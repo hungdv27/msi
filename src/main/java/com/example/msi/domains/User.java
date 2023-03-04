@@ -15,11 +15,7 @@ import java.time.LocalDateTime;
 @Table(name = "user")
 public class User {
   @Id
-  @SequenceGenerator(
-      name = "user_id_sequence",
-      sequenceName = "user_id_sequence",
-      allocationSize = 1)
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_sequence")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
   private int id;
 

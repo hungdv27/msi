@@ -14,11 +14,7 @@ import java.time.LocalDateTime;
 @Table(name = "internship_application")
 public class InternshipApplication {
   @Id
-  @SequenceGenerator(
-      name = "internship_application_id_sequence",
-      sequenceName = "internship_application_id_sequence",
-      allocationSize = 1)
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "internship_application_id_sequence")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
   private int id;
 

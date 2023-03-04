@@ -15,11 +15,7 @@ import java.time.LocalDateTime;
 @Table(name = "file")
 public class File {
   @Id
-  @SequenceGenerator(
-      name = "file_id_sequence",
-      sequenceName = "file_id_sequence",
-      allocationSize = 1)
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "file_id_sequence")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
   private int id;
 
