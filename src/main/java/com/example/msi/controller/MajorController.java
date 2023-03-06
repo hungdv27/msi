@@ -1,6 +1,9 @@
 package com.example.msi.controller;
 
+import com.example.msi.exceptions.ExceptionUtils;
+import com.example.msi.exceptions.MSIException;
 import com.example.msi.models.company.CreateMajorDTO;
+import com.example.msi.models.company.ErrorDTO;
 import com.example.msi.models.company.UpdateMajorDTO;
 import com.example.msi.service.MajorService;
 import lombok.RequiredArgsConstructor;
@@ -16,24 +19,60 @@ public class MajorController {
 
   @GetMapping("")
   public ResponseEntity<Object> getAllMajor() {
-    return new ResponseEntity<>(service.getAllMajor(), HttpStatus.OK);
+    try {
+      return new ResponseEntity<>(service.getAllMajor(), HttpStatus.OK);
+    } catch (MSIException ex) {
+      return new ResponseEntity<>(
+          new ErrorDTO(ex.getMessageKey(), ex.getMessage()), HttpStatus.BAD_REQUEST);
+    } catch (Exception ex) {
+      return new ResponseEntity<>(
+          ExceptionUtils.messages.get(ExceptionUtils.E_INTERNAL_SERVER),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @PostMapping("")
   public ResponseEntity<Object> createMajor(@RequestBody CreateMajorDTO major) {
-    service.addMajor(major);
+    try {
+      service.addMajor(major);
+    } catch (MSIException ex) {
+      return new ResponseEntity<>(
+          new ErrorDTO(ex.getMessageKey(), ex.getMessage()), HttpStatus.BAD_REQUEST);
+    } catch (Exception ex) {
+      return new ResponseEntity<>(
+          ExceptionUtils.messages.get(ExceptionUtils.E_INTERNAL_SERVER),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
   @PutMapping("")
   public ResponseEntity<Object> updateMajor(@RequestBody UpdateMajorDTO payload) {
-    service.updateMajor(payload);
+    try {
+      service.updateMajor(payload);
+    } catch (MSIException ex) {
+      return new ResponseEntity<>(
+          new ErrorDTO(ex.getMessageKey(), ex.getMessage()), HttpStatus.BAD_REQUEST);
+    } catch (Exception ex) {
+      return new ResponseEntity<>(
+          ExceptionUtils.messages.get(ExceptionUtils.E_INTERNAL_SERVER),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     return new ResponseEntity<>(HttpStatus.ACCEPTED);
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<Object> deleteMajor(@PathVariable int id) {
-    service.deleteMajor(id);
+    try {
+      service.deleteMajor(id);
+    } catch (MSIException ex) {
+      return new ResponseEntity<>(
+          new ErrorDTO(ex.getMessageKey(), ex.getMessage()), HttpStatus.BAD_REQUEST);
+    } catch (Exception ex) {
+      return new ResponseEntity<>(
+          ExceptionUtils.messages.get(ExceptionUtils.E_INTERNAL_SERVER),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 }

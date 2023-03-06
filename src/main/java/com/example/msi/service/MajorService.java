@@ -1,6 +1,7 @@
 package com.example.msi.service;
 
 import com.example.msi.domains.Major;
+import com.example.msi.exceptions.MSIException;
 import com.example.msi.models.company.CreateMajorDTO;
 import com.example.msi.models.company.UpdateMajorDTO;
 import lombok.NonNull;
@@ -8,11 +9,11 @@ import lombok.NonNull;
 import java.util.List;
 
 public interface MajorService {
-  List<Major> getAllMajor();
+  List<Major> getAllMajor() throws MSIException;
 
-  void addMajor(CreateMajorDTO major);
+  void addMajor(CreateMajorDTO major) throws MSIException;
 
-  void updateMajor(@NonNull UpdateMajorDTO payload);
+  void updateMajor(@NonNull UpdateMajorDTO payload) throws MSIException;
 
-  void deleteMajor(int id);
+  void deleteMajor(int id) throws MSIException;
 }

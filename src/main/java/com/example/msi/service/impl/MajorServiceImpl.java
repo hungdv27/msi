@@ -1,6 +1,7 @@
 package com.example.msi.service.impl;
 
 import com.example.msi.domains.Major;
+import com.example.msi.exceptions.MSIException;
 import com.example.msi.models.company.CreateMajorDTO;
 import com.example.msi.models.company.UpdateMajorDTO;
 import com.example.msi.repository.MajorRepository;
@@ -17,18 +18,18 @@ public class MajorServiceImpl implements MajorService {
   private final MajorRepository repository;
 
   @Override
-  public List<Major> getAllMajor() {
+  public List<Major> getAllMajor() throws MSIException {
     return repository.findAll();
   }
 
   @Override
-  public void addMajor(CreateMajorDTO major) {
+  public void addMajor(CreateMajorDTO major) throws MSIException {
     var entity = Major.getInstance(major);
     repository.save(entity);
   }
 
   @Override
-  public void updateMajor(@NonNull UpdateMajorDTO payload) {
+  public void updateMajor(@NonNull UpdateMajorDTO payload) throws MSIException {
     var id=payload.getId();
     repository.findById(id).ifPresent(entity -> {
       entity.update(payload);
@@ -37,7 +38,7 @@ public class MajorServiceImpl implements MajorService {
   }
 
   @Override
-  public void deleteMajor(int id) {
+  public void deleteMajor(int id) throws MSIException {
     repository.deleteById(id);
   }
 }

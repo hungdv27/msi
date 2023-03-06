@@ -1,6 +1,9 @@
 package com.example.msi.controller;
 
+import com.example.msi.exceptions.ExceptionUtils;
+import com.example.msi.exceptions.MSIException;
 import com.example.msi.models.company.CreateSemesterDTO;
+import com.example.msi.models.company.ErrorDTO;
 import com.example.msi.models.company.UpdateSemesterDTO;
 import com.example.msi.service.SemesterService;
 import lombok.RequiredArgsConstructor;
@@ -16,24 +19,60 @@ public class SemesterController {
 
   @GetMapping("")
   public ResponseEntity<Object> getAllSemester() {
-    return new ResponseEntity<>(service.getAllSemester(), HttpStatus.OK);
+    try {
+      return new ResponseEntity<>(service.getAllSemester(), HttpStatus.OK);
+    } catch (MSIException ex) {
+      return new ResponseEntity<>(
+          new ErrorDTO(ex.getMessageKey(), ex.getMessage()), HttpStatus.BAD_REQUEST);
+    } catch (Exception ex) {
+      return new ResponseEntity<>(
+          ExceptionUtils.messages.get(ExceptionUtils.E_INTERNAL_SERVER),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @PostMapping("")
   public ResponseEntity<Object> createSemester(@RequestBody CreateSemesterDTO major) {
-    service.addSemester(major);
+    try {
+      service.addSemester(major);
+    } catch (MSIException ex) {
+      return new ResponseEntity<>(
+          new ErrorDTO(ex.getMessageKey(), ex.getMessage()), HttpStatus.BAD_REQUEST);
+    } catch (Exception ex) {
+      return new ResponseEntity<>(
+          ExceptionUtils.messages.get(ExceptionUtils.E_INTERNAL_SERVER),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
   @PutMapping("")
   public ResponseEntity<Object> updateSemester(@RequestBody UpdateSemesterDTO payload) {
-    service.updateSemester(payload);
+    try {
+      service.updateSemester(payload);
+    } catch (MSIException ex) {
+      return new ResponseEntity<>(
+          new ErrorDTO(ex.getMessageKey(), ex.getMessage()), HttpStatus.BAD_REQUEST);
+    } catch (Exception ex) {
+      return new ResponseEntity<>(
+          ExceptionUtils.messages.get(ExceptionUtils.E_INTERNAL_SERVER),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     return new ResponseEntity<>(HttpStatus.ACCEPTED);
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<Object> deleteSemester(@PathVariable int id) {
-    service.deleteSemester(id);
+    try {
+      service.deleteSemester(id);
+    } catch (MSIException ex) {
+      return new ResponseEntity<>(
+          new ErrorDTO(ex.getMessageKey(), ex.getMessage()), HttpStatus.BAD_REQUEST);
+    } catch (Exception ex) {
+      return new ResponseEntity<>(
+          ExceptionUtils.messages.get(ExceptionUtils.E_INTERNAL_SERVER),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 }
