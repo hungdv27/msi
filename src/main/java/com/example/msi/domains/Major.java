@@ -1,9 +1,14 @@
 package com.example.msi.domains;
 
+import com.example.msi.models.company.CreateMajorDTO;
+import com.example.msi.models.company.UpdateMajorDTO;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,6 +16,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
+@EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor
 @Table(name = "major")
 public class Major {
   @Id
@@ -34,4 +41,20 @@ public class Major {
   @Column(name = "updated_date")
   @LastModifiedDate
   private LocalDateTime updatedDate;
+
+  private Major(@NonNull CreateMajorDTO target) {
+    this.code = target.getCode();
+    this.name = target.getName();
+    this.description = target.getDescription();
+  }
+
+  public void update(@NonNull UpdateMajorDTO target){
+    this.code = target.getCode();
+    this.name = target.getName();
+    this.description = target.getDescription();
+  }
+
+  public static Major getInstance(@NonNull CreateMajorDTO payload){
+    return new Major(payload);
+  }
 }

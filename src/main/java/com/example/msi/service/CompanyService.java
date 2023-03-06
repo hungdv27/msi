@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface CompanyService {
   Page<Company> getAllCompany(Pageable pageable);
 
-  Company getCompanyById(Integer id);
+  Company getCompanyById(int id);
 
   Company addCompany(CreateCompanyDTO company);
 
@@ -22,5 +22,5 @@ public interface CompanyService {
 
   List<Company> searchCompanyByName(@NonNull String name);
 
-  void deleteCompany(Integer id);
+  void deleteCompany(int id);
 }

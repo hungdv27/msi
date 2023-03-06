@@ -1,9 +1,14 @@
 package com.example.msi.domains;
 
+import com.example.msi.models.company.CreateSemesterDTO;
+import com.example.msi.models.company.UpdateSemesterDTO;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -12,6 +17,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
+@EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor
 @Table(name = "semester")
 public class Semester {
   @Id
@@ -35,4 +42,20 @@ public class Semester {
   @Column(name = "updated_date")
   @LastModifiedDate
   private LocalDateTime updatedDate;
+
+  private Semester(@NonNull CreateSemesterDTO target) {
+    this.semesterName = target.getName();
+    this.startDate = LocalDate.parse(target.getStartDate());
+    this.endDate = LocalDate.parse(target.getEndDate());
+  }
+
+  public void update(@NonNull UpdateSemesterDTO target){
+    this.semesterName = target.getName();
+    this.startDate = LocalDate.parse(target.getStartDate());
+    this.endDate = LocalDate.parse(target.getEndDate());
+  }
+
+  public static Semester getInstance(@NonNull CreateSemesterDTO payload){
+    return new Semester(payload);
+  }
 }
