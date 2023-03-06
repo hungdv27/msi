@@ -35,7 +35,7 @@ public class CompanyServiceImpl implements CompanyService {
   }
 
   @Override
-  public Company getCompanyById(Integer id) {
+  public Company getCompanyById(int id) {
     return repository.findById(id).orElse(null);
   }
 
@@ -60,7 +60,7 @@ public class CompanyServiceImpl implements CompanyService {
   }
 
   @Override
-  public void deleteCompany(Integer id) {
+  public void deleteCompany(int id) {
     repository.deleteById(id);
   }
 }
