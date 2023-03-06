@@ -1,18 +1,18 @@
 package com.example.msi.service.impl;
 
 import com.example.msi.domains.Company;
+import com.example.msi.models.company.CreateCompanyDTO;
+import com.example.msi.models.company.UpdateCompanyDTO;
 import com.example.msi.repository.CompanyRepository;
 import com.example.msi.service.CompanyService;
-import com.example.msi.shared.Constant;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,10 +22,10 @@ public class CompanyServiceImpl implements CompanyService {
   private static final int DEFAULT_PAGE_NUMBER = 0;
   private static final int DEFAULT_PAGE_SIZE = 10;
 
-  public static Pageable getPageable(Integer pageNumber, Integer pageSize) {
-    pageNumber = pageNumber != null ? pageNumber : DEFAULT_PAGE_NUMBER;
-    pageSize = pageSize != null ? pageSize : DEFAULT_PAGE_SIZE;
-    return PageRequest.of(pageNumber, pageSize);
+  public static Pageable getPageable(Integer page, Integer size) {
+    page = page != null ? page : DEFAULT_PAGE_NUMBER;
+    size = size != null ? size : DEFAULT_PAGE_SIZE;
+    return PageRequest.of(page, size);
   }
 
   @Override
@@ -39,22 +39,18 @@ public class CompanyServiceImpl implements CompanyService {
   }
 
   @Override
-  public Company addCompany(Company company) {
-    return repository.save(company);
+  public Company addCompany(CreateCompanyDTO payload) {
+    var entity = Company.getInstance(payload);
+    return repository.save(entity);
   }
 
   @Override
-  public Company updateCompany(Integer id, Company company) {
-    Company existingCompany = repository.findById(id).orElse(null);;
-    if (existingCompany == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found");
-    }
-    existingCompany.setName(company.getName());
-    existingCompany.setAddress(company.getAddress());
-    existingCompany.setEmail(company.getEmail());
-    existingCompany.setPhoneNumber(company.getPhoneNumber());
-    existingCompany.setStatus(company.getStatus());
-    return repository.save(existingCompany);
+  public Optional<Company> updateCompany(@NonNull UpdateCompanyDTO payload) {
+    var id=payload.getId();
+    return repository.findById(id).map(e ->{
+      e.update(payload);
+      return repository.save(e);
+    });
   }
 
   @Override

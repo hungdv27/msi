@@ -5,7 +5,8 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class CreateCompanyDTO {
+public class UpdateCompanyDTO {
+  private int id;
 
   private String name;
 
