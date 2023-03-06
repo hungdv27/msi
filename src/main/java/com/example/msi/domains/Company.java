@@ -35,7 +35,7 @@ public class Company {
   private String email;
 
   @Column(name = "status", nullable = false)
-  private String status;
+  private Boolean status;
 
   @Column(name = "created_date", nullable = false, updatable = false)
   @CreatedDate

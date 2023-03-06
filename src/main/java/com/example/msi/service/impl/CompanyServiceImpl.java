@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -51,6 +52,11 @@ public class CompanyServiceImpl implements CompanyService {
       e.update(payload);
       return repository.save(e);
     });
+  }
+
+  @Override
+  public List<Company> searchCompanyByName(@NonNull String name) {
+    return repository.getCompanyByName(name);
   }
 
   @Override
