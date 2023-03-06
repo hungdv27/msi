@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.example.msi.service.impl.CompanyServiceImpl.getPageable;
@@ -31,19 +32,24 @@ public class CompanyController {
     return ResponseEntity.ok(page1);
   }
 
-  @PostMapping("/create")
+  @PostMapping("")
   public Company createCompany(@RequestBody CreateCompanyDTO company) {
     return service.addCompany(company);
   }
 
-  @PutMapping("/update")
+  @PutMapping("")
   public Optional<Company> updateCompany(@RequestBody UpdateCompanyDTO payload) {
     return service.updateCompany(payload);
   }
 
-  @DeleteMapping("delete/{id}")
-  public void deleteBook(@PathVariable Integer id) {
+  @DeleteMapping("/{id}")
+  public void deleteCompany(@PathVariable Integer id) {
     service.deleteCompany(id);
+  }
+
+  @GetMapping("/{name}")
+  public List<Company> getCompanyByName(@PathVariable String name){
+    return service.searchCompanyByName(name);
   }
 
 }

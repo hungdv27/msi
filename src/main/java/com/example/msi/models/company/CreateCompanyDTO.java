@@ -15,5 +15,5 @@ public class CreateCompanyDTO {
 
   private String email;
 
-  private String status;
+  private Boolean status;
 }

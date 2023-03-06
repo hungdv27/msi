@@ -16,5 +16,5 @@ public class UpdateCompanyDTO {
 
   private String email;
 
-  private String status;
+  private Boolean status;
 }

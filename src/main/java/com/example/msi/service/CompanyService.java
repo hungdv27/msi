@@ -7,6 +7,7 @@ import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -18,6 +19,8 @@ public interface CompanyService {
   Company addCompany(CreateCompanyDTO company);
 
   Optional<Company> updateCompany(@NonNull UpdateCompanyDTO payload);
+
+  List<Company> searchCompanyByName(@NonNull String name);
 
   void deleteCompany(Integer id);
 }
