@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class UpdateSemesterDTO {
   private int id;
-  private String name;
+  private String semesterName;
 
   private String startDate;
 

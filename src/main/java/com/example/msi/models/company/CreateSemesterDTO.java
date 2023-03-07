@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class CreateSemesterDTO {
-  private String name;
+  private String semesterName;
   private String startDate;
   private String endDate;
 }

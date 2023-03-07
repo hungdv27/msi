@@ -44,13 +44,13 @@ public class Semester {
   private LocalDateTime updatedDate;
 
   private Semester(@NonNull CreateSemesterDTO target) {
-    this.semesterName = target.getName();
+    this.semesterName = target.getSemesterName();
     this.startDate = LocalDate.parse(target.getStartDate());
     this.endDate = LocalDate.parse(target.getEndDate());
   }
 
   public void update(@NonNull UpdateSemesterDTO target){
-    this.semesterName = target.getName();
+    this.semesterName = target.getSemesterName();
     this.startDate = LocalDate.parse(target.getStartDate());
     this.endDate = LocalDate.parse(target.getEndDate());
   }
