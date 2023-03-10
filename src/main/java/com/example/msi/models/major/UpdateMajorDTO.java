@@ -1,9 +1,11 @@
-package com.example.msi.models.company;
+package com.example.msi.models.major;
 
 import lombok.Data;
 
 @Data
-public class CreateMajorDTO {
+public class UpdateMajorDTO {
+  private int id;
+
   private String code;
 
   private String name;
