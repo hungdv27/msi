@@ -15,6 +15,7 @@
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>11</java.version>
+        <poi.version>5.2.2</poi.version>
     </properties>
     <dependencies>
         <dependency>
@@ -99,6 +100,16 @@
             <groupId>org.modelmapper</groupId>
             <artifactId>modelmapper</artifactId>
             <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <artifactId>poi</artifactId>
+            <groupId>org.apache.poi</groupId>
+            <version>${poi.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>poi-ooxml</artifactId>
+            <groupId>org.apache.poi</groupId>
+            <version>${poi.version}</version>
         </dependency>
     </dependencies>
 
