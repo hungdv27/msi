@@ -1,7 +1,7 @@
 package com.example.msi.domains;
 
-import com.example.msi.models.company.CreateSemesterDTO;
-import com.example.msi.models.company.UpdateSemesterDTO;
+import com.example.msi.models.semester.CreateSemesterDTO;
+import com.example.msi.models.semester.UpdateSemesterDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
