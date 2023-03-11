@@ -1,9 +1,7 @@
 package com.example.msi.controller;
 
-import com.example.msi.domains.User;
 import com.example.msi.models.user.CreateUserDTO;
 import com.example.msi.models.user.LoginUserDTO;
-import com.example.msi.models.user.UserDTO;
 import com.example.msi.respone.Data;
 import com.example.msi.respone.LoginResponse;
 import com.example.msi.security.CustomUserDetails;
@@ -12,7 +10,6 @@ import com.example.msi.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,14 +19,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.io.UnsupportedEncodingException;
 
 @CrossOrigin
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
-//  private final SimpMessagingTemplate simpMessagingTemplate;
+  //  private final SimpMessagingTemplate simpMessagingTemplate;
   private final UserServiceImpl userService;
   private final AuthenticationManager authenticationManager;
   private final JwtTokenProvider tokenProvider;
@@ -53,8 +49,8 @@ public class UserController {
       // Trả về jwt cho người dùng.
       CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
       String jwt = tokenProvider.generateToken(userDetails);
-      return ResponseEntity.ok(new Data(true, "success", new LoginResponse("Bearer " + jwt,mapper.map(userDetails.getUser(),LoginUserDTO.class))));
-    }catch (Exception e){
+      return ResponseEntity.ok(new Data(true, "success", new LoginResponse("Bearer " + jwt, mapper.map(userDetails.getUser(), LoginUserDTO.class))));
+    } catch (Exception e) {
       throw new IllegalStateException("Sai thông tin đăng nhập");
     }
   }

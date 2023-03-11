@@ -2,8 +2,6 @@ package com.example.msi.models.company;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 @Data
 public class UpdateCompanyDTO {
   private int id;
