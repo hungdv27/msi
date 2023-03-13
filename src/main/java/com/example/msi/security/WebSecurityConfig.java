@@ -1,10 +1,8 @@
 package com.example.msi.security;
 
-import com.example.msi.enums.RoleEnum;
 import com.example.msi.security.jwt.JwtAuthenticationFilter;
 import com.example.msi.service.impl.UserDetailsServiceImpl;
 import com.example.msi.service.impl.UserServiceImpl;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;

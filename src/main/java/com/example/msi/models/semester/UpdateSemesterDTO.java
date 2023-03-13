@@ -1,11 +1,11 @@
-package com.example.msi.models.company;
+package com.example.msi.models.semester;
 
 import lombok.Data;
 
 @Data
 public class UpdateSemesterDTO {
   private int id;
-  private String name;
+  private String semesterName;
 
   private String startDate;
 

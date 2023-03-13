@@ -1,7 +1,7 @@
 package com.example.msi.domains;
 
-import com.example.msi.models.company.CreateSemesterDTO;
-import com.example.msi.models.company.UpdateSemesterDTO;
+import com.example.msi.models.semester.CreateSemesterDTO;
+import com.example.msi.models.semester.UpdateSemesterDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -44,13 +44,13 @@ public class Semester {
   private LocalDateTime updatedDate;
 
   private Semester(@NonNull CreateSemesterDTO target) {
-    this.semesterName = target.getName();
+    this.semesterName = target.getSemesterName();
     this.startDate = LocalDate.parse(target.getStartDate());
     this.endDate = LocalDate.parse(target.getEndDate());
   }
 
   public void update(@NonNull UpdateSemesterDTO target){
-    this.semesterName = target.getName();
+    this.semesterName = target.getSemesterName();
     this.startDate = LocalDate.parse(target.getStartDate());
     this.endDate = LocalDate.parse(target.getEndDate());
   }

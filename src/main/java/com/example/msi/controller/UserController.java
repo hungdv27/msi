@@ -49,8 +49,8 @@ public class UserController {
       // Trả về jwt cho người dùng.
       CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
       String jwt = tokenProvider.generateToken(userDetails);
-      return ResponseEntity.ok(new Data(true, "success", new LoginResponse("Bearer " + jwt,mapper.map(userDetails.getUser(),LoginUserDTO.class))));
-    }catch (Exception e){
+      return ResponseEntity.ok(new Data(true, "success", new LoginResponse("Bearer " + jwt, mapper.map(userDetails.getUser(), LoginUserDTO.class))));
+    } catch (Exception e) {
       throw new IllegalStateException("Sai thông tin đăng nhập");
     }
   }

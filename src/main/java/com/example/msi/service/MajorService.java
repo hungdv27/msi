@@ -2,8 +2,8 @@ package com.example.msi.service;
 
 import com.example.msi.domains.Major;
 import com.example.msi.exceptions.MSIException;
-import com.example.msi.models.company.CreateMajorDTO;
-import com.example.msi.models.company.UpdateMajorDTO;
+import com.example.msi.models.major.CreateMajorDTO;
+import com.example.msi.models.major.UpdateMajorDTO;
 import lombok.NonNull;
 
 import java.util.List;

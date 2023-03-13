@@ -3,7 +3,6 @@ package com.example.msi.service.impl;
 import com.example.msi.domains.MyUserDetails;
 import com.example.msi.domains.User;
 import com.example.msi.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

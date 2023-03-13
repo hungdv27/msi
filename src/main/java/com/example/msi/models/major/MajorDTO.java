@@ -1,4 +1,4 @@
-package com.example.msi.models.company;
+package com.example.msi.models.major;
 
 import lombok.Getter;
 

@@ -2,9 +2,9 @@ package com.example.msi.controller;
 
 import com.example.msi.exceptions.ExceptionUtils;
 import com.example.msi.exceptions.MSIException;
-import com.example.msi.models.company.CreateSemesterDTO;
-import com.example.msi.models.company.ErrorDTO;
-import com.example.msi.models.company.UpdateSemesterDTO;
+import com.example.msi.models.error.ErrorDTO;
+import com.example.msi.models.semester.CreateSemesterDTO;
+import com.example.msi.models.semester.UpdateSemesterDTO;
 import com.example.msi.service.SemesterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

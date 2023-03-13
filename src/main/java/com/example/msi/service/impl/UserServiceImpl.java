@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   public Data register(CreateUserDTO userRegister, StringBuffer siteURL) throws IllegalAccessException, MessagingException {
     Optional<User> optional = repository.findByEmail(userRegister.getEmail());
     if (optional.isPresent()){
-      throw new IllegalAccessException("mail already exist");
+      throw new IllegalAccessException("Email đã tồn tại trong hệ thống");
     }
     var user = User.getInstance(userRegister);
     user.setPassword(passwordEncoder.encode(userRegister.getPassword()));
