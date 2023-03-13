@@ -54,6 +54,11 @@ public class User {
   @LastModifiedDate
   private LocalDateTime updatedDate;
 
+  private boolean enabled;
+
+  @Column(name = "update_password_token", length = 64)
+  private String updatePasswordToken;
+
   private User(@NonNull CreateUserDTO target) {
     this.fullName = target.getFullName();
     this.password = target.getPassword();

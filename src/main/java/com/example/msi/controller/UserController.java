@@ -1,9 +1,7 @@
 package com.example.msi.controller;
 
-import com.example.msi.domains.User;
 import com.example.msi.models.user.CreateUserDTO;
 import com.example.msi.models.user.LoginUserDTO;
-import com.example.msi.models.user.UserDTO;
 import com.example.msi.respone.Data;
 import com.example.msi.respone.LoginResponse;
 import com.example.msi.security.CustomUserDetails;
@@ -12,7 +10,6 @@ import com.example.msi.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.io.UnsupportedEncodingException;
 
 @CrossOrigin
 @RestController
@@ -30,7 +26,7 @@ import java.io.UnsupportedEncodingException;
 @RequiredArgsConstructor
 public class UserController {
 //  private final SimpMessagingTemplate simpMessagingTemplate;
-  private final UserServiceImpl userService;
+  private final UserServiceImpl service;
   private final AuthenticationManager authenticationManager;
   private final JwtTokenProvider tokenProvider;
   private final ModelMapper mapper;
@@ -61,7 +57,26 @@ public class UserController {
 
   @PostMapping("/register")
   public ResponseEntity<Data> registerUser(@Valid @RequestBody CreateUserDTO user, HttpServletRequest request) throws MessagingException, IllegalAccessException {
-    return ResponseEntity.ok(userService.register(user, new StringBuffer("")));
+    return ResponseEntity.ok(service.register(user, request.getRequestURL().append("/verify?code=")));
   }
 
+  @GetMapping("/register/verify")
+  public ResponseEntity<Data> verifyUser(@RequestParam("code") String code) {
+    return ResponseEntity.ok(service.verify(code));
+  }
+
+  @GetMapping("/send-mail/update-password-token")
+  public ResponseEntity<Data> updatePasswordToken(@RequestParam String mail) throws MessagingException {
+    return ResponseEntity.ok(service.updatePasswordToken(mail, new StringBuffer("")));
+  }
+
+  @PostMapping("/update-password-token")
+  public ResponseEntity<Data> updatePassword(@RequestParam String code, @RequestParam String password) {
+    return ResponseEntity.ok(service.updatePassword(code, password));
+  }
+
+  @GetMapping("/forgot-password")
+  public ResponseEntity<Data> forgotPassword(@RequestParam String mail) throws MessagingException {
+    return ResponseEntity.ok(service.forgotPassword(mail));
+  }
 }
