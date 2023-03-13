@@ -86,5 +86,4 @@ public class CompanyController {
           HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-
 }
