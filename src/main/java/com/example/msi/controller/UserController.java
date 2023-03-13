@@ -22,7 +22,7 @@ import javax.validation.Valid;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/user")
+@RequestMapping("api/user")
 @RequiredArgsConstructor
 public class UserController {
   //  private final SimpMessagingTemplate simpMessagingTemplate;
