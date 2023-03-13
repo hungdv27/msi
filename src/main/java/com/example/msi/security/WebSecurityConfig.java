@@ -79,7 +79,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
         .authorizeRequests()
-        .antMatchers("/user/**").permitAll()
+        .antMatchers("/api/user/**").permitAll()
         .antMatchers(HttpMethod.POST, "*/swagger-ui.html/*").permitAll()
 //        .antMatchers("/company/*").hasAnyAuthority(RoleEnum.TEACHER.name(), RoleEnum.ADMIN.name())
         .anyRequest().authenticated()

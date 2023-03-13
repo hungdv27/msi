@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
-@RequestMapping("/major")
+@RequestMapping("api/major")
 @RestController
 public class MajorController {
   private final MajorService service;

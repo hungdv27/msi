@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
-@RequestMapping("/semester")
+@RequestMapping("api/semester")
 @RestController
 public class SemesterController {
   private final SemesterService service;

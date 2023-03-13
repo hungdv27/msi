@@ -17,7 +17,7 @@ import java.util.Optional;
 import static com.example.msi.service.impl.CompanyServiceImpl.getPageable;
 
 @RequiredArgsConstructor
-@RequestMapping("/company")
+@RequestMapping("api/company")
 @RestController
 public class CompanyController {
   private final CompanyService service;
