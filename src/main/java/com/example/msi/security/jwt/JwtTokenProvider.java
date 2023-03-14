@@ -4,6 +4,8 @@ import com.example.msi.security.CustomUserDetails;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -41,7 +43,7 @@ public class JwtTokenProvider {
     return Long.parseLong(claims.getSubject());
   }
 
-  public boolean validateToken(String authToken) {
+  public boolean validateToken(String authToken) throws Exception {
     try {
       Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(authToken);
       return true;
@@ -54,8 +56,8 @@ public class JwtTokenProvider {
     } catch (IllegalArgumentException ex) {
       log.error("JWT claims string is empty.");
     } catch (SignatureException ex) {
-      log.error("JWT signature does not match locally computed signature.");
-    }
+      throw new Exception(HttpStatus.UNAUTHORIZED.toString());
+   }
     return false;
   }
 }

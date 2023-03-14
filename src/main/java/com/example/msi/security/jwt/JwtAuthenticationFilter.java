@@ -1,8 +1,10 @@
 package com.example.msi.security.jwt;
 
 import com.example.msi.service.impl.UserServiceImpl;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   @Autowired
   private UserServiceImpl userService;
 
+  @SneakyThrows
   @Override
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -37,7 +40,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     String token = header.split(" ")[1].trim();
     if (!tokenProvider.validateToken(token)) {
       filterChain.doFilter(request, response);
-      return;
     }
 
     // * Lấy id user từ chuỗi jwt
