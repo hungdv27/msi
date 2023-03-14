@@ -57,22 +57,17 @@ public class UserController {
 
   @PostMapping("/register")
   public ResponseEntity<Data> registerUser(@Valid @RequestBody CreateUserDTO user, HttpServletRequest request) throws MessagingException, IllegalAccessException {
-    return ResponseEntity.ok(service.register(user, request.getRequestURL().append("/verify?code=")));
+    return ResponseEntity.ok(service.register(user, request.getRequestURL()));
   }
 
   @GetMapping("/register/verify")
-  public ResponseEntity<Data> verifyUser(@RequestParam("code") String code) {
+  public ResponseEntity<Data> verifyUser(@RequestParam("code") String code) throws IllegalAccessException {
     return ResponseEntity.ok(service.verify(code));
   }
 
-  @GetMapping("/send-mail/update-password-token")
-  public ResponseEntity<Data> updatePasswordToken(@RequestParam String mail) throws MessagingException {
-    return ResponseEntity.ok(service.updatePasswordToken(mail, new StringBuffer("")));
-  }
-
-  @PostMapping("/update-password-token")
-  public ResponseEntity<Data> updatePassword(@RequestParam String code, @RequestParam String password) {
-    return ResponseEntity.ok(service.updatePassword(code, password));
+  @PostMapping("/update-password/{userId}")
+  public ResponseEntity<Data> updatePassword(@PathVariable int userId, @RequestParam String password, @RequestParam String newPassword) {
+    return ResponseEntity.ok(service.updatePassword(userId, password, newPassword));
   }
 
   @GetMapping("/forgot-password")

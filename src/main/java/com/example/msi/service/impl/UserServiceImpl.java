@@ -12,6 +12,9 @@ import com.example.msi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,7 +33,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   private final UserRepository repository;
   private final PasswordEncoder passwordEncoder;
   private final MailService mailService;
-  private final ModelMapper mapper;
 
   // JWTAuthenticationFilter sẽ sử dụng hàm này
   @Transactional
@@ -53,10 +55,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     user.setEnabled(false);
     user.setRole(RoleEnum.STUDENT);// * Mac dinh de Role la Student
     user.setVerificationCode(RandomString.make(64));
+    StringBuffer url = new StringBuffer("159.65.4.245/login?verify=");
+
 
     Map<String, Object> props = new HashMap<>();
     props.put("email", user.getEmail());
-    props.put("url", siteURL.append(user.getVerificationCode()).toString());
+    props.put("url", url.append(user.getVerificationCode()).toString());
 
     mailService.sendMail(props, user.getEmail(), "sendMail", "Xác thực tài khoản");
     repository.save(user);
@@ -64,9 +68,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   }
 
   @Override
-  public Data verify(String verificationCode) {
+  public Data verify(String verificationCode) throws IllegalAccessException {
     Optional<User> optionalUser = repository.findByVerificationCode(verificationCode);
-    if (!optionalUser.isPresent()) return new Data(false, "verification code not found", null);
+    if (!optionalUser.isPresent()){
+      throw new IllegalAccessException("Verification Code không tồn tại");
+    }
 
     User user = optionalUser.get();
 //    user.setVerificationCode(null);
@@ -76,34 +82,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   }
 
   @Override
-  public Data updatePasswordToken(String mail, StringBuffer siteUrl) throws MessagingException {
-    Optional<User> optionalUser = repository.findByEmail(mail);
-    if (!optionalUser.isPresent()) return new Data(false, "mail not found", null);
-
-    User user = optionalUser.get();
-    user.setUpdatePasswordToken(RandomString.make(64));
-    repository.save(user);
-
-    Map<String, Object> props = new HashMap<>();
-    props.put("email", user.getEmail());
-    props.put("url", siteUrl.append(user.getUpdatePasswordToken()).toString());
-
-    mailService.sendMail(props, user.getEmail(), "updatePassword", "Đổi mật khẩu");
-    return new Data(true, "update password success", siteUrl);
-  }
-
-  @Override
-  public Data updatePassword(String code, String password) {
-    Optional<User> optionalUser = repository.findByUpdatePasswordToken(code);
-    if (!optionalUser.isPresent()) {
-      return new Data(false, "password token not found", null);
+  public Data updatePassword(int userId, String password, String newPassword) {
+    Optional<User> optionalUser = repository.findById(userId);
+    if (optionalUser.isPresent()) {
+      User user = optionalUser.get();
+      if (passwordEncoder.matches(password, user.getPassword())) {
+        String encryptedPassword = passwordEncoder.encode(newPassword);
+        user.setPassword(encryptedPassword);
+        user.setUpdatePasswordToken(null);
+        repository.save(user);
+        return new Data(true, "Cập nhật mật khẩu thành công", null);
+      }
+      return new Data(false, "Mật khẩu không đúng", null);
+    } else {
+      return new Data(false, "Không có dữ liệu của người dùng này", null);
     }
-
-    User user = optionalUser.get();
-    user.setPassword(passwordEncoder.encode(password));
-    user.setUpdatePasswordToken(null);
-    repository.save(user);
-    return new Data(true, "update password success", null);
   }
 
   @Override
@@ -122,7 +115,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     props.put("pass", pass);
 
     mailService.sendMail(props, user.getEmail(), "forgotPassword", "Quên mật khẩu");
-    return new Data(true, "forgot password success", pass);
+    return new Data(true, "forgot password success", null);
   }
 
   @Override
