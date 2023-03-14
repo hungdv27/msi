@@ -1,5 +1,6 @@
 package com.example.msi.controller;
 
+import com.example.msi.domains.User;
 import com.example.msi.models.user.CreateUserDTO;
 import com.example.msi.models.user.LoginUserDTO;
 import com.example.msi.respone.Data;
@@ -19,13 +20,14 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.Optional;
 
 @CrossOrigin
 @RestController
 @RequestMapping("api/user")
 @RequiredArgsConstructor
 public class UserController {
-//  private final SimpMessagingTemplate simpMessagingTemplate;
+  //  private final SimpMessagingTemplate simpMessagingTemplate;
   private final UserServiceImpl service;
   private final AuthenticationManager authenticationManager;
   private final JwtTokenProvider tokenProvider;
@@ -41,7 +43,6 @@ public class UserController {
               user.getPassword()
           )
       );
-
       // Nếu không xảy ra exception tức là thông tin hợp lệ
       // Set thông tin authentication vào Security Context
       SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -73,5 +74,10 @@ public class UserController {
   @GetMapping("/forgot-password")
   public ResponseEntity<Data> forgotPassword(@RequestParam String mail) throws MessagingException {
     return ResponseEntity.ok(service.forgotPassword(mail));
+  }
+
+  @GetMapping("/user_access_information")
+  public Optional<User> userAccessInformation(){
+    return service.userAccessInformation();
   }
 }

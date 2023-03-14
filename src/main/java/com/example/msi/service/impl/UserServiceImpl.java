@@ -11,10 +11,13 @@ import com.example.msi.service.MailService;
 import com.example.msi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import net.bytebuddy.utility.RandomString;
+import org.apache.poi.sl.draw.geom.GuideIf;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,6 +27,7 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -57,7 +61,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     user.setVerificationCode(RandomString.make(64));
     StringBuffer url = new StringBuffer("159.65.4.245/login?verify=");
 
-
     Map<String, Object> props = new HashMap<>();
     props.put("email", user.getEmail());
     props.put("url", url.append(user.getVerificationCode()).toString());
@@ -73,9 +76,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     if (!optionalUser.isPresent()){
       throw new IllegalAccessException("Verification Code không tồn tại");
     }
-
     User user = optionalUser.get();
-//    user.setVerificationCode(null);
     user.setEnabled(true);
     repository.save(user);
     return new Data(true, "verify success", null);
@@ -109,13 +110,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     User user = optionalUser.get();
     user.setPassword(passwordEncoder.encode(pass));
     repository.save(user);
-//
     Map<String, Object> props = new HashMap<>();
     props.put("email", user.getEmail());
     props.put("pass", pass);
 
     mailService.sendMail(props, user.getEmail(), "forgotPassword", "Quên mật khẩu");
     return new Data(true, "forgot password success", null);
+  }
+
+  @Override
+  public Optional<User> userAccessInformation() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+    String email = userDetails.getUsername();
+    Optional<User> user = repository.findByEmail(email);
+    return user;
   }
 
   @Override
