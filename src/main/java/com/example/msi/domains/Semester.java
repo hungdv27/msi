@@ -50,6 +50,7 @@ public class Semester {
     this.semesterName = target.getSemesterName();
     this.startDate = LocalDate.parse(target.getStartDate());
     this.endDate = LocalDate.parse(target.getEndDate());
+    this.status = false;
   }
 
   public void update(@NonNull UpdateSemesterDTO target){

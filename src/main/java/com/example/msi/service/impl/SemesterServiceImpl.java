@@ -55,6 +55,28 @@ public class SemesterServiceImpl implements SemesterService {
     repository.deleteById(id);
   }
 
+  @Override
+  public void changeStatus(int id) throws MSIException {
+    var optional = repository.findById(id);
+    if (optional.isEmpty()) {
+      throw new MSIException(
+          ExceptionUtils.E_COMMON_NOT_EXISTS_ID,
+          String.format(ExceptionUtils.messages.get(ExceptionUtils.E_COMMON_NOT_EXISTS_ID), id));
+    }
+    var semester = optional.get();
+    if (semester.isStatus()) {
+      semester.setStatus(false);
+    } else {
+      if (repository.countAllByStatus(true) > 0) {
+        throw new MSIException(
+            ExceptionUtils.TRUE_STATUS_IS_EXIST,
+            ExceptionUtils.messages.get(ExceptionUtils.TRUE_STATUS_IS_EXIST));
+      }
+      semester.setStatus(true);
+    }
+    repository.save(semester);
+  }
+
   private boolean validateDate(String startDate, String endDate){
     var start = LocalDate.parse(startDate);
     var end = LocalDate.parse(endDate);
