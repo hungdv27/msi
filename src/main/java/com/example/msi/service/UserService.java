@@ -2,9 +2,12 @@ package com.example.msi.service;
 
 import com.example.msi.domains.User;
 import com.example.msi.models.user.CreateUserDTO;
+import com.example.msi.models.user.UpdateUserDTO;
+import com.example.msi.models.user.UpdatePasswordUserDTO;
 import com.example.msi.respone.Data;
 
 import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.Optional;
 
 public interface UserService {
@@ -12,10 +15,12 @@ public interface UserService {
 
   Data verify(String verificationCode) throws IllegalAccessException;
 
-  Data updatePassword(int userId, String password, String newPassword);
+  Data updatePassword(UpdatePasswordUserDTO updatePasswordUser) throws IOException;
 
   Data forgotPassword(String mail) throws MessagingException;
 
-  Optional<User> userAccessInformation();
+  Optional<User> userAccessInformation() throws IllegalAccessException;
+
+  Data update(UpdateUserDTO updateUser) throws IOException;
 
 }

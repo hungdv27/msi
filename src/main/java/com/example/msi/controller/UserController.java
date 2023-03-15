@@ -1,8 +1,7 @@
 package com.example.msi.controller;
 
 import com.example.msi.domains.User;
-import com.example.msi.models.user.CreateUserDTO;
-import com.example.msi.models.user.LoginUserDTO;
+import com.example.msi.models.user.*;
 import com.example.msi.respone.Data;
 import com.example.msi.respone.LoginResponse;
 import com.example.msi.security.CustomUserDetails;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.Optional;
 
 @CrossOrigin
@@ -27,7 +27,6 @@ import java.util.Optional;
 @RequestMapping("api/user")
 @RequiredArgsConstructor
 public class UserController {
-  //  private final SimpMessagingTemplate simpMessagingTemplate;
   private final UserServiceImpl service;
   private final AuthenticationManager authenticationManager;
   private final JwtTokenProvider tokenProvider;
@@ -50,7 +49,7 @@ public class UserController {
       // Trả về jwt cho người dùng.
       CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
       String jwt = tokenProvider.generateToken(userDetails);
-      return ResponseEntity.ok(new Data(true, "success", new LoginResponse("Bearer " + jwt, mapper.map(userDetails.getUser(), LoginUserDTO.class))));
+      return ResponseEntity.ok(new Data(new LoginResponse("Bearer " + jwt, mapper.map(userDetails.getUser(), LoginUserDTO.class))));
     } catch (Exception e) {
       throw new IllegalStateException("Sai thông tin đăng nhập");
     }
@@ -66,9 +65,9 @@ public class UserController {
     return ResponseEntity.ok(service.verify(code));
   }
 
-  @PostMapping("/update-password/{userId}")
-  public ResponseEntity<Data> updatePassword(@PathVariable int userId, @RequestParam String password, @RequestParam String newPassword) {
-    return ResponseEntity.ok(service.updatePassword(userId, password, newPassword));
+  @PostMapping("/update-password")
+  public ResponseEntity<Data> updatePassword(@RequestBody UpdatePasswordUserDTO updatePasswordUser) throws IOException {
+    return ResponseEntity.ok(service.updatePassword(updatePasswordUser));
   }
 
   @GetMapping("/forgot-password")
@@ -77,7 +76,13 @@ public class UserController {
   }
 
   @GetMapping("/user_access_information")
-  public Optional<User> userAccessInformation(){
-    return service.userAccessInformation();
+  public ResponseEntity<Data> userAccessInformation() throws IllegalAccessException {
+    Optional<User> user = service.userAccessInformation();
+    return ResponseEntity.ok(new Data(user));
+  }
+
+  @PutMapping("/update")
+  public ResponseEntity<Data> updateUser(@RequestBody UpdateUserDTO updateUser) throws IOException {
+    return ResponseEntity.ok(new Data(service.update(updateUser)));
   }
 }
