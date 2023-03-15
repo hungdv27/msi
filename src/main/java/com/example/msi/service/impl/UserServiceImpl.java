@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     mailService.sendMail(props, user.getEmail(), "sendMail", "Xác thực tài khoản");
     repository.save(user);
-    return new Data(true, "send mail success", UserDTO.getInstance(user));
+    return new Data(UserDTO.getInstance(user));
   }
 
   @Override
@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     User user = optionalUser.get();
     user.setEnabled(true);
     repository.save(user);
-    return new Data(true, "verify success", null);
+    return new Data(null);
   }
 
   @Override
@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setPassword(encryptedPassword);
         user.setUpdatePasswordToken(null);
         repository.save(user);
-        return new Data(true, "Cập nhật mật khẩu thành công", null);
+        return new Data(null);
       }
       throw new IOException("Mật khẩu không đúng");
     } else {
@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   @Override
   public Data forgotPassword(String mail) throws MessagingException {
     Optional<User> optionalUser = repository.findByEmail(mail);
-    if (!optionalUser.isPresent()) return new Data(false, "mail not found", null);
+    if (!optionalUser.isPresent()) return new Data(null);
     String pass = RandomString.make(10);
     User user = optionalUser.get();
     user.setPassword(passwordEncoder.encode(pass));
@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     props.put("pass", pass);
 
     mailService.sendMail(props, user.getEmail(), "forgotPassword", "Quên mật khẩu");
-    return new Data(true, "forgot password success", null);
+    return new Data(null);
   }
 
   @Override
@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     user.setFullName(updateUser.getFullName());
     user.setPhoneNumber(updateUser.getPhoneNumber());
     repository.save(user);
-    return new Data(true, "Cập nhật thông tin thành công", user);
+    return new Data(user);
   }
 
   @Override

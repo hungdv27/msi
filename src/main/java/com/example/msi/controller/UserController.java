@@ -27,7 +27,6 @@ import java.util.Optional;
 @RequestMapping("api/user")
 @RequiredArgsConstructor
 public class UserController {
-  //  private final SimpMessagingTemplate simpMessagingTemplate;
   private final UserServiceImpl service;
   private final AuthenticationManager authenticationManager;
   private final JwtTokenProvider tokenProvider;
@@ -50,7 +49,7 @@ public class UserController {
       // Trả về jwt cho người dùng.
       CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
       String jwt = tokenProvider.generateToken(userDetails);
-      return ResponseEntity.ok(new Data(true, "success", new LoginResponse("Bearer " + jwt, mapper.map(userDetails.getUser(), LoginUserDTO.class))));
+      return ResponseEntity.ok(new Data(new LoginResponse("Bearer " + jwt, mapper.map(userDetails.getUser(), LoginUserDTO.class))));
     } catch (Exception e) {
       throw new IllegalStateException("Sai thông tin đăng nhập");
     }
@@ -79,11 +78,11 @@ public class UserController {
   @GetMapping("/user_access_information")
   public ResponseEntity<Data> userAccessInformation() throws IllegalAccessException {
     Optional<User> user = service.userAccessInformation();
-    return ResponseEntity.ok(new Data(true, "success",  user));
+    return ResponseEntity.ok(new Data(user));
   }
 
   @PutMapping("/update")
   public ResponseEntity<Data> updateUser(@RequestBody UpdateUserDTO updateUser) throws IOException {
-    return ResponseEntity.ok(new Data(true, "success", service.update(updateUser)));
+    return ResponseEntity.ok(new Data(service.update(updateUser)));
   }
 }
