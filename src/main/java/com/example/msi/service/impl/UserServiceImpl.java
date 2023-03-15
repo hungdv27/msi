@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   }
 
   @Override
-  public Data updatePassword(UpdatePasswordUserDTO updatePasswordUserDTO) {
+  public Data updatePassword(UpdatePasswordUserDTO updatePasswordUserDTO) throws IOException {
     Optional<User> optionalUser = repository.findById(updatePasswordUserDTO.getId());
     if (optionalUser.isPresent()) {
       User user = optionalUser.get();
@@ -91,9 +91,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         repository.save(user);
         return new Data(true, "Cập nhật mật khẩu thành công", null);
       }
-      return new Data(false, "Mật khẩu không đúng", null);
+      throw new IOException("Mật khẩu không đúng");
     } else {
-      return new Data(false, "Không có dữ liệu của người dùng này", null);
+      throw new IOException("Không có dữ liệu của người dùng này");
     }
   }
 

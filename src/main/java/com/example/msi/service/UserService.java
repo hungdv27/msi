@@ -15,7 +15,7 @@ public interface UserService {
 
   Data verify(String verificationCode) throws IllegalAccessException;
 
-  Data updatePassword(UpdatePasswordUserDTO updatePasswordUser);
+  Data updatePassword(UpdatePasswordUserDTO updatePasswordUser) throws IOException;
 
   Data forgotPassword(String mail) throws MessagingException;
 
