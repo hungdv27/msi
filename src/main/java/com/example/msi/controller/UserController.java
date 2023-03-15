@@ -67,7 +67,7 @@ public class UserController {
   }
 
   @PostMapping("/update-password")
-  public ResponseEntity<Data> updatePassword(@RequestBody UpdatePasswordUserDTO updatePasswordUser) {
+  public ResponseEntity<Data> updatePassword(@RequestBody UpdatePasswordUserDTO updatePasswordUser) throws IOException {
     return ResponseEntity.ok(service.updatePassword(updatePasswordUser));
   }
 
