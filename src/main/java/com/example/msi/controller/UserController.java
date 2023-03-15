@@ -1,5 +1,6 @@
 package com.example.msi.controller;
 
+import com.example.msi.domains.User;
 import com.example.msi.models.user.CreateUserDTO;
 import com.example.msi.models.user.LoginUserDTO;
 import com.example.msi.respone.Data;
@@ -19,13 +20,14 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.Optional;
 
 @CrossOrigin
 @RestController
 @RequestMapping("api/user")
 @RequiredArgsConstructor
 public class UserController {
-//  private final SimpMessagingTemplate simpMessagingTemplate;
+  //  private final SimpMessagingTemplate simpMessagingTemplate;
   private final UserServiceImpl service;
   private final AuthenticationManager authenticationManager;
   private final JwtTokenProvider tokenProvider;
@@ -41,7 +43,6 @@ public class UserController {
               user.getPassword()
           )
       );
-
       // Nếu không xảy ra exception tức là thông tin hợp lệ
       // Set thông tin authentication vào Security Context
       SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -57,26 +58,26 @@ public class UserController {
 
   @PostMapping("/register")
   public ResponseEntity<Data> registerUser(@Valid @RequestBody CreateUserDTO user, HttpServletRequest request) throws MessagingException, IllegalAccessException {
-    return ResponseEntity.ok(service.register(user, request.getRequestURL().append("/verify?code=")));
+    return ResponseEntity.ok(service.register(user, request.getRequestURL()));
   }
 
   @GetMapping("/register/verify")
-  public ResponseEntity<Data> verifyUser(@RequestParam("code") String code) {
+  public ResponseEntity<Data> verifyUser(@RequestParam("code") String code) throws IllegalAccessException {
     return ResponseEntity.ok(service.verify(code));
   }
 
-  @GetMapping("/send-mail/update-password-token")
-  public ResponseEntity<Data> updatePasswordToken(@RequestParam String mail) throws MessagingException {
-    return ResponseEntity.ok(service.updatePasswordToken(mail, new StringBuffer("")));
-  }
-
-  @PostMapping("/update-password-token")
-  public ResponseEntity<Data> updatePassword(@RequestParam String code, @RequestParam String password) {
-    return ResponseEntity.ok(service.updatePassword(code, password));
+  @PostMapping("/update-password/{userId}")
+  public ResponseEntity<Data> updatePassword(@PathVariable int userId, @RequestParam String password, @RequestParam String newPassword) {
+    return ResponseEntity.ok(service.updatePassword(userId, password, newPassword));
   }
 
   @GetMapping("/forgot-password")
   public ResponseEntity<Data> forgotPassword(@RequestParam String mail) throws MessagingException {
     return ResponseEntity.ok(service.forgotPassword(mail));
+  }
+
+  @GetMapping("/user_access_information")
+  public Optional<User> userAccessInformation(){
+    return service.userAccessInformation();
   }
 }
