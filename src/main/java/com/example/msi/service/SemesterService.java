@@ -9,11 +9,12 @@ import lombok.NonNull;
 import java.util.List;
 
 public interface SemesterService {
-  List<Semester> getAllSemester() throws MSIException;;
+  List<Semester> getAllSemester() throws MSIException;
 
   void addSemester(CreateSemesterDTO semester) throws MSIException;
 
   void updateSemester(@NonNull UpdateSemesterDTO payload) throws MSIException;
 
-  void deleteSemester(int id) throws MSIException;;
+  void deleteSemester(int id) throws MSIException;
+  void changeStatus(int id) throws MSIException;
 }
