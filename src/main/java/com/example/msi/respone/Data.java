@@ -10,7 +10,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Data {
-  private boolean success;
-  private String message;
   private Object data;
 }
