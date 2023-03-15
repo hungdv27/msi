@@ -7,6 +7,7 @@ import com.example.msi.models.company.CompanyReqDTO;
 import com.example.msi.models.company.CreateCompanyDTO;
 import com.example.msi.models.company.UpdateCompanyDTO;
 import com.example.msi.models.error.ErrorDTO;
+import com.example.msi.respone.ImportError;
 import com.example.msi.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -107,8 +108,8 @@ public class CompanyController {
   public ResponseEntity<Object> importFile(
       @RequestBody MultipartFile file, HttpServletRequest request) {
     try {
-      var fileId = service.importFile(file, request);
-      return new ResponseEntity<>(fileId, HttpStatus.OK);
+      var message = service.importFile(file, request);
+      return new ResponseEntity<>(new ImportError(message), HttpStatus.OK);
     } catch (MSIException ex) {
       log.error(ex.getMessage());
       return new ResponseEntity<>(

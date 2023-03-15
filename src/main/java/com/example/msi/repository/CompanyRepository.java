@@ -10,4 +10,6 @@ import java.util.List;
 public interface CompanyRepository extends JpaRepository<Company, Integer> {
   @Query(value = "SELECT * FROM company WHERE name LIKE %:name%", nativeQuery = true)
   List<Company> getCompanyByName(@Param("name") String name);
+  boolean existsByEmail(String email);
+  boolean existsByName(String name);
 }
