@@ -2,6 +2,7 @@ package com.example.msi.controller;
 
 import com.example.msi.domains.User;
 import com.example.msi.models.user.*;
+import com.example.msi.repository.UserRepository;
 import com.example.msi.respone.Data;
 import com.example.msi.respone.LoginResponse;
 import com.example.msi.security.CustomUserDetails;
@@ -28,12 +29,17 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserController {
   private final UserServiceImpl service;
+  private final UserRepository repository;
   private final AuthenticationManager authenticationManager;
   private final JwtTokenProvider tokenProvider;
   private final ModelMapper mapper;
 
   @PostMapping("/login")
   public ResponseEntity<Data> authenticateUser(@Valid @RequestBody LoginUserDTO user) {
+    Optional<User> userOptional = repository.findByEmail(user.getEmail());
+    if (userOptional.isPresent() && !userOptional.get().isEnabled()) {
+      throw new IllegalStateException("Tài khoản chưa được kích hoạt");
+    }
     // Xác thực thông tin người dùng Request lên
     try {
       Authentication authentication = authenticationManager.authenticate(
@@ -45,7 +51,6 @@ public class UserController {
       // Nếu không xảy ra exception tức là thông tin hợp lệ
       // Set thông tin authentication vào Security Context
       SecurityContextHolder.getContext().setAuthentication(authentication);
-
       // Trả về jwt cho người dùng.
       CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
       String jwt = tokenProvider.generateToken(userDetails);
@@ -53,6 +58,7 @@ public class UserController {
     } catch (Exception e) {
       throw new IllegalStateException("Sai thông tin đăng nhập");
     }
+
   }
 
   @PostMapping("/register")
