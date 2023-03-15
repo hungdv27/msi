@@ -35,6 +35,9 @@ public class Semester {
   @Column(name = "end_date")
   private LocalDate endDate;
 
+  @Column(name = "status")
+  private boolean status;
+
   @Column(name = "created_date", nullable = false, updatable = false)
   @CreatedDate
   private LocalDateTime createdDate;
