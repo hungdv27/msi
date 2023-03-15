@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
   private UserRepository repository;
@@ -21,10 +23,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-    User user = repository.getUserByEmail(s);
-    if (user == null) {
-      throw new UsernameNotFoundException("Could not find user");
-    }
-    return new MyUserDetails(user);
+    Optional<User> userOptional = Optional.ofNullable(repository.getUserByEmail(s));
+    return userOptional.map(MyUserDetails::new).orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy người dùng này"));
   }
 }
