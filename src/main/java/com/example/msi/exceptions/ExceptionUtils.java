@@ -12,13 +12,27 @@ public class ExceptionUtils {
   // ExportExcel
   public static final String E_EXPORT_COMPANY = "E_EXPORT_COMPANY";
   public static final String E_EXPORT_EXCEL = "E_EXPORT_EXCEL";
+  public static final String E_FILE_IS_EMPTY = "E_FILE_IS_EMPTY";
+  public static final String E_FILE_TOO_LARGE_THAN_DEFAULT_IMPORT_3MB = "E_FILE_TOO_LARGE_THAN_DEFAULT_IMPORT_3MB";
+  public static final String E_FILE_IS_NOT_FORMAT_CORRECT = "E_FILE_IS_NOT_FORMAT_CORRECT";
+  public static final String E_FILE_DATA_EXCEED_NUMBER_PERMITTED = "E_FILE_DATA_EXCEED_NUMBER_PERMITTED";
+  public static final String E_FILE_IS_NOT_EXCEL = "E_FILE_IS_NOT_EXCEL";
 
   public static final Map<String, String> messages;
   static {
     messages = new HashMap<>();
     messages.put(ExceptionUtils.END_DATE_IS_NOT_BEFORE_OR_EQUAL_START_DATE, "Ngày kết thúc không được nhỏ hơn hoặc bằng ngày bắt đầu");
     messages.put(ExceptionUtils.E_INTERNAL_SERVER, "Server không phản hồi");
-    messages.put(ExceptionUtils.E_INTERNAL_SERVER, "Danh sách công ty rỗng");
+    messages.put(ExceptionUtils.E_EXPORT_COMPANY, "Danh sách công ty rỗng");
     messages.put(ExceptionUtils.E_EXPORT_EXCEL, "Lỗi kết xuất excel");
+    messages.put(ExceptionUtils.E_FILE_IS_EMPTY, "Vui lòng chọn file");
+    messages.put(ExceptionUtils.E_FILE_TOO_LARGE_THAN_DEFAULT_IMPORT_3MB, "File lớn hơn 3MB");
+    messages.put(ExceptionUtils.E_FILE_IS_NOT_FORMAT_CORRECT, "File không đúng định dạng template");
+    messages.put(ExceptionUtils.E_FILE_DATA_EXCEED_NUMBER_PERMITTED, "File đẩy quá số lượng");
+    messages.put(ExceptionUtils.E_FILE_IS_NOT_EXCEL, "File không đúng định dạng excel");
+  }
+
+  public static String buildMessage(String messKey, Object... arg) {
+    return String.format(ExceptionUtils.messages.get(messKey), arg);
   }
 }

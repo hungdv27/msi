@@ -9,12 +9,14 @@ import com.example.msi.models.company.UpdateCompanyDTO;
 import com.example.msi.models.error.ErrorDTO;
 import com.example.msi.service.CompanyService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +28,7 @@ import static com.example.msi.service.impl.CompanyServiceImpl.getPageable;
 @RequiredArgsConstructor
 @RequestMapping("api/company")
 @RestController
+@Slf4j
 public class CompanyController {
   private final CompanyService service;
 
@@ -81,6 +84,37 @@ public class CompanyController {
       return new ResponseEntity<>(
           new ErrorDTO(ex.getMessageKey(), ex.getMessage()), HttpStatus.BAD_REQUEST);
     } catch (Exception ex) {
+      return new ResponseEntity<>(
+          ExceptionUtils.messages.get(ExceptionUtils.E_INTERNAL_SERVER),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @GetMapping(value = "/template/download", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Object> templateDownload(HttpServletRequest request) {
+    try {
+      var bytes = service.templateDownload(request);
+      return new ResponseEntity<>(bytes, HttpStatus.OK);
+    } catch (Exception ex) {
+      log.error(ex.getMessage());
+      return new ResponseEntity<>(
+          ExceptionUtils.messages.get(ExceptionUtils.E_INTERNAL_SERVER),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @PostMapping(value = "/import-file", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Object> importFile(
+      @RequestBody MultipartFile file, HttpServletRequest request) {
+    try {
+      var fileId = service.importFile(file, request);
+      return new ResponseEntity<>(fileId, HttpStatus.OK);
+    } catch (MSIException ex) {
+      log.error(ex.getMessage());
+      return new ResponseEntity<>(
+          new ErrorDTO(ex.getMessageKey(), ex.getMessage()), HttpStatus.BAD_REQUEST);
+    } catch (Exception ex) {
+      log.error(ex.getMessage());
       return new ResponseEntity<>(
           ExceptionUtils.messages.get(ExceptionUtils.E_INTERNAL_SERVER),
           HttpStatus.INTERNAL_SERVER_ERROR);
