@@ -1,6 +1,7 @@
 package com.example.msi.domains;
 
 import com.example.msi.models.company.CreateCompanyDTO;
+import com.example.msi.models.company.IncomeCompanyCreateDTO;
 import com.example.msi.models.company.UpdateCompanyDTO;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -45,12 +46,20 @@ public class Company {
   @LastModifiedDate
   private LocalDateTime updatedDate;
 
-  private Company(@NonNull CreateCompanyDTO target) {
+  public Company(@NonNull CreateCompanyDTO target) {
     this.name = target.getName();
     this.address = target.getAddress();
     this.email = target.getEmail();
     this.phoneNumber = target.getPhoneNumber();
     this.status = target.getStatus();
+  }
+
+  public Company(@NonNull IncomeCompanyCreateDTO target) {
+    this.name = target.getName();
+    this.address = target.getAddress();
+    this.email = target.getEmail();
+    this.phoneNumber = target.getPhoneNumber();
+    this.status = true;
   }
 
   public void update(@NonNull UpdateCompanyDTO target){

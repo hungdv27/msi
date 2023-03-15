@@ -1,16 +1,21 @@
 package com.example.msi.utils;
 
 import com.example.msi.config.annotation.ExportExcel;
+import com.example.msi.exceptions.ExceptionUtils;
 import com.example.msi.exceptions.MSIException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -78,5 +83,56 @@ public class ExcelUtils {
       e.printStackTrace();
       throw new MSIException("..");
     }
+  }
+
+  public static void setHeader(List<String> columns, Workbook wb, Sheet sheet) {
+    var rowHeader = sheet.createRow(0);
+    for (var i = 0; i < columns.size(); i++) {
+      var cell = rowHeader.createCell(i);
+      cell.setCellValue(columns.get(i));
+      var style = wb.createCellStyle();
+      style.setWrapText(true);
+      style.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
+      style.setAlignment(HorizontalAlignment.CENTER);
+      style.setVerticalAlignment(VerticalAlignment.CENTER);
+      style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+      var font = wb.createFont();
+      font.setFontName(HSSFFont.FONT_ARIAL);
+      font.setFontHeightInPoints((short) 10);
+      font.setBold(true);
+      style.setFont(font);
+      cell.setCellStyle(style);
+      sheet.setColumnWidth(i, 20 * 256);
+    }
+  }
+
+  public static Workbook checkFileExcel(MultipartFile file) throws IOException, MSIException {
+    Workbook workbook;
+    String fileExtension = FilenameUtils.getExtension(file.getOriginalFilename());
+    assert fileExtension != null;
+    if (fileExtension.endsWith("xlsx")) {
+      workbook = new XSSFWorkbook(file.getInputStream());
+    } else if (fileExtension.endsWith("xls")) {
+      workbook = new HSSFWorkbook(file.getInputStream());
+    } else {
+      throw new MSIException(
+          ExceptionUtils.E_FILE_IS_NOT_EXCEL,
+          ExceptionUtils.messages.get(ExceptionUtils.E_FILE_IS_NOT_EXCEL));
+    }
+    return workbook;
+  }
+
+  public static boolean isRowEmpty(Row row) {
+    boolean isEmpty = true;
+    DataFormatter dataFormatter = new DataFormatter();
+    if (row != null) {
+      for (Cell cell : row) {
+        if (dataFormatter.formatCellValue(cell).trim().length() > 0) {
+          isEmpty = false;
+          break;
+        }
+      }
+    }
+    return isEmpty;
   }
 }

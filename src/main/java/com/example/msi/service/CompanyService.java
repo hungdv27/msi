@@ -7,8 +7,10 @@ import com.example.msi.models.company.UpdateCompanyDTO;
 import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,4 +29,6 @@ public interface CompanyService {
   void deleteCompany(int id);
 
   Object export(HttpServletRequest request, Object req) throws MSIException;
+  byte[] templateDownload(HttpServletRequest request) throws IOException;
+  String importFile(MultipartFile file, HttpServletRequest request) throws IOException, MSIException;
 }
