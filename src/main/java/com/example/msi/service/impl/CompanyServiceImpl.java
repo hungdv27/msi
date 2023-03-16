@@ -130,8 +130,6 @@ public class CompanyServiceImpl implements CompanyService {
 
   @Override
   public String importFile(MultipartFile file, HttpServletRequest request) throws IOException, MSIException {
-    var authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-    var fileId = UUID.randomUUID().toString();
 
     //Check chưa đính kèm file
     if (file.isEmpty()) {
@@ -214,7 +212,7 @@ public class CompanyServiceImpl implements CompanyService {
     repository.saveAll(dataInt);
 
     if (message.trim().isEmpty()) {
-      return "Import success";
+      return Constant.IMPORT_SUCCESS;
     } else {
       return message.substring(0, message.length() - 2);
     }

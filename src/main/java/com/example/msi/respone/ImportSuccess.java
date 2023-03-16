@@ -8,6 +8,6 @@ import javax.validation.constraints.NotBlank;
 @Data
 @AllArgsConstructor
 @NotBlank
-public class ImportError {
-  private String error;
+public class ImportSuccess {
+  private String message;
 }
