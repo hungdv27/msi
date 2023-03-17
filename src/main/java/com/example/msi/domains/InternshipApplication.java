@@ -33,6 +33,9 @@ public class InternshipApplication {
   @Column(name = "semester_id", nullable = false)
   private int semesterId;
 
+  @Column(name = "note", length = 10000)
+  private String note;
+
   @Column(name = "created_date", nullable = false, updatable = false)
   @CreatedDate
   private LocalDateTime createdDate;

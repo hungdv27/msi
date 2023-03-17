@@ -7,7 +7,9 @@ import com.example.msi.repository.PostRepository;
 import com.example.msi.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +23,9 @@ public class PostServiceImpl implements PostService {
 
   @Override
   public Page<Post> findAll(Pageable pageable) {
-    return repository.findAll(pageable);
+    Sort sort = Sort.by("createdDate").descending();
+    Pageable pageable1 = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),sort);
+    return repository.findAll(pageable1);
   }
 
   @Override
