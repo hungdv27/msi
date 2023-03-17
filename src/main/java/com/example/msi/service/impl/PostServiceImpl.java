@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -21,6 +22,11 @@ public class PostServiceImpl implements PostService {
   @Override
   public Page<Post> findAll(Pageable pageable) {
     return repository.findAll(pageable);
+  }
+
+  @Override
+  public Post findById(int id) {
+    return repository.findById(id).orElseThrow(NoSuchElementException::new);
   }
 
   @Override

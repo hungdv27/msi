@@ -7,6 +7,7 @@ import com.example.msi.models.post.UpdatePostDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.lang.NonNull;
 
@@ -38,6 +39,10 @@ public class Post {
   @Column(name = "created_date", nullable = false, updatable = false)
   @CreatedDate
   private LocalDateTime createdDate;
+
+  @Column(name = "update_date")
+  @LastModifiedDate
+  private LocalDateTime updateDate;
 
   private Post(@NonNull CreatePostDTO target){
     title = target.getTitle();

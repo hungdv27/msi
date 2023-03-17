@@ -12,6 +12,8 @@ import java.util.Optional;
 public interface PostService {
   Page<Post> findAll(Pageable pageable);
 
+  Post findById(int id);
+
   Post add(@NonNull CreatePostDTO dto);
 
   Optional<Post> update(@NonNull UpdatePostDTO dto);

@@ -32,6 +32,12 @@ public class PostController {
     return ResponseEntity.ok(page1);
   }
 
+  @GetMapping("/{id}")
+  public ResponseEntity<PostDTO> postById(@PathVariable int id) throws NoSuchElementException{
+    var response = PostDTO.getInstance(service.findById(id));
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
   @PostMapping("")
   public ResponseEntity<PostDTO> createPost(@RequestBody @NonNull CreatePostDTO dto) {
     var response = PostDTO.getInstance(service.add(dto));
