@@ -27,9 +27,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -130,8 +130,6 @@ public class CompanyServiceImpl implements CompanyService {
 
   @Override
   public String importFile(MultipartFile file, HttpServletRequest request) throws IOException, MSIException {
-    var authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-    var fileId = UUID.randomUUID().toString();
 
     //Check chưa đính kèm file
     if (file.isEmpty()) {
@@ -179,10 +177,10 @@ public class CompanyServiceImpl implements CompanyService {
     }
     // Xử lý dữ liệu trong file import
     List<IncomeCompanyCreateDTO> allDataImport = new ArrayList<>();
-    this.getDataFromFileImport(sheet, allDataImport);
+    var message = this.getDataFromFileImport(sheet, allDataImport);
 
-    // validate duplicate
     workbook.close();
+    // validate duplicate
     var duplicates =
         allDataImport.parallelStream()
             .filter(n -> StringUtils.isNotBlank(n.getCheckDuplicate()))
@@ -213,10 +211,16 @@ public class CompanyServiceImpl implements CompanyService {
             .collect(Collectors.toList());
     repository.saveAll(dataInt);
 
-    return fileId;
+    if (message.trim().isEmpty()) {
+      return Constant.IMPORT_SUCCESS;
+    } else {
+      return message.substring(0, message.length() - 2);
+    }
   }
 
-  private void getDataFromFileImport(Sheet sheet, List<IncomeCompanyCreateDTO> allData) {
+  // mapping data from file
+  private String getDataFromFileImport(Sheet sheet, List<IncomeCompanyCreateDTO> allData) {
+    String error = "";
     int rowTotal = sheet.getLastRowNum();
     //  Đọc dữ liệu trong file bỏ dòng header(dòng 1).
     IncomeCompanyCreateDTO item;
@@ -233,10 +237,25 @@ public class CompanyServiceImpl implements CompanyService {
       item.setNumberSort(i);
       // set data
       this.setDataFromFile(item, dataFormatter, row);
-      allData.add(item);
+      // validate email của từng row
+      if (!repository.existsByName(item.getName())) {
+        if (validateEmail(item.getEmail())) {
+          if (!repository.existsByEmail(item.getEmail())) {
+            allData.add(item);
+          } else {
+            error += String.format("Row <%d>: %s |", item.getNumberSort(), "Email duplicate");
+          }
+        } else {
+          error += String.format("Row <%d>: %s |", item.getNumberSort(), "Email invalid");
+        }
+      } else {
+        error += String.format("Row <%d>: %s |", item.getNumberSort(), "CompanyName duplicate");
+      }
     }
+    return error;
   }
 
+  // set data import file
   private void setDataFromFile(
       IncomeCompanyCreateDTO item, DataFormatter dataFormatter, Row row) {
     item.setName(
@@ -247,5 +266,9 @@ public class CompanyServiceImpl implements CompanyService {
         row.getCell(2) != null ? dataFormatter.formatCellValue(row.getCell(2)).trim() : null);
     item.setAddress(
         row.getCell(3) != null ? dataFormatter.formatCellValue(row.getCell(3)).trim() : null);
+  }
+
+  private boolean validateEmail (String email) {
+    return Pattern.compile(Constant.EMAIL_REGEX).matcher(email).matches();
   }
 }

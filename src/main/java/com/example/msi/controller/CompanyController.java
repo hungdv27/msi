@@ -7,7 +7,10 @@ import com.example.msi.models.company.CompanyReqDTO;
 import com.example.msi.models.company.CreateCompanyDTO;
 import com.example.msi.models.company.UpdateCompanyDTO;
 import com.example.msi.models.error.ErrorDTO;
+import com.example.msi.respone.ImportError;
+import com.example.msi.respone.ImportSuccess;
 import com.example.msi.service.CompanyService;
+import com.example.msi.shared.Constant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -107,8 +110,11 @@ public class CompanyController {
   public ResponseEntity<Object> importFile(
       @RequestBody MultipartFile file, HttpServletRequest request) {
     try {
-      var fileId = service.importFile(file, request);
-      return new ResponseEntity<>(fileId, HttpStatus.OK);
+      var message = service.importFile(file, request);
+      if (message.equals(Constant.IMPORT_SUCCESS)) {
+        return new ResponseEntity<>(new ImportSuccess(message), HttpStatus.OK);
+      }
+      return new ResponseEntity<>(new ImportError(message), HttpStatus.OK);
     } catch (MSIException ex) {
       log.error(ex.getMessage());
       return new ResponseEntity<>(

@@ -19,4 +19,6 @@ public class Constant {
   public static final String INCOME_COMPANY_TEMPLATE_ADDRESS = "Địa chỉ";
   public static final String INCOME_COMPANY_TEMPLATE_STATUS = "Status";
   public static final String F_DUPLICATE = "F_DUPLICATE";
+  public static final String EMAIL_REGEX = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
+  public static final String IMPORT_SUCCESS = "Success";
 }
