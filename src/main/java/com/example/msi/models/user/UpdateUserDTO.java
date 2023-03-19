@@ -1,6 +1,5 @@
 package com.example.msi.models.user;
 
-import com.example.msi.enums.RoleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

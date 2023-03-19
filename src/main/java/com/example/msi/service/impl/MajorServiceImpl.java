@@ -1,7 +1,7 @@
 package com.example.msi.service.impl;
 
 import com.example.msi.domains.Major;
-import com.example.msi.exceptions.MSIException;
+import com.example.msi.shared.exceptions.MSIException;
 import com.example.msi.models.major.CreateMajorDTO;
 import com.example.msi.models.major.UpdateMajorDTO;
 import com.example.msi.repository.MajorRepository;

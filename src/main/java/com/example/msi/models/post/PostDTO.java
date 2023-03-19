@@ -1,7 +1,7 @@
 package com.example.msi.models.post;
 
 import com.example.msi.domains.Post;
-import com.example.msi.enums.PostApplyTo;
+import com.example.msi.shared.enums.PostApplyTo;
 import lombok.Getter;
 import org.springframework.lang.NonNull;
 

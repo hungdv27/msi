@@ -1,4 +1,4 @@
-package com.example.msi.config.annotation;
+package com.example.msi.shared.config.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

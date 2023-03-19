@@ -1,14 +1,14 @@
 package com.example.msi.service.impl;
 
 import com.example.msi.domains.Company;
-import com.example.msi.exceptions.ExceptionUtils;
-import com.example.msi.exceptions.MSIException;
+import com.example.msi.shared.exceptions.ExceptionUtils;
+import com.example.msi.shared.exceptions.MSIException;
 import com.example.msi.models.company.*;
 import com.example.msi.repository.CompanyRepository;
 import com.example.msi.service.CompanyService;
 import com.example.msi.shared.Constant;
 import com.example.msi.shared.ValidateError;
-import com.example.msi.utils.ExcelUtils;
+import com.example.msi.shared.utils.ExcelUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
@@ -20,7 +20,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

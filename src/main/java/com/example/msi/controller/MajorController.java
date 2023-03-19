@@ -1,7 +1,7 @@
 package com.example.msi.controller;
 
-import com.example.msi.exceptions.ExceptionUtils;
-import com.example.msi.exceptions.MSIException;
+import com.example.msi.shared.exceptions.ExceptionUtils;
+import com.example.msi.shared.exceptions.MSIException;
 import com.example.msi.models.error.ErrorDTO;
 import com.example.msi.models.major.CreateMajorDTO;
 import com.example.msi.models.major.UpdateMajorDTO;

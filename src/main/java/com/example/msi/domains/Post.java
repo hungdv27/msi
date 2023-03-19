@@ -1,7 +1,7 @@
 package com.example.msi.domains;
 
-import com.example.msi.converters.PostRoleApplyToConverter;
-import com.example.msi.enums.PostApplyTo;
+import com.example.msi.shared.converters.PostRoleApplyToConverter;
+import com.example.msi.shared.enums.PostApplyTo;
 import com.example.msi.models.post.CreatePostDTO;
 import com.example.msi.models.post.UpdatePostDTO;
 import lombok.Getter;

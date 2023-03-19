@@ -1,4 +1,4 @@
-package com.example.msi.converters;
+package com.example.msi.shared.converters;
 
 import org.springframework.lang.NonNull;
 

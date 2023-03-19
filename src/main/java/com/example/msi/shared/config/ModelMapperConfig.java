@@ -1,4 +1,4 @@
-package com.example.msi.config;
+package com.example.msi.shared.config;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
