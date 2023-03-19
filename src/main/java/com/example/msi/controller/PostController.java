@@ -22,7 +22,7 @@ import static com.example.msi.service.impl.CompanyServiceImpl.getPageable;
 public class PostController {
   private final PostService service;
 
-  @GetMapping("")
+  @GetMapping
   public ResponseEntity<Page<PostDTO>> getAll(
       @RequestParam(defaultValue = "0") Integer page,
       @RequestParam(defaultValue = "5") Integer size
@@ -38,13 +38,13 @@ public class PostController {
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
-  @PostMapping("")
+  @PostMapping
   public ResponseEntity<PostDTO> createPost(@RequestBody @NonNull CreatePostDTO dto) {
     var response = PostDTO.getInstance(service.add(dto));
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
-  @PutMapping("")
+  @PutMapping
   public ResponseEntity<PostDTO> updatePost(@RequestBody @NonNull UpdatePostDTO dto) {
     var response = service.update(dto).map(PostDTO::getInstance).orElseThrow(NoSuchElementException::new);
     return new ResponseEntity<>(response, HttpStatus.OK);

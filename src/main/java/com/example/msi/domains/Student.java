@@ -1,16 +1,18 @@
 package com.example.msi.domains;
 
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @Entity
+@EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor
 @Table(name = "student")
 public class Student {
   @Id
