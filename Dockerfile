@@ -12,5 +12,5 @@ FROM openjdk:11-slim
 #FROM openjdk:8-alpine FOR JAVA 8
 WORKDIR /app
 
-COPY --from=MAVEN_BUILD /build/target/appdemo-*.jar /app/appdemo.jar
+COPY --from=MAVEN_BUILD /build/target/*.jar /app/appdemo.jar
 ENTRYPOINT ["java", "-jar", "appdemo.jar"]
