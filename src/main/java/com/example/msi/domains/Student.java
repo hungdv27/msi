@@ -1,7 +1,9 @@
 package com.example.msi.domains;
 
+import com.example.msi.models.student.UpdateStudentDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -45,4 +47,23 @@ public class Student {
   @Column(name = "updated_date")
   @LastModifiedDate
   private LocalDateTime updatedDate;
+
+  private Student(@NonNull UpdateStudentDTO target, int userId) {
+    this.code = target.getCode();
+    this.majorCode = target.getMajorCode();
+    this.status = target.getStatus();
+    this.teacherId = target.getTeacherId();
+    this.userId = userId;
+    this.grade = target.getGrade();
+  }
+
+  public void update(@NonNull UpdateStudentDTO target){
+    this.code = target.getCode();
+    this.majorCode = target.getMajorCode();
+    this.grade = target.getGrade();
+  }
+
+  public static Student getInstance(@NonNull UpdateStudentDTO payload, int userId){
+    return new Student(payload, userId);
+  }
 }
