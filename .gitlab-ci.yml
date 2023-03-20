@@ -21,9 +21,9 @@ docker build:
   stage: build and push docker image
   before_script:
     - source .${CI_COMMIT_REF_NAME}.env
+    - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
   script:
     - docker build --build-arg SPRING_ACTIVE_PROFILE=$SPRING_ACTIVE_PROFILE -t $DOCKER_REPO .
-    - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
     - docker push $DOCKER_REPO
 
 deploy:
