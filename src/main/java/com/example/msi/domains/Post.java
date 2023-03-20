@@ -44,19 +44,19 @@ public class Post {
   @LastModifiedDate
   private LocalDateTime updateDate;
 
-  private Post(@NonNull CreatePostDTO target){
+  private Post(@NonNull CreatePostDTO target) {
     title = target.getTitle();
     applyTo = target.getApplyTo();
     content = target.getContent();
   }
 
-  public void update(@NonNull UpdatePostDTO dto){
+  public void update(@NonNull UpdatePostDTO dto) {
     title = dto.getTitle();
     applyTo = dto.getApplyTo();
     content = dto.getContent();
   }
 
-  public static Post getInstance(@NonNull CreatePostDTO dto){
+  public static Post getInstance(@NonNull CreatePostDTO dto) {
     return new Post(dto);
   }
 }

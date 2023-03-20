@@ -57,13 +57,13 @@ public class Student {
     this.grade = target.getGrade();
   }
 
-  public void update(@NonNull UpdateStudentDTO target){
+  public void update(@NonNull UpdateStudentDTO target) {
     this.code = target.getCode();
     this.majorCode = target.getMajorCode();
     this.grade = target.getGrade();
   }
 
-  public static Student getInstance(@NonNull UpdateStudentDTO payload, int userId){
+  public static Student getInstance(@NonNull UpdateStudentDTO payload, int userId) {
     return new Student(payload, userId);
   }
 }

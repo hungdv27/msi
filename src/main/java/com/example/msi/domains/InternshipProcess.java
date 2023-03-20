@@ -34,4 +34,5 @@ public class InternshipProcess {
 
   @Column(name = "updated_date")
   @LastModifiedDate
-  private LocalDateTime updatedDate;}
+  private LocalDateTime updatedDate;
+}

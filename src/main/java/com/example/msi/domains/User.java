@@ -66,7 +66,7 @@ public class User {
     this.dob = target.getDob();
   }
 
-  public static User getInstance(@NonNull CreateUserDTO payload){
+  public static User getInstance(@NonNull CreateUserDTO payload) {
     return new User(payload);
   }
 }

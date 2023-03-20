@@ -53,13 +53,13 @@ public class Semester {
     this.status = false;
   }
 
-  public void update(@NonNull UpdateSemesterDTO target){
+  public void update(@NonNull UpdateSemesterDTO target) {
     this.semesterName = target.getSemesterName();
     this.startDate = LocalDate.parse(target.getStartDate());
     this.endDate = LocalDate.parse(target.getEndDate());
   }
 
-  public static Semester getInstance(@NonNull CreateSemesterDTO payload){
+  public static Semester getInstance(@NonNull CreateSemesterDTO payload) {
     return new Semester(payload);
   }
 }
