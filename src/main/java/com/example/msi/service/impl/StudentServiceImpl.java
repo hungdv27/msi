@@ -1,11 +1,11 @@
 package com.example.msi.service.impl;
 
 import com.example.msi.domains.Student;
-import com.example.msi.exceptions.MSIException;
 import com.example.msi.models.student.UpdateStudentDTO;
 import com.example.msi.repository.StudentRepository;
 import com.example.msi.service.StudentService;
 import com.example.msi.service.UserService;
+import com.example.msi.shared.exceptions.MSIException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

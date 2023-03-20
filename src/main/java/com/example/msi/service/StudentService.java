@@ -1,8 +1,8 @@
 package com.example.msi.service;
 
 import com.example.msi.domains.Student;
-import com.example.msi.exceptions.MSIException;
 import com.example.msi.models.student.UpdateStudentDTO;
+import com.example.msi.shared.exceptions.MSIException;
 import lombok.NonNull;
 
 import java.util.Optional;

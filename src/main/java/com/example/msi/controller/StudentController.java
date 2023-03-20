@@ -1,10 +1,10 @@
 package com.example.msi.controller;
 
-import com.example.msi.exceptions.ExceptionUtils;
-import com.example.msi.exceptions.MSIException;
 import com.example.msi.models.error.ErrorDTO;
 import com.example.msi.models.student.UpdateStudentDTO;
 import com.example.msi.service.StudentService;
+import com.example.msi.shared.exceptions.ExceptionUtils;
+import com.example.msi.shared.exceptions.MSIException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
