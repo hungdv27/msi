@@ -1,4 +1,4 @@
-package com.example.msi.exceptions;
+package com.example.msi.shared.exceptions;
 
 import java.util.HashMap;
 import java.util.Map;

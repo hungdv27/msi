@@ -1,6 +1,6 @@
 package com.example.msi.models.company;
 
-import com.example.msi.config.annotation.ExportExcel;
+import com.example.msi.shared.config.annotation.ExportExcel;
 import com.example.msi.domains.Company;
 import lombok.*;
 

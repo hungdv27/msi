@@ -1,4 +1,4 @@
-package com.example.msi.enums;
+package com.example.msi.shared.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,7 +1,7 @@
 package com.example.msi.service;
 
 import com.example.msi.domains.Semester;
-import com.example.msi.exceptions.MSIException;
+import com.example.msi.shared.exceptions.MSIException;
 import com.example.msi.models.semester.CreateSemesterDTO;
 import com.example.msi.models.semester.UpdateSemesterDTO;
 import lombok.NonNull;

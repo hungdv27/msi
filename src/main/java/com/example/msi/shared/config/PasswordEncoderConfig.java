@@ -1,4 +1,4 @@
-package com.example.msi.config;
+package com.example.msi.shared.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

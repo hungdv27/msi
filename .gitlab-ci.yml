@@ -21,9 +21,9 @@ docker build:
   stage: build and push docker image
   before_script:
     - source .${CI_COMMIT_REF_NAME}.env
+    - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
   script:
     - docker build --build-arg SPRING_ACTIVE_PROFILE=$SPRING_ACTIVE_PROFILE -t $DOCKER_REPO .
-    - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD docker.io
     - docker push $DOCKER_REPO
 
 deploy:
@@ -38,4 +38,4 @@ deploy:
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
     - source .${CI_COMMIT_REF_NAME}.env
   script:
-    - ssh root@$SERVER "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD docker.io; docker stop $APP_NAME; docker system prune -a -f; docker pull $DOCKER_REPO; docker container run -d --name $APP_NAME -p $PORT:8080 -e SPRING_PROFILES_ACTIVE=$SPRING_ACTIVE_PROFILE $DOCKER_REPO; docker logout"
+    - ssh ubuntu@$SERVER "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD; docker stop $APP_NAME; docker system prune -a -f; docker pull $DOCKER_REPO; docker container run -d --name $APP_NAME -p $PORT:8080 -e SPRING_PROFILES_ACTIVE=$SPRING_ACTIVE_PROFILE $DOCKER_REPO; docker logout"

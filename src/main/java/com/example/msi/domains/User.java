@@ -1,7 +1,6 @@
 package com.example.msi.domains;
 
-import com.example.msi.enums.RoleEnum;
-import com.example.msi.models.company.CreateCompanyDTO;
+import com.example.msi.shared.enums.RoleEnum;
 import com.example.msi.models.user.CreateUserDTO;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;

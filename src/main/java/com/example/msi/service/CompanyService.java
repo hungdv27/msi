@@ -1,7 +1,7 @@
 package com.example.msi.service;
 
 import com.example.msi.domains.Company;
-import com.example.msi.exceptions.MSIException;
+import com.example.msi.shared.exceptions.MSIException;
 import com.example.msi.models.company.CreateCompanyDTO;
 import com.example.msi.models.company.UpdateCompanyDTO;
 import lombok.NonNull;

@@ -1,7 +1,7 @@
 package com.example.msi.service.impl;
 
 import com.example.msi.domains.User;
-import com.example.msi.enums.RoleEnum;
+import com.example.msi.shared.enums.RoleEnum;
 import com.example.msi.models.user.CreateUserDTO;
 import com.example.msi.models.user.UpdateUserDTO;
 import com.example.msi.models.user.UpdatePasswordUserDTO;

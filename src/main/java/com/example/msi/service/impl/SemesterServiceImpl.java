@@ -1,8 +1,8 @@
 package com.example.msi.service.impl;
 
 import com.example.msi.domains.Semester;
-import com.example.msi.exceptions.ExceptionUtils;
-import com.example.msi.exceptions.MSIException;
+import com.example.msi.shared.exceptions.ExceptionUtils;
+import com.example.msi.shared.exceptions.MSIException;
 import com.example.msi.models.semester.CreateSemesterDTO;
 import com.example.msi.models.semester.UpdateSemesterDTO;
 import com.example.msi.repository.SemesterRepository;

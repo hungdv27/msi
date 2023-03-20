@@ -1,7 +1,7 @@
 package com.example.msi.models.post;
 
-import com.example.msi.enums.PostApplyTo;
-import lombok.Getter;
+import com.example.msi.shared.enums.PostApplyTo;
+import lombok.*;
 
 import java.util.Set;
 

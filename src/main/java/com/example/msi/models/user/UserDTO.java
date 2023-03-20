@@ -1,14 +1,13 @@
 package com.example.msi.models.user;
 
 import com.example.msi.domains.User;
-import com.example.msi.enums.RoleEnum;
+import com.example.msi.shared.enums.RoleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.lang.NonNull;
 
-import javax.persistence.Column;
 import java.time.LocalDate;
 
 @Getter
