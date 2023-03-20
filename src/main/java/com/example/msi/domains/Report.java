@@ -26,7 +26,7 @@ public class Report {
   @Column(name = "file_id")
   private Integer fileId;
 
-  @Column(name = "submitted",nullable = false)
+  @Column(name = "submitted", nullable = false)
   private boolean submitted;
 
   @Column(name = "description", length = 255)

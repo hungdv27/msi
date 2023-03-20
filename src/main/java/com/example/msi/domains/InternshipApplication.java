@@ -51,7 +51,7 @@ public class InternshipApplication {
   @LastModifiedDate
   private LocalDateTime updatedDate;
 
-  private InternshipApplication(@NonNull CreateInternshipApplicationDTO target){
+  private InternshipApplication(@NonNull CreateInternshipApplicationDTO target) {
     studentCode = target.getStudentCode();
     status = InternshipApplicationStatus.NEW;
     fileId = target.getFileId();
@@ -60,14 +60,14 @@ public class InternshipApplication {
     note = target.getNote();
   }
 
-  public void update(@NonNull UpdateInternshipApplicationDTO target){
+  public void update(@NonNull UpdateInternshipApplicationDTO target) {
     studentCode = target.getStudentCode();
     fileId = target.getFileId();
     companyId = target.getCompanyId();
     semesterId = target.getSemesterId();
   }
 
-  public static InternshipApplication getInstance(@NonNull CreateInternshipApplicationDTO dto){
+  public static InternshipApplication getInstance(@NonNull CreateInternshipApplicationDTO dto) {
     return new InternshipApplication(dto);
   }
 }

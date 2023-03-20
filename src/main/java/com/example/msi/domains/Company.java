@@ -62,7 +62,7 @@ public class Company {
     this.status = true;
   }
 
-  public void update(@NonNull UpdateCompanyDTO target){
+  public void update(@NonNull UpdateCompanyDTO target) {
     this.name = target.getName();
     this.address = target.getAddress();
     this.email = target.getEmail();
@@ -70,7 +70,7 @@ public class Company {
     this.status = target.getStatus();
   }
 
-  public static Company getInstance(@NonNull CreateCompanyDTO payload){
+  public static Company getInstance(@NonNull CreateCompanyDTO payload) {
     return new Company(payload);
   }
 }
