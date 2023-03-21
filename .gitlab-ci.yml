@@ -11,7 +11,7 @@ build:
   before_script:
     - source .${CI_COMMIT_REF_NAME}.env
   script:
-    - mvn clean install -Dspring.profiles.active=$SPRING_ACTIVE_PROFILE && mvn package -B -e -Dspring.profiles.active=$SPRING_ACTIVE_PROFILE
+    - mvn package -B -e -Dspring.profiles.active=$SPRING_ACTIVE_PROFILE
   artifacts:
     paths:
       - target/*.jar
@@ -20,7 +20,6 @@ build:
     - main
 
 docker build:
-  image: docker:stable
   stage: build and push docker image
   before_script:
     - source .${CI_COMMIT_REF_NAME}.env
@@ -28,6 +27,7 @@ docker build:
   script:
     - docker build --build-arg SPRING_ACTIVE_PROFILE=$SPRING_ACTIVE_PROFILE -t $DOCKER_REPO .
     - docker push $DOCKER_REPO
+    - docker rmi --force $DOCKER_REPO
   only:
     - main
 
