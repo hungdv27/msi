@@ -1,7 +1,7 @@
 package com.example.msi.models.user;
 
 import com.example.msi.domains.User;
-import com.example.msi.shared.enums.RoleEnum;
+import com.example.msi.shared.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +21,7 @@ public class UserDTO {
 
   private String password;
 
-  private RoleEnum role;
+  private Role role;
 
   private String fullName;
 

@@ -1,6 +1,6 @@
 package com.example.msi.domains;
 
-import com.example.msi.shared.enums.RoleEnum;
+import com.example.msi.shared.enums.Role;
 import com.example.msi.models.user.CreateUserDTO;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -31,7 +31,7 @@ public class User {
   private String password;
 
   @Column(name = "role", nullable = false)
-  private RoleEnum role;
+  private Role role;
 
   @Column(name = "full_name", length = 255)
   private String fullName;
