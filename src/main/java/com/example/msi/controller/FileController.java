@@ -22,4 +22,9 @@ public class FileController {
       @RequestParam(name = "file", required = false) MultipartFile file) {
     return new ResponseEntity<>(service.uploadFile(createFileDTO, file), HttpStatus.CREATED);
   }
+
+  @PostMapping("download_file/{fileId}")
+  public ResponseEntity<?> downloadFile(@PathVariable Integer fileId) {
+    return new ResponseEntity<>(service.downloadFile(fileId), HttpStatus.OK);
+  }
 }
