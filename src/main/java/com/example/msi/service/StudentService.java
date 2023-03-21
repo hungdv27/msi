@@ -10,5 +10,6 @@ import java.util.Optional;
 public interface StudentService {
 
   void updateStudent(@NonNull UpdateStudentDTO payload, String userName) throws MSIException;
+
   Optional<Student> findByUserId(String userName) throws MSIException;
 }

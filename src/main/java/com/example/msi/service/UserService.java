@@ -22,6 +22,7 @@ public interface UserService {
   Optional<User> userAccessInformation() throws IllegalAccessException;
 
   Data update(UpdateUserDTO updateUser) throws IOException;
+
   Optional<User> findByEmail(String mail);
 
 }

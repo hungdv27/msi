@@ -29,6 +29,8 @@ public interface CompanyService {
   void deleteCompany(int id);
 
   Object export(HttpServletRequest request, Object req) throws MSIException;
+
   byte[] templateDownload(HttpServletRequest request) throws IOException;
+
   String importFile(MultipartFile file, HttpServletRequest request) throws IOException, MSIException;
 }

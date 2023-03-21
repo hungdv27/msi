@@ -16,5 +16,6 @@ public interface SemesterService {
   void updateSemester(@NonNull UpdateSemesterDTO payload) throws MSIException;
 
   void deleteSemester(int id) throws MSIException;
+
   void changeStatus(int id) throws MSIException;
 }
