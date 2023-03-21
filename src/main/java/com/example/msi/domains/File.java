@@ -40,6 +40,9 @@ public class File {
   @Column(name = "file_url", nullable = false, length = 5000)
   private String fileURL;
 
+  @Column(name = "public_file_id")
+  private String publicFileId;
+
   public File(@NonNull CreateFileDTO target) {
     this.fileName = target.getFileName();
   }
