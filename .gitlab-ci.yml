@@ -20,6 +20,7 @@ build:
     - main
 
 docker build:
+  image: docker:stable
   stage: build and push docker image
   before_script:
     - source .${CI_COMMIT_REF_NAME}.env
