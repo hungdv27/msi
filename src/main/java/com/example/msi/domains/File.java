@@ -1,10 +1,15 @@
 package com.example.msi.domains;
 
 
+import com.example.msi.models.company.CreateCompanyDTO;
+import com.example.msi.models.file.CreateFileDTO;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,6 +17,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
+@EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor
 @Table(name = "file")
 public class File {
   @Id
@@ -22,9 +29,6 @@ public class File {
   @Column(name = "file_name", nullable = false, length = 255)
   private String fileName;
 
-  @Column(name = "content", nullable = false, length = 255)
-  private String content;
-
   @Column(name = "created_date", nullable = false, updatable = false)
   @CreatedDate
   private LocalDateTime createdDate;
@@ -32,4 +36,15 @@ public class File {
   @Column(name = "updated_date")
   @LastModifiedDate
   private LocalDateTime updatedDate;
+
+  @Column(name = "file_url", nullable = false, length = 5000)
+  private String fileURL;
+
+  public File(@NonNull CreateFileDTO target) {
+    this.fileName = target.getFileName();
+  }
+
+  public static File getInstance(@NonNull CreateFileDTO payload) {
+    return new File(payload);
+  }
 }
