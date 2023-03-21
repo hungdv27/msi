@@ -1,10 +1,5 @@
 services:
   - docker:19.03.7-dind
-rules:
-  - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
-  - if: '$CI_COMMIT_BRANCH == "main"'
-  - if: '$CI_PIPELINE_SOURCE == "schedule"'
-
 stages:
   - build jar
   - build and push docker image
@@ -44,3 +39,7 @@ deploy:
     - source .${CI_COMMIT_REF_NAME}.env
   script:
     - ssh ubuntu@$SERVER "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD; docker stop $APP_NAME; docker system prune -a -f; docker pull $DOCKER_REPO; docker container run -d --name $APP_NAME -p $PORT:8080 -e SPRING_PROFILES_ACTIVE=$SPRING_ACTIVE_PROFILE $DOCKER_REPO; docker logout"
+only:
+  - merge_requests
+  - push_to_merge_request_event
+  - main
