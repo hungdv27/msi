@@ -15,6 +15,7 @@ build:
   artifacts:
     paths:
       - target/*.jar
+    expire_in: 15 mins
   only:
     - main
 
