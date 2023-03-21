@@ -33,7 +33,7 @@ public class PostController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<PostDTO> postById(@PathVariable int id) throws NoSuchElementException{
+  public ResponseEntity<PostDTO> postById(@PathVariable int id) throws NoSuchElementException {
     var response = PostDTO.getInstance(service.findById(id));
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
