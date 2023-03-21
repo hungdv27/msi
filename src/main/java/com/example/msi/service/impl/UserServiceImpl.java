@@ -1,7 +1,7 @@
 package com.example.msi.service.impl;
 
 import com.example.msi.domains.User;
-import com.example.msi.shared.enums.RoleEnum;
+import com.example.msi.shared.enums.Role;
 import com.example.msi.models.user.CreateUserDTO;
 import com.example.msi.models.user.UpdateUserDTO;
 import com.example.msi.models.user.UpdatePasswordUserDTO;
@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     var user = User.getInstance(userRegister);
     user.setPassword(passwordEncoder.encode(userRegister.getPassword()));
     user.setEnabled(false);
-    user.setRole(RoleEnum.STUDENT);// * Mac dinh de Role la Student
+    user.setRole(Role.STUDENT);// * Mac dinh de Role la Student
     user.setVerificationCode(RandomString.make(64));
     StringBuilder url = new StringBuilder("159.65.4.245/login?verify=");
 

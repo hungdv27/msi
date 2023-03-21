@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum RoleEnum {
+public enum Role {
   STUDENT(0), TEACHER(1), ADMIN(2);
   private final int value;
 }
