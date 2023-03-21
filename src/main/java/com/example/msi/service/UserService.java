@@ -4,7 +4,7 @@ import com.example.msi.domains.User;
 import com.example.msi.models.user.CreateUserDTO;
 import com.example.msi.models.user.UpdateUserDTO;
 import com.example.msi.models.user.UpdatePasswordUserDTO;
-import com.example.msi.respone.Data;
+import com.example.msi.response.Data;
 
 import javax.mail.MessagingException;
 import java.io.IOException;

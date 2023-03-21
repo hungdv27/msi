@@ -2,11 +2,10 @@ package com.example.msi.service.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.example.msi.domains.Company;
 import com.example.msi.domains.File;
 import com.example.msi.models.file.CreateFileDTO;
 import com.example.msi.repository.FileRepository;
-import com.example.msi.respone.Data;
+import com.example.msi.response.Data;
 import com.example.msi.service.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

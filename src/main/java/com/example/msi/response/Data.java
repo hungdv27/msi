@@ -1,4 +1,4 @@
-package com.example.msi.respone;
+package com.example.msi.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -4,6 +4,7 @@ import com.example.msi.shared.converters.PostRoleApplyToConverter;
 import com.example.msi.shared.enums.PostApplyTo;
 import com.example.msi.models.post.CreatePostDTO;
 import com.example.msi.models.post.UpdatePostDTO;
+import com.example.msi.shared.enums.Role;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -31,7 +32,7 @@ public class Post {
 
   @Convert(converter = PostRoleApplyToConverter.class)
   @Column(name = "audience", nullable = false)
-  private Set<PostApplyTo> applyTo;
+  private Set<Role> applyTo;
 
   @Column(name = "content", nullable = false)
   private String content;
