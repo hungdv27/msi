@@ -1,9 +1,8 @@
 package com.example.msi.domains;
 
 import com.example.msi.models.student.UpdateStudentDTO;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
+import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -47,6 +46,13 @@ public class Student {
   @Column(name = "updated_date")
   @LastModifiedDate
   private LocalDateTime updatedDate;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", insertable = false, updatable = false, nullable = false)
+  @NotAudited
+  @Setter(AccessLevel.NONE)
+  @Getter(AccessLevel.NONE)
+  private User user;
 
   private Student(@NonNull UpdateStudentDTO target, int userId) {
     this.code = target.getCode();
