@@ -18,14 +18,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SemesterServiceImpl implements SemesterService {
   private final SemesterRepository repository;
+
   @Override
-  public List<Semester> getAllSemester() throws MSIException {
+  public List<Semester> getAllSemester() {
     return repository.findAll();
   }
 
   @Override
-  public void addSemester(CreateSemesterDTO semester) throws MSIException{
-    if (validateDate(semester.getStartDate(), semester.getEndDate())){
+  public void addSemester(CreateSemesterDTO semester) throws MSIException {
+    if (validateDate(semester.getStartDate(), semester.getEndDate())) {
       var entity = Semester.getInstance(semester);
       repository.save(entity);
     } else {
@@ -37,8 +38,8 @@ public class SemesterServiceImpl implements SemesterService {
 
   @Override
   public void updateSemester(@NonNull UpdateSemesterDTO payload) throws MSIException {
-    if (validateDate(payload.getStartDate(), payload.getEndDate())){
-      var id=payload.getId();
+    if (validateDate(payload.getStartDate(), payload.getEndDate())) {
+      var id = payload.getId();
       repository.findById(id).ifPresent(entity -> {
         entity.update(payload);
         repository.save(entity);
@@ -51,7 +52,7 @@ public class SemesterServiceImpl implements SemesterService {
   }
 
   @Override
-  public void deleteSemester(int id) throws MSIException {
+  public void deleteSemester(int id) {
     repository.deleteById(id);
   }
 
@@ -77,7 +78,7 @@ public class SemesterServiceImpl implements SemesterService {
     repository.save(semester);
   }
 
-  private boolean validateDate(String startDate, String endDate){
+  private boolean validateDate(String startDate, String endDate) {
     var start = LocalDate.parse(startDate);
     var end = LocalDate.parse(endDate);
     return !end.isBefore(start) && !end.isEqual(start);

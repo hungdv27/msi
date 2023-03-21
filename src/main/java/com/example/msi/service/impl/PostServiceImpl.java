@@ -24,7 +24,7 @@ public class PostServiceImpl implements PostService {
   @Override
   public Page<Post> findAll(Pageable pageable) {
     Sort sort = Sort.by("createdDate").descending();
-    Pageable pageable1 = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),sort);
+    Pageable pageable1 = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
     return repository.findAll(pageable1);
   }
 

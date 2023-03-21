@@ -13,6 +13,7 @@ public interface InternshipApplicationService {
   List<InternshipApplication> search(@NonNull SearchInternshipApplicationDTO filter);
 
   InternshipApplication findById(int id);
+
   InternshipApplication create(@NonNull CreateInternshipApplicationDTO dto);
 
   Optional<InternshipApplication> update(@NonNull UpdateInternshipApplicationDTO dto);

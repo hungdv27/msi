@@ -63,8 +63,8 @@ public class CompanyServiceImpl implements CompanyService {
 
   @Override
   public Optional<Company> updateCompany(@NonNull UpdateCompanyDTO payload) {
-    var id=payload.getId();
-    return repository.findById(id).map(e ->{
+    var id = payload.getId();
+    return repository.findById(id).map(e -> {
       e.update(payload);
       return repository.save(e);
     });
@@ -114,7 +114,7 @@ public class CompanyServiceImpl implements CompanyService {
   @Override
   public byte[] templateDownload(HttpServletRequest request) throws IOException {
     // Số lượng bản ghi được cấu hình chp phép import
-    var totalImport = new AtomicInteger(10000);
+//    var totalImport = new AtomicInteger(10000);
 
     var columns = Constant.INCOME_COMPANY_IMPORT_HEADER;
     var workbook = new XSSFWorkbook();
@@ -200,14 +200,9 @@ public class CompanyServiceImpl implements CompanyService {
               }
             });
 //    Lưu dữ liệu
-    var dataInt =
-        allDataImport.parallelStream()
-            .map(
-                item -> {
-                  var entityInt = new Company(item);
-                  return entityInt;
-                })
-            .collect(Collectors.toList());
+    var dataInt = allDataImport.parallelStream()
+        .map(Company::new)
+        .collect(Collectors.toList());
     repository.saveAll(dataInt);
 
     if (message.trim().isEmpty()) {
@@ -219,7 +214,7 @@ public class CompanyServiceImpl implements CompanyService {
 
   // mapping data from file
   private String getDataFromFileImport(Sheet sheet, List<IncomeCompanyCreateDTO> allData) {
-    String error = "";
+    StringBuilder error = new StringBuilder();
     int rowTotal = sheet.getLastRowNum();
     //  Đọc dữ liệu trong file bỏ dòng header(dòng 1).
     IncomeCompanyCreateDTO item;
@@ -242,16 +237,16 @@ public class CompanyServiceImpl implements CompanyService {
           if (!repository.existsByEmail(item.getEmail())) {
             allData.add(item);
           } else {
-            error += String.format("Row <%d>: %s |", item.getNumberSort(), "Email duplicate");
+            error.append(String.format("Row <%d>: %s |", item.getNumberSort(), "Email duplicate"));
           }
         } else {
-          error += String.format("Row <%d>: %s |", item.getNumberSort(), "Email invalid");
+          error.append(String.format("Row <%d>: %s |", item.getNumberSort(), "Email invalid"));
         }
       } else {
-        error += String.format("Row <%d>: %s |", item.getNumberSort(), "CompanyName duplicate");
+        error.append(String.format("Row <%d>: %s |", item.getNumberSort(), "CompanyName duplicate"));
       }
     }
-    return error;
+    return error.toString();
   }
 
   // set data import file
@@ -267,7 +262,7 @@ public class CompanyServiceImpl implements CompanyService {
         row.getCell(3) != null ? dataFormatter.formatCellValue(row.getCell(3)).trim() : null);
   }
 
-  private boolean validateEmail (String email) {
+  private boolean validateEmail(String email) {
     return Pattern.compile(Constant.EMAIL_REGEX).matcher(email).matches();
   }
 }

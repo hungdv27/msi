@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   @Override
   public Data register(CreateUserDTO userRegister, StringBuffer siteURL) throws IllegalAccessException, MessagingException {
     Optional<User> optional = repository.findByEmail(userRegister.getEmail());
-    if (optional.isPresent()){
+    if (optional.isPresent()) {
       throw new IllegalAccessException("Email đã tồn tại trong hệ thống");
     }
     var user = User.getInstance(userRegister);
@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     user.setEnabled(false);
     user.setRole(RoleEnum.STUDENT);// * Mac dinh de Role la Student
     user.setVerificationCode(RandomString.make(64));
-    StringBuffer url = new StringBuffer("159.65.4.245/login?verify=");
+    StringBuilder url = new StringBuilder("159.65.4.245/login?verify=");
 
     Map<String, Object> props = new HashMap<>();
     props.put("email", user.getEmail());
@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   @Override
   public Data verify(String verificationCode) throws IllegalAccessException {
     Optional<User> optionalUser = repository.findByVerificationCode(verificationCode);
-    if (!optionalUser.isPresent()){
+    if (optionalUser.isEmpty()) {
       throw new IllegalAccessException("Verification Code không tồn tại");
     }
     User user = optionalUser.get();
@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   @Override
   public Data forgotPassword(String mail) throws MessagingException {
     Optional<User> optionalUser = repository.findByEmail(mail);
-    if (!optionalUser.isPresent()) return new Data(null);
+    if (optionalUser.isEmpty()) return new Data(null);
     String pass = RandomString.make(10);
     User user = optionalUser.get();
     user.setPassword(passwordEncoder.encode(pass));
@@ -120,8 +120,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
       throw new IllegalAccessException("Chưa có tài khoản đăng nhập");
     }
     String email = authentication.getName();
-    Optional<User> user = repository.findByEmail(email);
-    return user;
+    return repository.findByEmail(email);
   }
 
   @Override

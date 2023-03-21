@@ -17,6 +17,7 @@ import java.util.Map;
 public class MailServiceImpl implements MailService {
   private final JavaMailSender mailSender;
   private final SpringTemplateEngine templateEngine;
+
   @Override
   public void sendMail(Map<String, Object> props, String mail, String template, String subject) throws MessagingException {
     Context context = new Context();
