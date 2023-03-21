@@ -7,7 +7,7 @@ import com.example.msi.models.user.UpdateUserDTO;
 import com.example.msi.models.user.UpdatePasswordUserDTO;
 import com.example.msi.models.user.UserDTO;
 import com.example.msi.repository.UserRepository;
-import com.example.msi.respone.Data;
+import com.example.msi.response.Data;
 import com.example.msi.security.CustomUserDetails;
 import com.example.msi.service.MailService;
 import com.example.msi.service.UserService;
