@@ -1,5 +1,6 @@
+image: docker:latest
 services:
-  - docker:19.03.7-dind
+  - docker:stable-dind
 stages:
   - build jar
   - build and push docker image
@@ -20,11 +21,12 @@ build:
     - main
 
 docker build:
-  image: docker:stable
   stage: build and push docker image
   before_script:
     - source .${CI_COMMIT_REF_NAME}.env
     - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+  after_script:
+    - docker logout
   script:
     - docker build --build-arg SPRING_ACTIVE_PROFILE=$SPRING_ACTIVE_PROFILE -t $DOCKER_REPO .
     - docker push $DOCKER_REPO
