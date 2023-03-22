@@ -2,16 +2,22 @@ package com.example.msi.domains;
 
 import com.example.msi.models.internshipappication.CreateInternshipApplicationDTO;
 import com.example.msi.models.internshipappication.UpdateInternshipApplicationDTO;
+import com.example.msi.models.internshipappication.VerifyApplicationDTO;
+import com.example.msi.service.SemesterService;
+import com.example.msi.service.StudentService;
+import com.example.msi.shared.ApplicationContextHolder;
 import com.example.msi.shared.enums.InternshipApplicationStatus;
+import com.example.msi.shared.exceptions.MSIException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.lang.NonNull;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Getter
 @Entity
@@ -51,12 +57,12 @@ public class InternshipApplication {
   @LastModifiedDate
   private LocalDateTime updatedDate;
 
-  private InternshipApplication(@NonNull CreateInternshipApplicationDTO target) {
-    studentCode = target.getStudentCode();
+  private InternshipApplication(@NonNull CreateInternshipApplicationDTO target) throws MSIException {
+    SingletonHelper.STUDENT_SERVICE.findByUsername(target.getUsername()).ifPresent(val -> studentCode = val.getCode());
+    SingletonHelper.SEMESTER_SERVICE.findSemesterActive().ifPresent(val -> semesterId = val.getId());
     status = InternshipApplicationStatus.NEW;
     fileId = target.getFileId();
     companyId = target.getCompanyId();
-    semesterId = target.getSemesterId();
     note = target.getNote();
   }
 
@@ -67,7 +73,20 @@ public class InternshipApplication {
     semesterId = target.getSemesterId();
   }
 
-  public static InternshipApplication getInstance(@NonNull CreateInternshipApplicationDTO dto) {
+  public void update(@NonNull VerifyApplicationDTO target) {
+    if (target.isAccepted()) status = InternshipApplicationStatus.ACCEPTED;
+    else status = InternshipApplicationStatus.CANCELED;
+    Optional.ofNullable(Strings.trimToNull(target.getNote())).ifPresent(val -> note = val);
+  }
+
+  public static InternshipApplication getInstance(@NonNull CreateInternshipApplicationDTO dto) throws MSIException {
     return new InternshipApplication(dto);
+  }
+
+  private static class SingletonHelper {
+    private static final StudentService STUDENT_SERVICE = ApplicationContextHolder.getBean(StudentService.class);
+
+    private static final SemesterService SEMESTER_SERVICE = ApplicationContextHolder.getBean(SemesterService.class);
+
   }
 }

@@ -6,7 +6,6 @@ import com.example.msi.repository.StudentRepository;
 import com.example.msi.service.StudentService;
 import com.example.msi.service.UserService;
 import com.example.msi.shared.Constant;
-import com.example.msi.shared.exceptions.MSIException;
 import com.example.msi.shared.utils.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +28,7 @@ public class StudentServiceImpl implements StudentService {
   private final UserService userService;
 
   @Override
-  public void updateStudent(@NonNull UpdateStudentDTO payload, String userName) throws MSIException {
+  public void updateStudent(@NonNull UpdateStudentDTO payload, String userName) {
     var userId = userService.findByEmail(userName).orElseThrow().getId();
     repository.findTopByUserId(userId).ifPresentOrElse(
         entity -> {
@@ -44,13 +43,13 @@ public class StudentServiceImpl implements StudentService {
   }
 
   @Override
-  public Optional<Student> findByUserId(String userName) throws MSIException {
+  public Optional<Student> findByUsername(String userName) {
     var userId = userService.findByEmail(userName).orElseThrow().getId();
     return repository.findTopByUserId(userId);
   }
 
   @Override
-  public Page<Student> search(String code, String phoneNumber, String fullName, Pageable pageable) throws MSIException {
+  public Page<Student> search(String code, String phoneNumber, String fullName, Pageable pageable) {
     pageable =
         PageRequest.of(
             pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Constant.ID).ascending());

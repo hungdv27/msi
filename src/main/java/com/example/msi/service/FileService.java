@@ -5,7 +5,5 @@ import com.example.msi.response.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface FileService {
-  Data uploadFile(CreateFileDTO createFileDTO, MultipartFile file);
-
-  Data downloadFile(Integer fileId);
+  String uploadFile(MultipartFile multipartFile);
 }

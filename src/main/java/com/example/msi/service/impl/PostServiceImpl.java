@@ -16,10 +16,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,15 +27,16 @@ public class PostServiceImpl implements PostService {
 
   @Override
   public Page<Post> findAll(Pageable pageable, @NonNull String userName) {
-    Sort sort = Sort.by("createdDate").descending();
-    Pageable pageable1 = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
-    var role = userService.findByEmail(userName).map(User::getRole).get();
-    return repository.findAll(pageable);
-//    return repository.findAll(pageable1).stream()
-//        .filter(post -> role == Role.ADMIN || post.getApplyTo().contains(role))
-//        .findAny()
-//        .stream()
-//        .collect(Collectors.toList());
+    Sort sort1 = Sort.by("createdDate").descending();
+    Sort sort2 = Sort.by("created_date").descending();
+    Pageable pageable1 = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort1);
+    Pageable pageable2 = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort2);
+     return userService.findByEmail(userName).map(User::getRole).map(val ->{
+      if(val == Role.ADMIN){
+        return repository.findAll(pageable1);
+      }else
+        return repository.findAllByApplyToRole(val, pageable2);
+    }).orElseThrow(NoSuchElementException::new);
   }
 
   @Override

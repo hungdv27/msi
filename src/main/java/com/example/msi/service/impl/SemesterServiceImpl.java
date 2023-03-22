@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -76,6 +77,11 @@ public class SemesterServiceImpl implements SemesterService {
       semester.setStatus(true);
     }
     repository.save(semester);
+  }
+
+  @Override
+  public Optional<Semester> findSemesterActive() {
+    return repository.findTopByStatusIs(true);
   }
 
   private boolean validateDate(String startDate, String endDate) {

@@ -1,7 +1,5 @@
 package com.example.msi.domains;
 
-import com.example.msi.shared.converters.PostRoleApplyToConverter;
-import com.example.msi.shared.enums.PostApplyTo;
 import com.example.msi.models.post.CreatePostDTO;
 import com.example.msi.models.post.UpdatePostDTO;
 import com.example.msi.shared.enums.Role;
@@ -14,7 +12,6 @@ import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Getter
 @Entity
@@ -30,9 +27,8 @@ public class Post {
   @Column(name = "title", nullable = false)
   private String title;
 
-  @Convert(converter = PostRoleApplyToConverter.class)
   @Column(name = "audience", nullable = false)
-  private Set<Role> applyTo;
+  private Role applyTo;
 
   @Column(name = "content", nullable = false)
   private String content;

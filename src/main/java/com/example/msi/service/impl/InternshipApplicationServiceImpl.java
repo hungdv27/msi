@@ -4,13 +4,16 @@ import com.example.msi.domains.InternshipApplication;
 import com.example.msi.models.internshipappication.CreateInternshipApplicationDTO;
 import com.example.msi.models.internshipappication.SearchInternshipApplicationDTO;
 import com.example.msi.models.internshipappication.UpdateInternshipApplicationDTO;
+import com.example.msi.models.internshipappication.VerifyApplicationDTO;
 import com.example.msi.repository.InternshipApplicationRepository;
 import com.example.msi.service.InternshipApplicationService;
+import com.example.msi.shared.exceptions.MSIException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import javax.transaction.Transactional;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -20,7 +23,7 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   private final InternshipApplicationRepository repository;
 
   @Override
-  public List<InternshipApplication> search(@NonNull SearchInternshipApplicationDTO filter) {
+  public Page<InternshipApplication> search(@NonNull SearchInternshipApplicationDTO filter) {
     var spec = filter.getSpecification();
     var pageable = filter.getPageable();
     return repository.findAll(spec, pageable);
@@ -32,7 +35,7 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   }
 
   @Override
-  public InternshipApplication create(@NonNull CreateInternshipApplicationDTO dto) {
+  public InternshipApplication create(@NonNull CreateInternshipApplicationDTO dto) throws MSIException {
     var entity = InternshipApplication.getInstance(dto);
     return repository.save(entity);
   }
@@ -48,5 +51,11 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   @Override
   public void delete(int id) {
     repository.deleteById(id);
+  }
+
+  @Override
+  @Transactional
+  public void verify(@NonNull VerifyApplicationDTO dto) {
+    repository.findById(dto.getId()).ifPresent(entity-> entity.update(dto));
   }
 }

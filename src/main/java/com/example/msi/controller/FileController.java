@@ -16,15 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileController {
   private final FileService service;
 
-  @PostMapping("")
-  public ResponseEntity<?> uploadFile(
-      @ModelAttribute CreateFileDTO createFileDTO,
-      @RequestParam(name = "file", required = false) MultipartFile file) {
-    return new ResponseEntity<>(service.uploadFile(createFileDTO, file), HttpStatus.CREATED);
-  }
-
-  @PostMapping("download_file/{fileId}")
-  public ResponseEntity<?> downloadFile(@PathVariable Integer fileId) {
-    return new ResponseEntity<>(service.downloadFile(fileId), HttpStatus.OK);
+  @PostMapping("/uploadFile")
+  public String uploadFile(@RequestPart(value = "file") MultipartFile file) {
+    return this.service.uploadFile(file);
   }
 }
