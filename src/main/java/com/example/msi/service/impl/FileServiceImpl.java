@@ -1,25 +1,31 @@
 package com.example.msi.service.impl;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
-import com.example.msi.domains.File;
+import com.example.msi.domains.FileE;
 import com.example.msi.models.file.CreateFileDTO;
 import com.example.msi.repository.FileRepository;
 import com.example.msi.response.Data;
 import com.example.msi.service.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FilenameUtils;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.MediaType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -29,47 +35,59 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class FileServiceImpl implements FileService {
   private final FileRepository repository;
-  private final Cloudinary cloudinary;
+
+  private AmazonS3 s3Client;
+
+  @Value("${amazonProperties.endpointUrl}")
+  private String endpointUrl;
+  @Value("${amazonProperties.bucketName}")
+  private String bucketName;
+  @Value("${amazonProperties.accessKey}")
+  private String accessKey;
+  @Value("${amazonProperties.secretKey}")
+  private String secretKey;
+
+  @PostConstruct
+  private void initializeAmazon() {
+    AWSCredentials credentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
+    this.s3Client = new AmazonS3Client(credentials);
+  }
+
+  private File convertMultiPartToFile(MultipartFile file) throws IOException {
+    File convFile = new File(file.getOriginalFilename());
+    FileOutputStream fos = new FileOutputStream(convFile);
+    fos.write(file.getBytes());
+    fos.close();
+    return convFile;
+  }
+
+  private String generateFileName(MultipartFile multiPart) {
+    return new Date().getTime() + "-" + multiPart.getOriginalFilename().replace(" ", "_");
+  }
+
+  private void uploadFileTos3bucket(String fileName, File file) {
+    s3Client.putObject(new PutObjectRequest(bucketName, fileName, file)
+        .withCannedAcl(CannedAccessControlList.PublicRead));
+  }
 
   @Override
-  public Data uploadFile(CreateFileDTO createFileDTO, MultipartFile file) {
-    Optional.ofNullable(file)
-        .orElseThrow(() -> new IllegalArgumentException("File cannot be null"));
-
-    File entity = File.getInstance(createFileDTO);
+  public String uploadFile(MultipartFile multipartFile) {
+    var entity = new FileE();
+    String fileUrl = "";
     try {
-      Map<String, Object> options = new HashMap<>();
-      options.put("public_id", file.getOriginalFilename());
-      options.put("resource_type", "auto");
-      Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), options);
-      entity.setFileURL(uploadResult.get("url").toString());
-      entity.setPublicFileId(uploadResult.get("public_id").toString());
+      File file = convertMultiPartToFile(multipartFile);
+      String fileName = generateFileName(multipartFile);
+      fileUrl = endpointUrl + "/" + fileName;
+      uploadFileTos3bucket(fileName, file);
+      entity.setFileURL(fileName);
+      file.delete();
     } catch (Exception e) {
-      log.error("Error uploading file: " + e.getMessage());
+      e.printStackTrace();
     }
-
     repository.save(entity);
-    return new Data(entity);
+    return fileUrl;
   }
 
-  @Override
-  public Data downloadFile(Integer fileId) {
-    var file = repository.findById(fileId);
-//    var url = file.get().getFileURL();
-//    try {
-//      Map<String, Object> options = ObjectUtils.asMap(
-//          "resource_type", "auto",
-//          "fetch_format", "docx"
-//      );
-//      String transformedUrl = cloudinary.url().transformation(options).generate(url);
-//
-//      InputStream in = new URL(transformedUrl).openStream();
-//      Files.copy(in, Paths.get(url.substring(url.lastIndexOf("/") + 1) + ".docx"));
-//    } catch (IOException e) {
-//      e.printStackTrace();
-//    }
 
-    return new Data(file);
-  }
 
 }
