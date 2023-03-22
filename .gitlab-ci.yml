@@ -11,7 +11,7 @@ build:
   before_script:
     - source .${CI_COMMIT_REF_NAME}.env
   script:
-    - mvn package -B -e -Dspring.profiles.active=$SPRING_ACTIVE_PROFILE
+    - mvn clean install -Dspring.profiles.active=$SPRING_ACTIVE_PROFILE && mvn package -B -e -Dspring.profiles.active=$SPRING_ACTIVE_PROFILE
   artifacts:
     paths:
       - target/*.jar
