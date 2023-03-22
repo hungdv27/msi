@@ -7,6 +7,7 @@ import com.example.msi.models.semester.UpdateSemesterDTO;
 import lombok.NonNull;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface SemesterService {
   List<Semester> getAllSemester() throws MSIException;
@@ -18,4 +19,6 @@ public interface SemesterService {
   void deleteSemester(int id) throws MSIException;
 
   void changeStatus(int id) throws MSIException;
+
+  Optional<Semester> findSemesterActive();
 }
