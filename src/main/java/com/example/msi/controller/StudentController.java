@@ -6,7 +6,9 @@ import com.example.msi.service.StudentService;
 import com.example.msi.shared.exceptions.ExceptionUtils;
 import com.example.msi.shared.exceptions.MSIException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +20,7 @@ import java.security.Principal;
 public class StudentController {
   private final StudentService service;
 
-  @GetMapping("")
+  @GetMapping("me")
   public ResponseEntity<Object> getStudent(Principal principal) {
     try {
       var userName = principal.getName();
@@ -39,6 +41,24 @@ public class StudentController {
       var userName = principal.getName();
       service.updateStudent(payload, userName);
       return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    } catch (MSIException ex) {
+      return new ResponseEntity<>(
+          new ErrorDTO(ex.getMessageKey(), ex.getMessage()), HttpStatus.BAD_REQUEST);
+    } catch (Exception ex) {
+      return new ResponseEntity<>(
+          ExceptionUtils.messages.get(ExceptionUtils.E_INTERNAL_SERVER),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Object> findAll(
+      @RequestParam(required = false) String code,
+      @RequestParam(required = false) String phoneNumber,
+      @RequestParam(required = false) String fullName,
+      Pageable pageable) {
+    try {
+      return new ResponseEntity<>(service.search(code, phoneNumber, fullName, pageable), HttpStatus.OK);
     } catch (MSIException ex) {
       return new ResponseEntity<>(
           new ErrorDTO(ex.getMessageKey(), ex.getMessage()), HttpStatus.BAD_REQUEST);

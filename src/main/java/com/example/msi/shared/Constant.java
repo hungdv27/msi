@@ -21,4 +21,5 @@ public class Constant {
   public static final String F_DUPLICATE = "F_DUPLICATE";
   public static final String EMAIL_REGEX = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
   public static final String IMPORT_SUCCESS = "Success";
+  public static final String STUDENT_CODE = "code";
 }

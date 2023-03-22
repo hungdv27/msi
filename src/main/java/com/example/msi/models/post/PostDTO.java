@@ -2,6 +2,7 @@ package com.example.msi.models.post;
 
 import com.example.msi.domains.Post;
 import com.example.msi.shared.enums.PostApplyTo;
+import com.example.msi.shared.enums.Role;
 import lombok.Getter;
 import org.springframework.lang.NonNull;
 
@@ -12,7 +13,7 @@ import java.util.Set;
 public class PostDTO {
   private final int id;
   private final String title;
-  private final Set<PostApplyTo> applyTo;
+  private final Set<Role> applyTo;
   private final String content;
   private final LocalDateTime createdDate;
   private final LocalDateTime updateDate;
