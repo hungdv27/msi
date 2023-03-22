@@ -6,13 +6,15 @@ stages:
   - build and push docker image
   - deploy
 
+variables:
+  MAVEN_CLI_OPTS: "-e --batch-mode --quiet"
 build:
   image: maven:3.6.3-jdk-11-slim
   stage: build jar
   before_script:
     - source .${CI_COMMIT_REF_NAME}.env
   script:
-    - mvn clean install -Dspring.profiles.active=$SPRING_ACTIVE_PROFILE && mvn package -B -e -Dspring.profiles.active=$SPRING_ACTIVE_PROFILE
+    - mvn package $MAVEN_CLI_OPTS
   artifacts:
     paths:
       - target/*.jar
@@ -28,8 +30,8 @@ docker build:
   after_script:
     - docker logout
   script:
-    - docker build --build-arg SPRING_ACTIVE_PROFILE=$SPRING_ACTIVE_PROFILE -t $DOCKER_REPO .
-    - docker push $DOCKER_REPO
+    - docker build --quiet -t $DOCKER_REPO .
+    - docker push --quiet $DOCKER_REPO
     - docker rmi --force $DOCKER_REPO
   only:
     - main
