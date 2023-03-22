@@ -24,7 +24,7 @@ public class StudentController {
   public ResponseEntity<Object> getStudent(Principal principal) {
     try {
       var userName = principal.getName();
-      return new ResponseEntity<>(service.findByUserId(userName), HttpStatus.OK);
+      return new ResponseEntity<>(service.findByUsername(userName), HttpStatus.OK);
     } catch (MSIException ex) {
       return new ResponseEntity<>(
           new ErrorDTO(ex.getMessageKey(), ex.getMessage()), HttpStatus.BAD_REQUEST);

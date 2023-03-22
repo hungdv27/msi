@@ -24,21 +24,21 @@ public class SearchInternshipApplicationDTO implements BaseFilter<InternshipAppl
   private final Integer fileId;
   private final Integer companyId;
   private final Integer semesterId;
-  private final int limit;
-  private final int offset;
+  private final Integer page = 0;
+  private final Integer size = 0;
 
   public String studentCode() {
     return StringUtils.upperCase(trimToNull(studentCode));
   }
 
   @Override
-  public int limit() {
-    return limit < 1 ? 15 : limit;
+  public int size() {
+    return size < 1 ? 15 : size;
   }
 
   @Override
-  public int offset() {
-    return Math.max(offset, 0);
+  public int page() {
+    return Math.max(page, 0);
   }
 
 

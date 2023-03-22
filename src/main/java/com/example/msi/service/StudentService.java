@@ -13,7 +13,7 @@ public interface StudentService {
 
   void updateStudent(@NonNull UpdateStudentDTO payload, String userName) throws MSIException;
 
-  Optional<Student> findByUserId(String userName) throws MSIException;
+  Optional<Student> findByUsername(String userName) throws MSIException;
 
   Page<Student> search(String studentCode, String phone, String fullName, Pageable pageable) throws MSIException;
 }

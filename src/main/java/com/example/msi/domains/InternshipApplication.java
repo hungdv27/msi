@@ -2,7 +2,11 @@ package com.example.msi.domains;
 
 import com.example.msi.models.internshipappication.CreateInternshipApplicationDTO;
 import com.example.msi.models.internshipappication.UpdateInternshipApplicationDTO;
+import com.example.msi.service.SemesterService;
+import com.example.msi.service.StudentService;
+import com.example.msi.shared.ApplicationContextHolder;
 import com.example.msi.shared.enums.InternshipApplicationStatus;
+import com.example.msi.shared.exceptions.MSIException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -51,12 +55,12 @@ public class InternshipApplication {
   @LastModifiedDate
   private LocalDateTime updatedDate;
 
-  private InternshipApplication(@NonNull CreateInternshipApplicationDTO target) {
-    studentCode = target.getStudentCode();
+  private InternshipApplication(@NonNull CreateInternshipApplicationDTO target) throws MSIException {
+    SingletonHelper.STUDENT_SERVICE.findByUsername(target.getUsername()).ifPresent(val -> studentCode = val.getCode());
+    SingletonHelper.SEMESTER_SERVICE.findSemesterActive().ifPresent(val -> semesterId = val.getId());
     status = InternshipApplicationStatus.NEW;
     fileId = target.getFileId();
     companyId = target.getCompanyId();
-    semesterId = target.getSemesterId();
     note = target.getNote();
   }
 
@@ -67,7 +71,14 @@ public class InternshipApplication {
     semesterId = target.getSemesterId();
   }
 
-  public static InternshipApplication getInstance(@NonNull CreateInternshipApplicationDTO dto) {
+  public static InternshipApplication getInstance(@NonNull CreateInternshipApplicationDTO dto) throws MSIException {
     return new InternshipApplication(dto);
+  }
+
+  private static class SingletonHelper {
+    private static final StudentService STUDENT_SERVICE = ApplicationContextHolder.getBean(StudentService.class);
+
+    private static final SemesterService SEMESTER_SERVICE = ApplicationContextHolder.getBean(SemesterService.class);
+
   }
 }

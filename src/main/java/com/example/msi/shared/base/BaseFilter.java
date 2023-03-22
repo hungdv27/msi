@@ -5,11 +5,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 public interface BaseFilter<T> {
-  int offset();
-  int limit();
+  int page();
+  int size();
   default Pageable getPageable() {
-    var page = offset() / limit();
-    return PageRequest.of(page, limit());
+    return PageRequest.of(page(), size());
   }
   Specification<T> getSpecification();
 }

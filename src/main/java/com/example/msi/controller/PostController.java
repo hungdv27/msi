@@ -13,9 +13,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 import static com.example.msi.service.impl.CompanyServiceImpl.getPageable;
 
@@ -26,16 +24,13 @@ public class PostController {
   private final PostService service;
 
   @GetMapping
-  public ResponseEntity<List<PostDTO>> getAll(
+  public ResponseEntity<Page<PostDTO>> getAll(
       Principal principal,
       @RequestParam(defaultValue = "0") Integer page,
       @RequestParam(defaultValue = "5") Integer size
   ) {
     Pageable pageable = getPageable(page, size);
-    List<PostDTO> responseData = service.findAll(pageable, principal.getName())
-        .stream()
-        .map(PostDTO::getInstance)
-        .collect(Collectors.toList());
+    Page<PostDTO> responseData = service.findAll(pageable, principal.getName()).map(PostDTO::getInstance);
     return ResponseEntity.ok(responseData);
   }
 

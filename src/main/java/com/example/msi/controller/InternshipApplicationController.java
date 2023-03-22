@@ -5,16 +5,16 @@ import com.example.msi.models.internshipappication.InternshipApplicationDTO;
 import com.example.msi.models.internshipappication.SearchInternshipApplicationDTO;
 import com.example.msi.models.internshipappication.UpdateInternshipApplicationDTO;
 import com.example.msi.service.InternshipApplicationService;
-import com.example.msi.shared.enums.InternshipApplicationStatus;
+import com.example.msi.shared.exceptions.MSIException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.security.Principal;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/internshipapplication")
@@ -29,37 +29,21 @@ public class InternshipApplicationController {
   }
 
   @GetMapping
-  public ResponseEntity<List<InternshipApplicationDTO>> search(
-      @RequestParam(required = false) String studentCode,
-      @RequestParam(required = false) InternshipApplicationStatus status,
-      @RequestParam(required = false) Integer fileId,
-      @RequestParam(required = false) Integer companyId,
-      @RequestParam(required = false) Integer semesterId,
-      @RequestParam(required = false,defaultValue = "0") int limit,
-      @RequestParam(required = false, defaultValue = "0") int offset
-      ) {
-    var searchDTO = new SearchInternshipApplicationDTO(
-        studentCode,
-        status,
-        fileId,
-        companyId,
-        semesterId,
-        limit,
-        offset
-    );
+  public ResponseEntity<Page<InternshipApplicationDTO>> search(
+      SearchInternshipApplicationDTO searchDTO
+  ) {
     var responseData = service.search(searchDTO)
-        .stream()
-        .map(InternshipApplicationDTO::getInstance)
-        .collect(Collectors.toList());
+        .map(InternshipApplicationDTO::getInstance);
     return new ResponseEntity<>(responseData, HttpStatus.OK);
   }
 
   @PostMapping
   public ResponseEntity<InternshipApplicationDTO> create(
-      @RequestBody @NonNull CreateInternshipApplicationDTO dto) {
+      @RequestBody @NonNull CreateInternshipApplicationDTO dto,
+      Principal principal) throws MSIException {
+    dto.setUsername(principal.getName());
     var responseData = InternshipApplicationDTO.getInstance(service.create(dto));
     return new ResponseEntity<>(responseData, HttpStatus.OK);
-
   }
 
   @PutMapping
