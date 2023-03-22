@@ -27,13 +27,15 @@ public class PostServiceImpl implements PostService {
 
   @Override
   public Page<Post> findAll(Pageable pageable, @NonNull String userName) {
-    Sort sort = Sort.by("createdDate").descending();
-    Pageable pageable1 = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+    Sort sort1 = Sort.by("createdDate").descending();
+    Sort sort2 = Sort.by("created_date").descending();
+    Pageable pageable1 = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort1);
+    Pageable pageable2 = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort2);
      return userService.findByEmail(userName).map(User::getRole).map(val ->{
       if(val == Role.ADMIN){
         return repository.findAll(pageable1);
       }else
-        return repository.findAllByApplyToRole(val, pageable1);
+        return repository.findAllByApplyToRole(val, pageable2);
     }).orElseThrow(NoSuchElementException::new);
   }
 

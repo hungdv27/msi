@@ -1,9 +1,6 @@
 package com.example.msi.controller;
 
-import com.example.msi.models.internshipappication.CreateInternshipApplicationDTO;
-import com.example.msi.models.internshipappication.InternshipApplicationDTO;
-import com.example.msi.models.internshipappication.SearchInternshipApplicationDTO;
-import com.example.msi.models.internshipappication.UpdateInternshipApplicationDTO;
+import com.example.msi.models.internshipappication.*;
 import com.example.msi.service.InternshipApplicationService;
 import com.example.msi.shared.exceptions.MSIException;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +14,7 @@ import java.security.Principal;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("api/internshipapplication")
+@RequestMapping("api/internship-application")
 @RequiredArgsConstructor
 public class InternshipApplicationController {
   private final InternshipApplicationService service;
@@ -58,6 +55,12 @@ public class InternshipApplicationController {
   @DeleteMapping("/{id}")
   public ResponseEntity<Object> delete(@PathVariable int id) {
     service.delete(id);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PutMapping("/verify")
+  public ResponseEntity<Object> verify(@RequestBody @NonNull VerifyApplicationDTO dto) {
+    service.verify(dto);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 }
