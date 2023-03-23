@@ -1,4 +1,3 @@
-image: docker:latest
 services:
   - docker:stable-dind
 stages:
@@ -11,7 +10,7 @@ build:
   before_script:
     - source .${CI_COMMIT_REF_NAME}.env
   script:
-    - mvn clean install -Dspring.profiles.active=$SPRING_ACTIVE_PROFILE
+    - mvn clean install -Dspring.profiles.active=$SPRING_ACTIVE_PROFILE --quiet
   artifacts:
     paths:
       - target/*.jar
