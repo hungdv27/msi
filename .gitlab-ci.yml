@@ -1,6 +1,4 @@
 image: docker:latest
-services:
-  - docker:stable-dind
 stages:
   - build jar
   - build and push docker image
