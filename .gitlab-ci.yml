@@ -27,7 +27,7 @@ docker build:
     - docker logout
   script:
     - docker build --build-arg SPRING_ACTIVE_PROFILE=$SPRING_ACTIVE_PROFILE --quiet -t $DOCKER_REPO .
-    - docker push --quiet $DOCKER_REPO
+    - docker push $DOCKER_REPO --quiet
     - docker rmi --force $DOCKER_REPO
   only:
     - main
