@@ -4,6 +4,7 @@ import com.example.msi.models.post.CreatePostDTO;
 import com.example.msi.models.post.PostDTO;
 import com.example.msi.models.post.UpdatePostDTO;
 import com.example.msi.service.PostService;
+import com.example.msi.shared.enums.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,9 +46,12 @@ public class PostController {
 
   @PostMapping
   public ResponseEntity<PostDTO> createPost(
-      @RequestBody CreatePostDTO dto,
-      @RequestParam("files") List<MultipartFile> files
+      @RequestParam("title") String title,
+      @RequestParam("applyTo") Role applyTo,
+      @RequestParam("content") String content,
+      @ModelAttribute("files") List<MultipartFile> files
       ) throws IOException {
+    var dto = new CreatePostDTO(title, applyTo, content);
     var response = PostDTO.getInstance(service.add(dto, files));
     return new ResponseEntity<>(response, HttpStatus.OK);
   }

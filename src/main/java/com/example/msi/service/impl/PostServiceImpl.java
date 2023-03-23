@@ -1,5 +1,6 @@
 package com.example.msi.service.impl;
 
+import com.example.msi.domains.FileE;
 import com.example.msi.domains.Post;
 import com.example.msi.domains.User;
 import com.example.msi.models.post.CreatePostDTO;
@@ -54,11 +55,10 @@ public class PostServiceImpl implements PostService {
   public Post add(@NonNull CreatePostDTO dto, List<MultipartFile> multipartFiles) throws IOException {
     var post = repository.save(Post.getInstance(dto));
     var files = fileService.uploadFiles(multipartFiles);
-    files.stream().map(file -> {
+    for (FileE file : files){
       var pf = CreatePostFileDTO.getInstance(post.getId(), file.getId());
       postFileService.add(pf);
-      return null;
-    });
+    }
     return post;
   }
 
