@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.NoSuchElementException;
@@ -41,8 +42,10 @@ public class PostController {
   }
 
   @PostMapping
-  public ResponseEntity<PostDTO> createPost(@RequestBody @NonNull CreatePostDTO dto) {
-    var response = PostDTO.getInstance(service.add(dto));
+  public ResponseEntity<PostDTO> createPost(
+      @RequestBody @NonNull CreatePostDTO dto,
+      @RequestBody MultipartFile multipartFile) {
+    var response = PostDTO.getInstance(service.add(dto, multipartFile));
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 

@@ -5,6 +5,7 @@ import com.example.msi.domains.User;
 import com.example.msi.models.post.CreatePostDTO;
 import com.example.msi.models.post.UpdatePostDTO;
 import com.example.msi.repository.PostRepository;
+import com.example.msi.service.FileService;
 import com.example.msi.service.PostService;
 import com.example.msi.service.UserService;
 import com.example.msi.shared.enums.Role;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -24,6 +26,7 @@ import java.util.Optional;
 public class PostServiceImpl implements PostService {
   private final PostRepository repository;
   private final UserService userService;
+  private final FileService fileService;
 
   @Override
   public Page<Post> findAll(Pageable pageable, @NonNull String userName) {
@@ -45,9 +48,10 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
-  public Post add(@NonNull CreatePostDTO dto) {
-    var entity = Post.getInstance(dto);
-    return repository.save(entity);
+  public Post add(@NonNull CreatePostDTO dto, MultipartFile multipartFile) {
+    var entity = repository.save(Post.getInstance(dto));
+    String s = fileService.uploadFile(multipartFile);
+    return entity;
   }
 
   @Override
