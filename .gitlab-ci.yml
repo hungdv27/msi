@@ -1,17 +1,15 @@
-services:
-  - docker:19.03.7-dind
+image: docker:latest
 stages:
   - build jar
   - build and push docker image
   - deploy
-
 build:
   image: maven:3.6.3-jdk-11-slim
   stage: build jar
   before_script:
     - source .${CI_COMMIT_REF_NAME}.env
   script:
-    - mvn clean install -Dspring.profiles.active=$SPRING_ACTIVE_PROFILE && mvn package -B -e -Dspring.profiles.active=$SPRING_ACTIVE_PROFILE
+    - mvn clean install -Dspring.profiles.active=$SPRING_ACTIVE_PROFILE --quiet
   artifacts:
     paths:
       - target/*.jar
@@ -20,20 +18,20 @@ build:
     - main
 
 docker build:
-  image: docker:stable
   stage: build and push docker image
   before_script:
     - source .${CI_COMMIT_REF_NAME}.env
     - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+  after_script:
+    - docker logout
   script:
-    - docker build --build-arg SPRING_ACTIVE_PROFILE=$SPRING_ACTIVE_PROFILE -t $DOCKER_REPO .
-    - docker push $DOCKER_REPO
+    - docker build --build-arg SPRING_ACTIVE_PROFILE=$SPRING_ACTIVE_PROFILE --quiet -t $DOCKER_REPO .
+    - docker push --quiet $DOCKER_REPO
     - docker rmi --force $DOCKER_REPO
   only:
     - main
 
 deploy:
-  image: ubuntu:latest
   stage: deploy
   before_script:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'

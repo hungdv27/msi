@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
+import static com.example.msi.service.impl.CompanyServiceImpl.getPageable;
+
 @RequiredArgsConstructor
 @RequestMapping("api/student")
 @RestController
@@ -56,8 +58,10 @@ public class StudentController {
       @RequestParam(required = false) String code,
       @RequestParam(required = false) String phoneNumber,
       @RequestParam(required = false) String fullName,
-      Pageable pageable) {
+      @RequestParam(defaultValue = "0") Integer page,
+      @RequestParam(defaultValue = "5") Integer size) {
     try {
+      Pageable pageable = getPageable(page, size);
       return new ResponseEntity<>(service.search(code, phoneNumber, fullName, pageable), HttpStatus.OK);
     } catch (MSIException ex) {
       return new ResponseEntity<>(
