@@ -13,7 +13,9 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import static com.example.msi.service.impl.CompanyServiceImpl.getPageable;
@@ -43,9 +45,10 @@ public class PostController {
 
   @PostMapping
   public ResponseEntity<PostDTO> createPost(
-      @RequestBody @NonNull CreatePostDTO dto,
-      @RequestBody MultipartFile multipartFile) {
-    var response = PostDTO.getInstance(service.add(dto, multipartFile));
+      @RequestBody CreatePostDTO dto,
+      @RequestParam("files") List<MultipartFile> files
+      ) throws IOException {
+    var response = PostDTO.getInstance(service.add(dto, files));
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 

@@ -4,8 +4,10 @@ import com.example.msi.domains.Post;
 import com.example.msi.domains.User;
 import com.example.msi.models.post.CreatePostDTO;
 import com.example.msi.models.post.UpdatePostDTO;
+import com.example.msi.models.postfile.CreatePostFileDTO;
 import com.example.msi.repository.PostRepository;
 import com.example.msi.service.FileService;
+import com.example.msi.service.PostFileService;
 import com.example.msi.service.PostService;
 import com.example.msi.service.UserService;
 import com.example.msi.shared.enums.Role;
@@ -18,6 +20,8 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -27,18 +31,17 @@ public class PostServiceImpl implements PostService {
   private final PostRepository repository;
   private final UserService userService;
   private final FileService fileService;
+  private final PostFileService postFileService;
 
   @Override
   public Page<Post> findAll(Pageable pageable, @NonNull String userName) {
     Sort sort1 = Sort.by("createdDate").descending();
-    Sort sort2 = Sort.by("created_date").descending();
     Pageable pageable1 = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort1);
-    Pageable pageable2 = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort2);
-     return userService.findByEmail(userName).map(User::getRole).map(val ->{
-      if(val == Role.ADMIN){
+    return userService.findByEmail(userName).map(User::getRole).map(val -> {
+      if (val == Role.ADMIN) {
         return repository.findAll(pageable1);
-      }else
-        return repository.findAllByApplyToRole(val, pageable2);
+      } else
+        return repository.findAllByApplyTo(val, pageable1);
     }).orElseThrow(NoSuchElementException::new);
   }
 
@@ -48,10 +51,15 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
-  public Post add(@NonNull CreatePostDTO dto, MultipartFile multipartFile) {
-    var entity = repository.save(Post.getInstance(dto));
-    String s = fileService.uploadFile(multipartFile);
-    return entity;
+  public Post add(@NonNull CreatePostDTO dto, List<MultipartFile> multipartFiles) throws IOException {
+    var post = repository.save(Post.getInstance(dto));
+    var files = fileService.uploadFiles(multipartFiles);
+    files.stream().map(file -> {
+      var pf = CreatePostFileDTO.getInstance(post.getId(), file.getId());
+      postFileService.add(pf);
+      return null;
+    });
+    return post;
   }
 
   @Override
