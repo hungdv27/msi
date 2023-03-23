@@ -1,6 +1,7 @@
 package com.example.msi.service;
 
 import com.example.msi.domains.Student;
+import com.example.msi.models.student.StudentDetailDTO;
 import com.example.msi.models.student.UpdateStudentDTO;
 import com.example.msi.shared.exceptions.MSIException;
 import lombok.NonNull;
@@ -15,5 +16,5 @@ public interface StudentService {
 
   Optional<Student> findByUsername(String userName) throws MSIException;
 
-  Page<Student> search(String studentCode, String phone, String fullName, Pageable pageable) throws MSIException;
+  Page<StudentDetailDTO> search(String studentCode, String phone, String fullName, Pageable pageable) throws MSIException;
 }
