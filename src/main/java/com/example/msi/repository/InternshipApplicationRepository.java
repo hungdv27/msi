@@ -1,6 +1,7 @@
 package com.example.msi.repository;
 
 import com.example.msi.domains.InternshipApplication;
+import com.example.msi.domains.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;

@@ -1,18 +1,18 @@
 package com.example.msi.service.impl;
 
 import com.example.msi.domains.User;
+import com.example.msi.models.user.*;
 import com.example.msi.shared.enums.Role;
-import com.example.msi.models.user.CreateUserDTO;
-import com.example.msi.models.user.UpdateUserDTO;
-import com.example.msi.models.user.UpdatePasswordUserDTO;
-import com.example.msi.models.user.UserDTO;
 import com.example.msi.repository.UserRepository;
 import com.example.msi.response.Data;
 import com.example.msi.security.CustomUserDetails;
 import com.example.msi.service.MailService;
 import com.example.msi.service.UserService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.bytebuddy.utility.RandomString;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -140,8 +140,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   }
 
   @Override
-  public Optional<User> findById(int id) {
-    return repository.findById(id);
+  public Page<User> findAll(@NonNull SearchUserDTO filter) {
+    var spec = filter.getSpecification();
+    var pageable = filter.getPageable();
+    return repository.findAll(spec, pageable);
+  }
+
+  @Override
+  public Optional<User> changeEnable(@NonNull Integer userId) {
+    Optional<User> optionalUser = repository.findById(userId);
+    optionalUser.ifPresent(user -> {
+      user.setEnabled(!user.isEnabled());
+      repository.save(user);
+    });
+    return optionalUser;
   }
 
   @Override
