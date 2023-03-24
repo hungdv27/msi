@@ -52,7 +52,8 @@ public class User {
   @Column(name = "updated_date")
   @LastModifiedDate
   private LocalDateTime updatedDate;
-
+  
+  @Column(name = "enabled")
   private boolean enabled;
 
   @Column(name = "update_password_token", length = 64)
@@ -65,8 +66,12 @@ public class User {
     this.phoneNumber = target.getPhoneNumber();
     this.dob = target.getDob();
   }
-//t
+
   public static User getInstance(@NonNull CreateUserDTO payload) {
     return new User(payload);
   }
+
+//  public boolean getEnabled() {
+//    return enabled;
+//  }
 }

@@ -1,6 +1,8 @@
 package com.example.msi.controller;
 
 import com.example.msi.domains.User;
+import com.example.msi.models.internshipappication.InternshipApplicationDTO;
+import com.example.msi.models.internshipappication.SearchInternshipApplicationDTO;
 import com.example.msi.models.user.*;
 import com.example.msi.repository.UserRepository;
 import com.example.msi.response.Data;
@@ -10,6 +12,8 @@ import com.example.msi.security.jwt.JwtTokenProvider;
 import com.example.msi.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -91,4 +95,20 @@ public class UserController {
   public ResponseEntity<Data> updateUser(@RequestBody UpdateUserDTO updateUser) throws IOException {
     return ResponseEntity.ok(new Data(service.update(updateUser)));
   }
+
+  @GetMapping("/find-all")
+  public ResponseEntity<Page<UserDTO>> search(
+      SearchUserDTO searchDTO
+  ) {
+    var responseData = service.findAll(searchDTO)
+        .map(UserDTO::getInstance);
+    return new ResponseEntity<>(responseData, HttpStatus.OK);
+  }
+
+  @PostMapping("/change-enable/{userId}")
+  public ResponseEntity<Data> changeEnable(@PathVariable Integer userId){
+    var responseData = service.changeEnable(userId).map(UserDTO::getInstance);
+    return ResponseEntity.ok(new Data(responseData));
+  }
+
 }

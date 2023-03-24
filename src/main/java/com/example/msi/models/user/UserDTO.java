@@ -19,8 +19,6 @@ public class UserDTO {
 
   private String email;
 
-  private String password;
-
   private Role role;
 
   private String fullName;
@@ -29,14 +27,16 @@ public class UserDTO {
 
   private String phoneNumber;
 
+  private boolean enabled;
+
   private UserDTO(@NonNull User target) {
     id = target.getId();
     email = target.getEmail();
-    password = target.getPassword();
     role = target.getRole();
     fullName = target.getFullName();
     dob = target.getDob();
     phoneNumber = target.getPhoneNumber();
+    enabled = target.isEnabled();
   }
 
   public static UserDTO getInstance(@NonNull User entity) {

@@ -1,6 +1,7 @@
 package com.example.msi.models.internshipappication;
 
 import com.example.msi.domains.InternshipApplication;
+import com.example.msi.domains.User;
 import com.example.msi.shared.base.BaseFilter;
 import com.example.msi.shared.enums.InternshipApplicationStatus;
 import lombok.Getter;
