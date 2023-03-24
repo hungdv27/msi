@@ -1,6 +1,7 @@
 package com.example.msi.service.impl;
 
 import com.example.msi.domains.Student;
+import com.example.msi.models.student.StudentDetailDTO;
 import com.example.msi.models.student.UpdateStudentDTO;
 import com.example.msi.repository.StudentRepository;
 import com.example.msi.service.StudentService;
@@ -49,7 +50,7 @@ public class StudentServiceImpl implements StudentService {
   }
 
   @Override
-  public Page<Student> search(String code, String phoneNumber, String fullName, Pageable pageable) {
+  public Page<StudentDetailDTO> search(String code, String phoneNumber, String fullName, Pageable pageable) {
     pageable =
         PageRequest.of(
             pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Constant.ID).ascending());
@@ -77,6 +78,14 @@ public class StudentServiceImpl implements StudentService {
           return cq.where(predicates.toArray(new Predicate[0])).getRestriction();
         };
     Page<Student> page = repository.findAll(spec, pageable);
-    return new PageImpl<>(page.getContent(), page.getPageable(), page.getTotalElements());
+    var content = page.getContent();
+    List<StudentDetailDTO> list = new ArrayList<>();
+    for (Student s : content) {
+      var userId = s.getUserId();
+      var user = userService.findById(userId).orElseThrow();
+      var studentDetail = new StudentDetailDTO(s, user);
+      list.add(studentDetail);
+    }
+    return new PageImpl<>(list, page.getPageable(), page.getTotalElements());
   }
 }

@@ -8,7 +8,6 @@ import com.example.msi.response.Data;
 import com.example.msi.security.CustomUserDetails;
 import com.example.msi.service.MailService;
 import com.example.msi.service.UserService;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.data.domain.Page;
@@ -154,6 +153,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
       repository.save(user);
     });
     return optionalUser;
+  }
+
+  @Override
+  public Optional<User> findById(int id) {
+    return repository.findById(id);
   }
 
   @Override

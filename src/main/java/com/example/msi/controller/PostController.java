@@ -4,6 +4,7 @@ import com.example.msi.models.post.CreatePostDTO;
 import com.example.msi.models.post.PostDTO;
 import com.example.msi.models.post.UpdatePostDTO;
 import com.example.msi.service.PostService;
+import com.example.msi.shared.enums.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,8 +12,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import static com.example.msi.service.impl.CompanyServiceImpl.getPageable;
@@ -41,8 +45,14 @@ public class PostController {
   }
 
   @PostMapping
-  public ResponseEntity<PostDTO> createPost(@RequestBody @NonNull CreatePostDTO dto) {
-    var response = PostDTO.getInstance(service.add(dto));
+  public ResponseEntity<PostDTO> createPost(
+      @RequestParam("title") String title,
+      @RequestParam("applyTo") Role applyTo,
+      @RequestParam("content") String content,
+      @ModelAttribute("files") List<MultipartFile> files
+      ) throws IOException {
+    var dto = new CreatePostDTO(title, applyTo, content);
+    var response = PostDTO.getInstance(service.add(dto, files));
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 

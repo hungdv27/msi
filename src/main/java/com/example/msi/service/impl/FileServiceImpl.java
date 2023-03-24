@@ -1,25 +1,15 @@
 package com.example.msi.service.impl;
 
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.SdkClientException;
 import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
-import com.cloudinary.Cloudinary;
-import com.cloudinary.Transformation;
-import com.cloudinary.utils.ObjectUtils;
 import com.example.msi.domains.FileE;
-import com.example.msi.models.file.CreateFileDTO;
 import com.example.msi.repository.FileRepository;
-import com.example.msi.response.Data;
 import com.example.msi.service.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,15 +18,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 @Service
@@ -63,7 +50,7 @@ public class FileServiceImpl implements FileService {
   }
 
   private File convertMultiPartToFile(MultipartFile file) throws IOException {
-    File convFile = new File(file.getOriginalFilename());
+    File convFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
     FileOutputStream fos = new FileOutputStream(convFile);
     fos.write(file.getBytes());
     fos.close();
@@ -71,7 +58,7 @@ public class FileServiceImpl implements FileService {
   }
 
   private String generateFileName(MultipartFile multiPart) {
-    return new Date().getTime() + "-" + multiPart.getOriginalFilename().replace(" ", "_");
+    return new Date().getTime() + "-" + Objects.requireNonNull(multiPart.getOriginalFilename()).replace(" ", "_");
   }
 
   private void uploadFileTos3bucket(String fileName, File file) {
@@ -99,7 +86,7 @@ public class FileServiceImpl implements FileService {
 
   @Override
   public List<FileE> uploadFiles(List<MultipartFile> files) throws IOException {
-    List<FileE> entity = new ArrayList<FileE>();
+    List<FileE> entity = new ArrayList<>();
     for (MultipartFile file : files) {
       var newEntity = new FileE();
       String key = generateFileName(file);
@@ -127,5 +114,8 @@ public class FileServiceImpl implements FileService {
     return responseEntity;
   }
 
-
+  @Override
+  public List<FileE> findByIds(@NonNull List<Integer> ids) {
+    return repository.findAllByIdIn(ids);
+  }
 }

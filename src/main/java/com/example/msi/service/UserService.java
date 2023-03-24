@@ -34,4 +34,6 @@ public interface UserService {
 
   Optional<User> changeEnable(@NonNull Integer userId);
 
+  Optional<User> findById(int id);
+
 }
