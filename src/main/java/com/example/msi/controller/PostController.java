@@ -10,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -57,7 +56,13 @@ public class PostController {
   }
 
   @PutMapping
-  public ResponseEntity<PostDTO> updatePost(@RequestBody @NonNull UpdatePostDTO dto) {
+  public ResponseEntity<PostDTO> updatePost(
+      @RequestParam("id") int id,
+      @RequestParam("title") String title,
+      @RequestParam("applyTo") Role applyTo,
+      @RequestParam("content") String content,
+      @ModelAttribute("files") List<MultipartFile> files) {
+    var dto = new UpdatePostDTO(id, title, applyTo,content, files);
     var response = service.update(dto).map(PostDTO::getInstance).orElseThrow(NoSuchElementException::new);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }

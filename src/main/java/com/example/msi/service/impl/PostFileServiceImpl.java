@@ -26,4 +26,8 @@ public class PostFileServiceImpl implements PostFileService {
     repository.save(entity);
   }
 
+  @Override
+  public void deleteByPostId(int postId) {
+    repository.deleteAllByPostId(postId);
+  }
 }

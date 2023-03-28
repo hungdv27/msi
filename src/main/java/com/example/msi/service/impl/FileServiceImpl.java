@@ -75,7 +75,7 @@ public class FileServiceImpl implements FileService {
       String fileName = generateFileName(multipartFile);
       fileUrl = endpointUrl + "/" + fileName;
       uploadFileTos3bucket(fileName, file);
-      entity.setFileURL(fileName);
+      entity.setFilename(fileName);
       file.delete();
     } catch (Exception e) {
       e.printStackTrace();
@@ -86,6 +86,7 @@ public class FileServiceImpl implements FileService {
 
   @Override
   public List<FileE> uploadFiles(List<MultipartFile> files) throws IOException {
+    if (files.size() == 0) return null;
     List<FileE> entity = new ArrayList<>();
     for (MultipartFile file : files) {
       var newEntity = new FileE();
@@ -95,7 +96,7 @@ public class FileServiceImpl implements FileService {
       metadata.setContentLength(file.getSize());
       PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, file.getInputStream(), metadata);
       s3Client.putObject(putObjectRequest);
-      newEntity.setFileURL(key);
+      newEntity.setFilename(key);
       entity.add(repository.save(newEntity));
     }
     return entity;
