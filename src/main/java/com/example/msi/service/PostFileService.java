@@ -10,4 +10,6 @@ public interface PostFileService {
   List<PostFile> findByPostId(@NonNull Integer postId);
 
   void add(@NonNull CreatePostFileDTO dto);
+
+  void deleteByPostId(int postId);
 }

@@ -31,7 +31,7 @@ public class FileE {
   @LastModifiedDate
   private LocalDateTime updatedDate;
 
-  @Column(name = "file_url", nullable = false, length = 5000)
-  private String fileURL;
+  @Column(name = "file_name", nullable = false, length = 5000)
+  private String filename;
 
 }
