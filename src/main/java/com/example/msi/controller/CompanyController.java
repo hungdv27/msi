@@ -61,7 +61,7 @@ public class CompanyController {
   }
 
   @GetMapping("/{name}")
-  public List<Company> getCompanyByName(@PathVariable String name){
+  public List<Company> getCompanyByName(@PathVariable String name) {
     return service.searchCompanyByName(name);
   }
 
