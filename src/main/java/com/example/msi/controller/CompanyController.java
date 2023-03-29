@@ -68,8 +68,8 @@ public class CompanyController {
       @RequestParam(value = "name", required = false) String name,
       @RequestParam(value = "phoneNumber", required = false) String phoneNumber,
       @RequestParam(value = "email", required = false) String email,
-      @RequestParam(value = "address", required = false) String address,
       @RequestParam(value = "status", required = false) String status,
+      @RequestParam(value = "address", required = false) String address,
       HttpServletRequest request) {
     byte[] bytes;
     try {
