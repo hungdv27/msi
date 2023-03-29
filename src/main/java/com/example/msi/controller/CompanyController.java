@@ -35,6 +35,7 @@ import static com.example.msi.service.impl.CompanyServiceImpl.getPageable;
 public class CompanyController {
   private final CompanyService service;
 
+
   @GetMapping("")
   public ResponseEntity<Page<Company>> getAllCompany(
       @RequestParam(defaultValue = "0") Integer page,
