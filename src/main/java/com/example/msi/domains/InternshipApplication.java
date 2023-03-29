@@ -37,9 +37,6 @@ public class InternshipApplication {
   @Enumerated
   private InternshipApplicationStatus status;
 
-  @Column(name = "file_id")
-  private Integer fileId;
-
   @Column(name = "company_id")
   private Integer companyId;
 
@@ -61,16 +58,12 @@ public class InternshipApplication {
     SingletonHelper.STUDENT_SERVICE.findByUsername(target.getUsername()).ifPresent(val -> studentCode = val.getCode());
     SingletonHelper.SEMESTER_SERVICE.findSemesterActive().ifPresent(val -> semesterId = val.getId());
     status = InternshipApplicationStatus.NEW;
-    fileId = target.getFileId();
     companyId = target.getCompanyId();
     note = target.getNote();
   }
 
   public void update(@NonNull UpdateInternshipApplicationDTO target) {
-    studentCode = target.getStudentCode();
-    fileId = target.getFileId();
     companyId = target.getCompanyId();
-    semesterId = target.getSemesterId();
   }
 
   public void update(@NonNull VerifyApplicationDTO target) {

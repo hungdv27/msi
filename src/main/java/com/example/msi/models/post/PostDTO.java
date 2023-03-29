@@ -31,18 +31,18 @@ public class PostDTO {
     this.content = target.getContent();
     this.createdDate = target.getCreatedDate();
     this.updateDate = target.getUpdateDate();
-    var fileIds = Singleton.POST_FILE_SERVICE.findByPostId(target.getId())
+    var fileIds = SingletonHelper.POST_FILE_SERVICE.findByPostId(target.getId())
         .stream()
         .map(PostFile::getFileId)
         .collect(Collectors.toList());
-    this.files = Singleton.FILE_SERVICE.findByIds(fileIds);
+    this.files = SingletonHelper.FILE_SERVICE.findByIds(fileIds);
   }
 
   public static PostDTO getInstance(@NonNull Post entity) {
     return new PostDTO(entity);
   }
 
-  private static class Singleton {
+  private static class SingletonHelper {
     private static final PostFileService POST_FILE_SERVICE =
         ApplicationContextHolder.getBean(PostFileService.class);
 

@@ -1,13 +1,15 @@
 package com.example.msi.models.internshipappication;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 
 @Getter
+@AllArgsConstructor
 public class UpdateInternshipApplicationDTO {
   private int id;
-  private String studentCode;
-  private Integer fileId;
   private Integer companyId;
-  private int semesterId;
+  private List<MultipartFile> files;
 }
