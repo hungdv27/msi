@@ -1,8 +1,6 @@
 package com.example.msi.controller;
 
 import com.example.msi.domains.User;
-import com.example.msi.models.internshipappication.InternshipApplicationDTO;
-import com.example.msi.models.internshipappication.SearchInternshipApplicationDTO;
 import com.example.msi.models.user.*;
 import com.example.msi.repository.UserRepository;
 import com.example.msi.response.Data;
