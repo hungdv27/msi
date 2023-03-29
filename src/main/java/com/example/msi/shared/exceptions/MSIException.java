@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Builder
-public class MSIException extends Exception{
+public class MSIException extends Exception {
   private String messageKey;
   private String message;
   private Throwable throwable;

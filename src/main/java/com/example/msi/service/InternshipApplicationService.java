@@ -9,6 +9,8 @@ import com.example.msi.shared.exceptions.MSIException;
 import org.springframework.data.domain.Page;
 import org.springframework.lang.NonNull;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 public interface InternshipApplicationService {
@@ -16,12 +18,13 @@ public interface InternshipApplicationService {
 
   InternshipApplication findById(int id);
 
-  InternshipApplication create(@NonNull CreateInternshipApplicationDTO dtoe) throws MSIException;
+  List<InternshipApplication> findByUsername(@NonNull String username) throws MSIException;
+
+  InternshipApplication create(@NonNull CreateInternshipApplicationDTO dtoe) throws MSIException, IOException;
 
   Optional<InternshipApplication> update(@NonNull UpdateInternshipApplicationDTO dto);
 
   void delete(int id);
 
   void verify(@NonNull VerifyApplicationDTO dto);
-
 }

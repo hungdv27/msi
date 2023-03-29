@@ -1,7 +1,6 @@
 package com.example.msi.models.internshipappication;
 
 import com.example.msi.domains.InternshipApplication;
-import com.example.msi.domains.User;
 import com.example.msi.shared.base.BaseFilter;
 import com.example.msi.shared.enums.InternshipApplicationStatus;
 import lombok.Getter;
@@ -22,7 +21,6 @@ import static org.apache.logging.log4j.util.Strings.trimToNull;
 public class SearchInternshipApplicationDTO implements BaseFilter<InternshipApplication> {
   private final String studentCode;
   private final InternshipApplicationStatus status;
-  private final Integer fileId;
   private final Integer companyId;
   private final Integer semesterId;
   private final Integer page = 0;
@@ -60,14 +58,6 @@ public class SearchInternshipApplicationDTO implements BaseFilter<InternshipAppl
                     cb::equal,
                     attr -> root.get(attr).as(InternshipApplicationStatus.class),
                     "status",
-                    () -> value
-                )
-            ),
-            Optional.ofNullable(fileId).map(
-                value -> build(
-                    cb::equal,
-                    attr -> root.get(attr).as(Integer.class),
-                    "fileId",
                     () -> value
                 )
             ),
