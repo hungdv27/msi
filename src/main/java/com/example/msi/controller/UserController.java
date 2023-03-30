@@ -104,7 +104,7 @@ public class UserController {
   }
 
   @PostMapping("/change-enable/{userId}")
-  public ResponseEntity<Data> changeEnable(@PathVariable Integer userId){
+  public ResponseEntity<Data> changeEnable(@PathVariable Integer userId) {
     var responseData = service.changeEnable(userId).map(UserDTO::getInstance);
     return ResponseEntity.ok(new Data(responseData));
   }
