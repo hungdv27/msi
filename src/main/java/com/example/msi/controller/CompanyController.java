@@ -3,9 +3,7 @@ package com.example.msi.controller;
 import com.example.msi.domains.Company;
 import com.example.msi.shared.exceptions.ExceptionUtils;
 import com.example.msi.shared.exceptions.MSIException;
-import com.example.msi.models.company.CompanyReqDTO;
-import com.example.msi.models.company.CreateCompanyDTO;
-import com.example.msi.models.company.UpdateCompanyDTO;
+import com.example.msi.models.company.*;
 import com.example.msi.models.error.ErrorDTO;
 import com.example.msi.response.ImportError;
 import com.example.msi.response.ImportSuccess;
@@ -70,8 +68,8 @@ public class CompanyController {
       @RequestParam(value = "name", required = false) String name,
       @RequestParam(value = "phoneNumber", required = false) String phoneNumber,
       @RequestParam(value = "email", required = false) String email,
-      @RequestParam(value = "address", required = false) String address,
       @RequestParam(value = "status", required = false) String status,
+      @RequestParam(value = "address", required = false) String address,
       HttpServletRequest request) {
     byte[] bytes;
     try {
