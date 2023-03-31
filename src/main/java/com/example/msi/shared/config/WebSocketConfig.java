@@ -1,17 +1,33 @@
 package com.example.msi.shared.config;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.socket.config.annotation.EnableWebSocket;
-import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
-import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.socket.config.annotation.*;
 
 @Configuration
-@EnableWebSocket
-public class WebSocketConfig implements WebSocketConfigurer {
+@EnableWebSocketMessageBroker
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
   @Override
-  public void registerWebSocketHandlers(WebSocketHandlerRegistry webSocketHandlerRegistry) {
-
+  public void configureMessageBroker(MessageBrokerRegistry config) {
+    config.enableSimpleBroker("/queue", "/topic");
+    config.setApplicationDestinationPrefixes("/app");
   }
-  
+
+  @Override
+  public void registerStompEndpoints(StompEndpointRegistry registry) {
+    registry.addEndpoint("/websocket").setAllowedOrigins("*").withSockJS();
+  }
+
+  @Override
+  public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+    registration
+        .setSendTimeLimit(15 * 1000)
+        .setSendBufferSizeLimit(512 * 1024)
+        .setMessageSizeLimit(128 * 1024);
+  }
+
+
+
 }
+

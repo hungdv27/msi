@@ -1,23 +1,23 @@
 package com.example.msi.service.impl;
 
 import com.example.msi.domains.FileE;
+import com.example.msi.domains.Notification;
 import com.example.msi.domains.Post;
 import com.example.msi.domains.User;
 import com.example.msi.models.post.CreatePostDTO;
 import com.example.msi.models.post.UpdatePostDTO;
 import com.example.msi.models.postfile.CreatePostFileDTO;
 import com.example.msi.repository.PostRepository;
-import com.example.msi.service.FileService;
-import com.example.msi.service.PostFileService;
-import com.example.msi.service.PostService;
-import com.example.msi.service.UserService;
+import com.example.msi.service.*;
 import com.example.msi.shared.enums.Role;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.NonNull;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,6 +34,8 @@ public class PostServiceImpl implements PostService {
   private final UserService userService;
   private final FileService fileService;
   private final PostFileService postFileService;
+  private final SimpMessagingTemplate messagingTemplate;
+  private final NotificationService notificationService;
 
   @Override
   public Page<Post> findAll(Pageable pageable, @NonNull String userName) {
@@ -53,9 +55,18 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
-  public Post add(@NonNull CreatePostDTO dto, List<MultipartFile> multipartFiles) throws IOException {
+  @Transactional
+  public Post add(@NonNull CreatePostDTO dto, List<MultipartFile> multipartFiles) throws Exception {
     var post = repository.save(Post.getInstance(dto));
     attachFiles(post.getId(), multipartFiles);
+    List<User> recipients = userService.findAllByRole(Role.STUDENT);
+    Notification notification = new Notification();
+    notification.setTitle("New post created");
+    notification.setMessage("A new post has been created: " + post.getTitle());
+    notification.setRecipients(recipients);
+    notificationService.sendNotification(notification);
+    messagingTemplate.convertAndSendToUser("STUDENT", "/queue/notifications", notification);
+
     return post;
   }
 
@@ -75,7 +86,7 @@ public class PostServiceImpl implements PostService {
   }
 
   private void attachFiles(int postId, List<MultipartFile> multipartFiles) throws IOException {
-    if(multipartFiles == null) return;
+    if (multipartFiles == null) return;
     var files = fileService.uploadFiles(multipartFiles);
     for (FileE file : files) {
       var pf = CreatePostFileDTO.getInstance(postId, file.getId());

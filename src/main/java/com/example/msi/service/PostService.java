@@ -17,7 +17,7 @@ public interface PostService {
 
   Post findById(int id);
 
-  Post add(@NonNull CreatePostDTO dto,List<MultipartFile> multipartFiles) throws IOException;
+  Post add(@NonNull CreatePostDTO dto,List<MultipartFile> multipartFiles) throws Exception;
 
   Optional<Post> update(@NonNull UpdatePostDTO dto);
 
