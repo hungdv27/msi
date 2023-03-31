@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -45,12 +44,10 @@ public class PostController {
 
   @PostMapping
   public ResponseEntity<PostDTO> createPost(
-      @RequestParam("title") String title,
-      @RequestParam("applyTo") Role applyTo,
-      @RequestParam("content") String content,
-      @ModelAttribute("files") List<MultipartFile> files
+      @RequestPart(value = "body") CreatePostDTO dto,
+      @RequestPart(value = "files") List<MultipartFile> files
       ) throws Exception {
-    var dto = new CreatePostDTO(title, applyTo, content);
+//    var dto = new CreatePostDTO(title, applyTo, content);
     var response = PostDTO.getInstance(service.add(dto, files));
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
