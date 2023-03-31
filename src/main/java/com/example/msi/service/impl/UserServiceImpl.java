@@ -24,6 +24,7 @@ import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -158,6 +159,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   @Override
   public Optional<User> findById(int id) {
     return repository.findById(id);
+  }
+
+  @Override
+  public List<User> findAllByRole(Role role) {
+    return repository.findAllByRole(role);
   }
 
   @Override

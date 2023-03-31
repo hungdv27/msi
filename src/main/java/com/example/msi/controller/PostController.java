@@ -49,7 +49,7 @@ public class PostController {
       @RequestParam("applyTo") Role applyTo,
       @RequestParam("content") String content,
       @ModelAttribute("files") List<MultipartFile> files
-      ) throws IOException {
+      ) throws Exception {
     var dto = new CreatePostDTO(title, applyTo, content);
     var response = PostDTO.getInstance(service.add(dto, files));
     return new ResponseEntity<>(response, HttpStatus.OK);
