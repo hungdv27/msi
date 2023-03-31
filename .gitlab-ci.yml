@@ -9,7 +9,7 @@ build:
   before_script:
     - source .${CI_COMMIT_REF_NAME}.env
   script:
-    - mvn clean install -Dspring.profiles.active=$SPRING_ACTIVE_PROFILE && mvn package -B -e -Dspring.profiles.active=$SPRING_ACTIVE_PROFILE
+    - mvn clean install -Dspring.profiles.active=$SPRING_ACTIVE_PROFILE --quiet
   artifacts:
     paths:
       - target/*.jar
@@ -36,12 +36,12 @@ deploy:
   before_script:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     - eval $(ssh-agent -s)
-    - echo "SERVER_SSH_KEY" | tr -d '\r' | ssh-add -
+    - echo "$SERVER_SSH_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
     - source .${CI_COMMIT_REF_NAME}.env
   script:
-    - ssh msiazure@$SERVER "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD; docker stop $APP_NAME; docker system prune -a -f; docker pull $DOCKER_REPO; docker container run -d --name $APP_NAME -p $PORT:8080 -e SPRING_PROFILES_ACTIVE=$SPRING_ACTIVE_PROFILE $DOCKER_REPO; docker logout"
+    - ssh ubuntu@$SERVER "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD; docker stop $APP_NAME; docker system prune -a -f; docker pull $DOCKER_REPO; docker container run -d --name $APP_NAME -p $PORT:8080 -e SPRING_PROFILES_ACTIVE=$SPRING_ACTIVE_PROFILE $DOCKER_REPO; docker logout"
   only:
     - main
