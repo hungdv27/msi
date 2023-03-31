@@ -3,6 +3,7 @@ stages:
   - build jar
   - build and push docker image
   - deploy
+
 build:
   image: maven:3.6.3-jdk-11-slim
   stage: build jar
