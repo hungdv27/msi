@@ -44,7 +44,7 @@ public class PostController {
   @PostMapping
   public ResponseEntity<PostDTO> createPost(
       @RequestPart(value = "body") CreatePostDTO dto,
-      @RequestPart(value = "files") List<MultipartFile> files
+      @RequestPart(value = "files", required = false) List<MultipartFile> files
       ) throws Exception {
     var response = PostDTO.getInstance(service.add(dto, files));
     return new ResponseEntity<>(response, HttpStatus.OK);
@@ -53,7 +53,7 @@ public class PostController {
   @PutMapping
   public ResponseEntity<PostDTO> updatePost(
       @RequestPart(value = "dto") UpdatePostDTO dto,
-      @RequestPart(value = "files") List<MultipartFile> files) {
+      @RequestPart(value = "files", required = false) List<MultipartFile> files) {
     dto.setFiles(files);
     var response = service.update(dto).map(PostDTO::getInstance).orElseThrow(NoSuchElementException::new);
     return new ResponseEntity<>(response, HttpStatus.OK);

@@ -96,6 +96,7 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
+  @Transactional
   public void delete(int id) {
     postFileService.deleteByPostId(id);
     repository.deleteById(id);
