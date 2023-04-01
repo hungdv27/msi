@@ -11,7 +11,6 @@ import com.example.msi.repository.PostRepository;
 import com.example.msi.service.*;
 import com.example.msi.shared.enums.Role;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,9 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -44,8 +41,7 @@ public class PostServiceImpl implements PostService {
     return userService.findByEmail(userName).map(User::getRole).map(val -> {
       if (val == Role.ADMIN) {
         return repository.findAll(pageable1);
-      } else
-        return repository.findAllByApplyTo(val, pageable1);
+      } else return repository.findAllByApplyTo(val, pageable1);
     }).orElseThrow(NoSuchElementException::new);
   }
 
@@ -77,6 +73,7 @@ public class PostServiceImpl implements PostService {
       post.update(dto);
       unattachedFiles(post.getId());
       try {
+
         attachFiles(post.getId(), dto.getFiles());
       } catch (IOException e) {
         throw new RuntimeException(e);

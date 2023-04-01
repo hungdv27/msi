@@ -4,7 +4,6 @@ import com.example.msi.models.post.CreatePostDTO;
 import com.example.msi.models.post.PostDTO;
 import com.example.msi.models.post.UpdatePostDTO;
 import com.example.msi.service.PostService;
-import com.example.msi.shared.enums.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,19 +46,15 @@ public class PostController {
       @RequestPart(value = "body") CreatePostDTO dto,
       @RequestPart(value = "files") List<MultipartFile> files
       ) throws Exception {
-//    var dto = new CreatePostDTO(title, applyTo, content);
     var response = PostDTO.getInstance(service.add(dto, files));
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
   @PutMapping
   public ResponseEntity<PostDTO> updatePost(
-      @RequestParam("id") int id,
-      @RequestParam("title") String title,
-      @RequestParam("applyTo") Role applyTo,
-      @RequestParam("content") String content,
-      @ModelAttribute("files") List<MultipartFile> files) {
-    var dto = new UpdatePostDTO(id, title, applyTo,content, files);
+      @RequestPart(value = "dto") UpdatePostDTO dto,
+      @RequestPart(value = "files") List<MultipartFile> files) {
+    dto.setFiles(files);
     var response = service.update(dto).map(PostDTO::getInstance).orElseThrow(NoSuchElementException::new);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }

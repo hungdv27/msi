@@ -8,7 +8,7 @@ import java.util.List;
 
 
 @Getter
-@AllArgsConstructor
+@Setter
 public class UpdatePostDTO {
   private int id;
   private String title;
