@@ -61,7 +61,7 @@ public class PostServiceImpl implements PostService {
     notification.setMessage("A new post has been created: " + post.getTitle());
     notification.setRecipients(recipients);
     notificationService.sendNotification(notification);
-    messagingTemplate.convertAndSendToUser("STUDENT", "/queue/notifications", notification);
+    messagingTemplate.convertAndSend("/topic/notifications", notification);
 
     return post;
   }
