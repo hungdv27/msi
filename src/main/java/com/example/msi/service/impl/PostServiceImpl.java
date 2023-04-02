@@ -71,7 +71,9 @@ public class PostServiceImpl implements PostService {
   public Optional<Post> update(@NonNull UpdatePostDTO dto) {
     return repository.findById(dto.getId()).map(post -> {
       post.update(dto);
-      unattachedFiles(post.getId());
+      if (dto.getFiles() != null) {
+        unattachedFiles(post.getId());
+      }
       try {
 
         attachFiles(post.getId(), dto.getFiles());
