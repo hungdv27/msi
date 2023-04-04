@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.msi.shared.Constant.SQL_CONTAINS_PATTERN;
 import static com.example.msi.shared.utils.PredicateUtils.build;
 import static com.example.msi.shared.utils.PredicateUtils.toPredicate;
 import static org.apache.logging.log4j.util.Strings.trimToNull;
@@ -21,8 +22,9 @@ public class SearchUserDTO implements BaseFilter<UserDTO> {
   private final String email;
   private final Role role;
   private final String fullName;
-  private final Integer page = 0;
-  private final Integer size = 0;
+  private final boolean enabled;
+  private Integer page = 0;
+  private Integer size = 0;
 
   public String email() {
     return StringUtils.upperCase(trimToNull(email));
@@ -62,12 +64,21 @@ public class SearchUserDTO implements BaseFilter<UserDTO> {
                     () -> value
                 )
             ),
-            Optional.ofNullable(fullName).map(
+            Optional.ofNullable(enabled).map(
                 value -> build(
                     cb::equal,
+                    attr -> root.get(attr).as(boolean.class),
+                    "enabled",
+                    () -> value
+                )
+            )
+            ,
+            Optional.ofNullable(fullName()).map(
+                value -> build(
+                    (expression, o) -> cb.like(cb.lower(expression), o),
                     attr -> root.get(attr).as(String.class),
                     "fullName",
-                    () -> value
+                    () -> SQL_CONTAINS_PATTERN.formatted(value.toLowerCase())
                 )
             )
         ),

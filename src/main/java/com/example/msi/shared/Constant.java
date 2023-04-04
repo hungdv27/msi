@@ -22,4 +22,5 @@ public class Constant {
   public static final String EMAIL_REGEX = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
   public static final String IMPORT_SUCCESS = "Success";
   public static final String STUDENT_CODE = "code";
+  public static final String SQL_CONTAINS_PATTERN = "%%%s%%";
 }
