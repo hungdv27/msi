@@ -9,7 +9,8 @@ public interface BaseFilter<T> {
   int page();
   int size();
   default Pageable getPageable() {
-    return PageRequest.of(page(), size());
+    var pageable = page() / size();
+    return PageRequest.of(pageable, size());
   }
   Specification<?> getSpecification();
 }
