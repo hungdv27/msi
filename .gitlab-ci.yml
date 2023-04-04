@@ -5,7 +5,7 @@ stages:
   - deploy
 
 build:
-  image: maven:3.10.1-jdk-11-slim
+  image: maven:3.10.1-openjdk-17-slim
   stage: build jar
   before_script:
     - source .${CI_COMMIT_REF_NAME}.env
