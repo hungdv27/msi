@@ -30,7 +30,5 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         .setMessageSizeLimit(128 * 1024);
   }
 
-
-
 }
 

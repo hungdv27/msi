@@ -18,6 +18,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
@@ -58,7 +59,9 @@ public class UserController {
       String jwt = tokenProvider.generateToken(userDetails);
       return ResponseEntity.ok(new Data(new LoginResponse("Bearer " + jwt, mapper.map(userDetails.getUser(), LoginUserDTO.class))));
     } catch (Exception e) {
-      throw new IllegalStateException("Sai thông tin đăng nhập");
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST,"Sai thông tin đăng nhập", e
+      );
     }
 
   }
