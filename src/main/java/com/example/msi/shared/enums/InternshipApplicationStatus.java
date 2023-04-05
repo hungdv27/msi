@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum InternshipApplicationStatus {
   NEW,
+  WAITING,
   ACCEPTED,
   CANCELED
 }
