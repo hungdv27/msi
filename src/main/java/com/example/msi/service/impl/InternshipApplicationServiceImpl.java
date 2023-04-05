@@ -47,8 +47,8 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
 
   @Override
   public List<InternshipApplication> findByUsername(@NonNull String username) throws MSIException {
-     var student = studentService.findByUsername(username).orElseThrow(NoSuchElementException::new);
-     return repository.findAllByStudentCode(student.getCode());
+    var student = studentService.findByUsername(username).orElseThrow(NoSuchElementException::new);
+    return repository.findAllByStudentCode(student.getCode());
   }
 
   @Override
@@ -59,10 +59,13 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   }
 
   @Override
+  @Transactional
   public Optional<InternshipApplication> update(@NonNull UpdateInternshipApplicationDTO dto) {
     return repository.findById(dto.getId()).map(entity -> {
       entity.update(dto);
-      unattachedFiles(entity.getId());
+      if (dto.getFiles() != null) {
+        unattachedFiles(entity.getId());
+      }
       try {
         attachFiles(entity.getId(), dto.getFiles());
       } catch (IOException e) {

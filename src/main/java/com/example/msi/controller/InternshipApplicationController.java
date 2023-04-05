@@ -39,7 +39,7 @@ public class InternshipApplicationController {
 
   @GetMapping("/search")
   public ResponseEntity<Page<InternshipApplicationDTO>> search(
-      SearchInternshipApplicationDTO searchDTO
+      @RequestBody SearchInternshipApplicationDTO searchDTO
   ) {
     var responseData = service.search(searchDTO)
         .map(InternshipApplicationDTO::getInstance);
@@ -48,21 +48,20 @@ public class InternshipApplicationController {
 
   @PostMapping
   public ResponseEntity<InternshipApplicationDTO> create(
-      @RequestParam("companyId") int companyId,
-      @RequestParam("note") String note,
-      @ModelAttribute("files") List<MultipartFile> files,
+      @RequestPart(value = "dto") CreateInternshipApplicationDTO dto,
+      @RequestPart(value = "files", required = false) List<MultipartFile> files,
       Principal principal) throws MSIException, IOException {
-    var dto = new CreateInternshipApplicationDTO(companyId, note, principal.getName(), files);
+    dto.setUsername(principal.getName());
+    dto.setFiles(files);
     var responseData = InternshipApplicationDTO.getInstance(service.create(dto));
     return new ResponseEntity<>(responseData, HttpStatus.OK);
   }
 
   @PutMapping
   public ResponseEntity<InternshipApplicationDTO> update(
-      @RequestParam("id") int id,
-      @RequestParam("companyId") int companyId,
-      @ModelAttribute("files") List<MultipartFile> files) {
-    var dto = new UpdateInternshipApplicationDTO(id, companyId, files);
+      @RequestPart(value = "dto") UpdateInternshipApplicationDTO dto,
+      @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+    dto.setFiles(files);
     var responseData = (service.update(dto))
         .map(InternshipApplicationDTO::getInstance)
         .orElseThrow(NoSuchElementException::new);

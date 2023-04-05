@@ -1,13 +1,13 @@
 package com.example.msi.models.internshipappication;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
+@Setter
 public class UpdateInternshipApplicationDTO {
   private int id;
   private Integer companyId;
