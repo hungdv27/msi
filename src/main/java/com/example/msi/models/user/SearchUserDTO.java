@@ -18,30 +18,30 @@ import static org.apache.logging.log4j.util.Strings.trimToNull;
 
 @Getter
 @RequiredArgsConstructor
-public class SearchUserDTO implements BaseFilter<UserDTO> {
+public class SearchUserDTO implements BaseFilter<User> {
   private final String email;
   private final Role role;
   private final String fullName;
-  private final boolean enabled;
-  private Integer page = 0;
-  private Integer size = 0;
+  private final Boolean enabled;
+  private final Integer page;
+  private final Integer size;
 
   public String email() {
     return StringUtils.upperCase(trimToNull(email));
   }
 
-  public String fullName(){
+  public String fullName() {
     return StringUtils.upperCase(trimToNull(fullName));
   }
 
   @Override
   public int size() {
-    return size < 1 ? 15 : size;
+    return (size == null ? 0 : size) < 1 ? 15 : size;
   }
 
   @Override
   public int page() {
-    return Math.max(page, 0);
+    return Math.max(page == null ? 0 : page, 0);
   }
 
   @Override
@@ -67,7 +67,7 @@ public class SearchUserDTO implements BaseFilter<UserDTO> {
             Optional.ofNullable(enabled).map(
                 value -> build(
                     cb::equal,
-                    attr -> root.get(attr).as(boolean.class),
+                    attr -> root.get(attr).as(Boolean.class),
                     "enabled",
                     () -> value
                 )

@@ -23,8 +23,8 @@ public class SearchInternshipApplicationDTO implements BaseFilter<InternshipAppl
   private final InternshipApplicationStatus status;
   private final Integer companyId;
   private final Integer semesterId;
-  private final Integer page = 0;
-  private final Integer size = 0;
+  private final Integer page;
+  private final Integer size;
 
   public String studentCode() {
     return StringUtils.upperCase(trimToNull(studentCode));
@@ -32,12 +32,12 @@ public class SearchInternshipApplicationDTO implements BaseFilter<InternshipAppl
 
   @Override
   public int size() {
-    return size < 1 ? 15 : size;
+    return (size == null ? 0 : size) < 1 ? 15 : size;
   }
 
   @Override
   public int page() {
-    return Math.max(page, 0);
+    return Math.max(page == null ? 0 : page, 0);
   }
 
 
