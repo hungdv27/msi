@@ -23,11 +23,15 @@ public class SearchInternshipApplicationDTO implements BaseFilter<InternshipAppl
   private final InternshipApplicationStatus status;
   private final Integer companyId;
   private final Integer semesterId;
+  private final String courseName;
   private final Integer page;
   private final Integer size;
 
   public String studentCode() {
     return StringUtils.upperCase(trimToNull(studentCode));
+  }
+  public String courseName() {
+    return trimToNull(courseName);
   }
 
   @Override
@@ -58,6 +62,14 @@ public class SearchInternshipApplicationDTO implements BaseFilter<InternshipAppl
                     cb::equal,
                     attr -> root.get(attr).as(InternshipApplicationStatus.class),
                     "status",
+                    () -> value
+                )
+            ),
+            Optional.ofNullable(courseName()).map(
+                value -> build(
+                    cb::equal,
+                    attr -> root.get(attr).as(String.class),
+                    "courseName",
                     () -> value
                 )
             ),

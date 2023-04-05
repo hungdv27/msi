@@ -17,7 +17,6 @@ public class StudentDetailDTO {
   private String majorCode;
   private Integer userId;
   private int status;
-  private int teacherId;
   private String grade;
   private String fullName;
   private String email;
@@ -29,7 +28,6 @@ public class StudentDetailDTO {
     this.majorCode = student.getMajorCode();
     this.userId = student.getUserId();
     this.status = student.getId();
-    this.teacherId = student.getId();
     this.grade = student.getGrade();
     this.fullName = user.getFullName();
     this.email = user.getEmail();

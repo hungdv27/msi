@@ -16,6 +16,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.lang.NonNull;
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -45,6 +46,30 @@ public class InternshipApplication {
 
   @Column(name = "note", length = 10000)
   private String note;
+
+  @Column(name = "course_name")
+  private String courseName;
+
+  @Column(name = "instructor")
+  private String instructor;
+
+  @Column(name = "instructor_contact")
+  private String instructorContact;
+
+  @Column(name = "description")
+  private String description;
+
+  @Column(name = "start_date")
+  private LocalDate startDate;
+
+  @Column(name = "end_date")
+  private LocalDate endDate;
+
+  @Column(name = "total_day_per_week")
+  private Integer totalDayPerWeek;
+
+  @Column(name = "total_hour_per_shift")
+  private LocalDate totalHourPerShift;
 
   @Column(name = "created_date", nullable = false, updatable = false)
   @CreatedDate
