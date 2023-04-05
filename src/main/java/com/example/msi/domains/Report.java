@@ -23,8 +23,8 @@ public class Report {
   @Column(name = "week_number", nullable = false)
   private int weekNumber;
 
-  @Column(name = "file_id")
-  private Integer fileId;
+  @Column(name = "process_id", nullable = false)
+  private int processId;
 
   @Column(name = "submitted", nullable = false)
   private boolean submitted;

@@ -25,8 +25,6 @@ public class InternshipProcess {
 
   @Column(name = "teacher_id")
   private int teacherId;
-  @Column(name = "report_id")
-  private int reportId;
 
   @Column(name = "created_date", nullable = false, updatable = false)
   @CreatedDate
