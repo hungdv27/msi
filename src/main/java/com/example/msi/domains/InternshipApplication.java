@@ -69,7 +69,7 @@ public class InternshipApplication {
   private Integer totalDayPerWeek;
 
   @Column(name = "total_hour_per_shift")
-  private LocalDate totalHourPerShift;
+  private Integer totalHourPerShift;
 
   @Column(name = "created_date", nullable = false, updatable = false)
   @CreatedDate
@@ -85,10 +85,26 @@ public class InternshipApplication {
     status = InternshipApplicationStatus.NEW;
     companyId = target.getCompanyId();
     note = target.getNote();
+    courseName = target.getCourseName();
+    instructor = target.getInstructor();
+    instructorContact = target.getInstructorContact();
+    description = target.getDescription();
+    startDate = target.getStartDate();
+    endDate = target.getEndDate();
+    totalDayPerWeek = target.getTotalDayPerWeek();
+    totalHourPerShift = target.getTotalHourPerShift();
   }
 
   public void update(@NonNull UpdateInternshipApplicationDTO target) {
     companyId = target.getCompanyId();
+    courseName = target.getCourseName();
+    instructor = target.getInstructor();
+    instructorContact = target.getInstructorContact();
+    description = target.getDescription();
+    startDate = target.getStartDate();
+    endDate = target.getEndDate();
+    totalDayPerWeek = target.getTotalDayPerWeek();
+    totalHourPerShift = target.getTotalHourPerShift();
   }
 
   public void update(@NonNull VerifyApplicationDTO target) {

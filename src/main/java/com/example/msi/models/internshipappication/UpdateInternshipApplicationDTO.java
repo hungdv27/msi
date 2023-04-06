@@ -20,5 +20,5 @@ public class UpdateInternshipApplicationDTO {
   private LocalDate startDate;
   private LocalDate endDate;
   private Integer totalDayPerWeek;
-  private LocalDate totalHourPerShift;
+  private Integer totalHourPerShift;
 }

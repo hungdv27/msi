@@ -66,6 +66,7 @@ public class PostServiceImpl implements PostService {
     for (String username : studentEmails) {
       messagingTemplate.convertAndSendToUser(username, "/notifications", notification);
     }
+
     return post;
   }
 
