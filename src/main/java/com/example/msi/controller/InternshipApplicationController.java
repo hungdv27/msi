@@ -39,7 +39,7 @@ public class InternshipApplicationController {
 
   @GetMapping("/search")
   public ResponseEntity<Page<InternshipApplicationDTO>> search(
-      @RequestBody SearchInternshipApplicationDTO searchDTO
+      SearchInternshipApplicationDTO searchDTO
   ) {
     var responseData = service.search(searchDTO)
         .map(InternshipApplicationDTO::getInstance);

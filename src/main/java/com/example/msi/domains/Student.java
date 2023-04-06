@@ -33,9 +33,6 @@ public class Student {
   @Column(name = "status", nullable = false)
   private int status;
 
-  @Column(name = "teacher_id", nullable = false)
-  private int teacherId;
-
   @Column(name = "grade", nullable = false, length = 10)
   private String grade;
 
@@ -58,7 +55,6 @@ public class Student {
     this.code = target.getCode();
     this.majorCode = target.getMajorCode();
     this.status = target.getStatus();
-    this.teacherId = target.getTeacherId();
     this.userId = userId;
     this.grade = target.getGrade();
   }

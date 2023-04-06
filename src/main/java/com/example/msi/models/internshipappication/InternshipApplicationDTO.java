@@ -12,6 +12,7 @@ import com.example.msi.shared.enums.InternshipApplicationStatus;
 import lombok.Getter;
 import org.springframework.lang.NonNull;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +29,14 @@ public class InternshipApplicationDTO {
   private String note;
   private LocalDateTime createdDate;
   private LocalDateTime updatedDate;
+  private String courseName;
+  private String instructor;
+  private String instructorContact;
+  private String description;
+  private LocalDate startDate;
+  private LocalDate endDate;
+  private Integer totalDayPerWeek;
+  private LocalDate totalHourPerShift;
 
   private InternshipApplicationDTO(@NonNull InternshipApplication entity) {
     id = entity.getId();
@@ -37,6 +46,14 @@ public class InternshipApplicationDTO {
     note = entity.getNote();
     createdDate = entity.getCreatedDate();
     updatedDate = entity.getUpdatedDate();
+    courseName = entity.getCourseName();
+    instructor = entity.getInstructor();
+    instructorContact = entity.getInstructorContact();
+    description = entity.getDescription();
+    startDate = entity.getStartDate();
+    endDate = entity.getEndDate();
+    totalDayPerWeek = entity.getTotalDayPerWeek();
+    totalHourPerShift = entity.getTotalHourPerShift();
     Optional.ofNullable(entity.getCompanyId()).ifPresent(
         value -> company = CompanyDTO.getInstance(SingletonHelper.COMPANY_SERVICE.getCompanyById(entity.getCompanyId()))
     );
