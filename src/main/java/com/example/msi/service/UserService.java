@@ -39,4 +39,6 @@ public interface UserService {
 
   List<User> findAllByRole(Role role);
 
+  List<String> findAllEmailByRole(Role role);
+
 }
