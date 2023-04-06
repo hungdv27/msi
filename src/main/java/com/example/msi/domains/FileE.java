@@ -37,4 +37,6 @@ public class FileE {
   @Column(name = "file_size", nullable = false)
   private Long size;
 
+  @Column(name = "file_key", nullable = false)
+  private String fileKey;
 }

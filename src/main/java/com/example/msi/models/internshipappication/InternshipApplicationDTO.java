@@ -1,9 +1,9 @@
 package com.example.msi.models.internshipappication;
 
-import com.example.msi.domains.FileE;
 import com.example.msi.domains.InternshipApplication;
 import com.example.msi.domains.InternshipApplicationFile;
 import com.example.msi.models.company.CompanyDTO;
+import com.example.msi.models.file.FileDTO;
 import com.example.msi.service.CompanyService;
 import com.example.msi.service.FileService;
 import com.example.msi.service.InternshipApplicationFileService;
@@ -23,7 +23,7 @@ public class InternshipApplicationDTO {
   private int id;
   private String studentCode;
   private InternshipApplicationStatus status;
-  private List<FileE> files;
+  private List<FileDTO> files;
   private CompanyDTO company;
   private int semesterId;
   private String note;
@@ -61,7 +61,7 @@ public class InternshipApplicationDTO {
         .stream()
         .map(InternshipApplicationFile::getFileId)
         .collect(Collectors.toList());
-    this.files = SingletonHelper.FILE_SERVICE.findByIds(fileIds);
+    this.files = SingletonHelper.FILE_SERVICE.findByIds(fileIds).stream().map(FileDTO::getInstance).collect(Collectors.toList());
   }
 
   public static InternshipApplicationDTO getInstance(@NonNull InternshipApplication entity) {

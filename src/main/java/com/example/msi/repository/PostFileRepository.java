@@ -12,4 +12,5 @@ public interface PostFileRepository extends JpaRepository<PostFile, Integer> {
   List<PostFile> findAllByPostId(@NonNull int postId);
 
   void deleteAllByPostId(int postId);
+  void deleteAllByFileIdIn(List<Integer> fileIds);
 }
