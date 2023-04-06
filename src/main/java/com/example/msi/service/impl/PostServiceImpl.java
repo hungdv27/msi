@@ -61,6 +61,11 @@ public class PostServiceImpl implements PostService {
     notification.setMessage("A new post has been created: " + post.getTitle());
     notification.setRecipients(recipients);
     notificationService.sendNotification(notification);
+
+    List<String> studentEmails = userService.findAllEmailByRole(Role.STUDENT);
+    for (String username : studentEmails) {
+      messagingTemplate.convertAndSendToUser(username, "/notifications", notification);
+    }
     return post;
   }
 

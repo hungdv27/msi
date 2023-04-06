@@ -167,6 +167,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   }
 
   @Override
+  public List<String> findAllEmailByRole(Role role) {
+    return repository.findAllEmailByRole(role);
+  }
+
+  @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
     User user = repository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
     return new CustomUserDetails(user);
