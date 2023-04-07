@@ -79,4 +79,5 @@ public class InternshipApplicationController {
     service.verify(dto);
     return new ResponseEntity<>(HttpStatus.OK);
   }
+
 }

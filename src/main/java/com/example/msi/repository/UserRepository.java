@@ -27,5 +27,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
   List<User> findAllByRole(Role role);
 
-  List<String> findAllEmailByRole(Role role);
+  @Query("SELECT u.email FROM User u WHERE u.role = :role")
+  List<String> findAllEmailByRole(@Param("role") Role role);
 }
