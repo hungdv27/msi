@@ -26,5 +26,11 @@ public interface InternshipApplicationService {
 
   void delete(int id);
 
-  void verify(@NonNull VerifyApplicationDTO dto);
+  void verify(@NonNull VerifyApplicationDTO dto) throws Exception;
+
+  Optional<InternshipApplication> regis(int id);
+
+  Optional<InternshipApplication> cancelRegis(int id);
+
+
 }

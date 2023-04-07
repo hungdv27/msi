@@ -75,8 +75,24 @@ public class InternshipApplicationController {
   }
 
   @PutMapping("/verify")
-  public ResponseEntity<Object> verify(@RequestBody @NonNull VerifyApplicationDTO dto) {
+  public ResponseEntity<Object> verify(@RequestBody @NonNull VerifyApplicationDTO dto) throws Exception {
     service.verify(dto);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PutMapping("/regisInternship/{id}")
+  public ResponseEntity<InternshipApplicationDTO> regis(@PathVariable int id) {
+    var responData = service.regis(id)
+        .map(InternshipApplicationDTO::getInstance)
+        .orElseThrow(NoSuchElementException::new);
+    return new ResponseEntity<>(responData, HttpStatus.OK);
+  }
+
+  @PutMapping("/unregistedInternship/{id}")
+  public ResponseEntity<InternshipApplicationDTO> cancelRegis(@PathVariable int id) {
+    var responData = service.cancelRegis(id)
+        .map(InternshipApplicationDTO::getInstance)
+        .orElseThrow(NoSuchElementException::new);
+    return new ResponseEntity<>(responData, HttpStatus.OK);
   }
 }

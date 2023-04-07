@@ -15,10 +15,13 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.lang.NonNull;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
+
+import static com.example.msi.shared.enums.InternshipApplicationStatus.WAITING;
 
 @Getter
 @Entity
@@ -107,10 +110,15 @@ public class InternshipApplication {
     totalHourPerShift = target.getTotalHourPerShift();
   }
 
-  public void update(@NonNull VerifyApplicationDTO target) {
-    if (target.isAccepted()) status = InternshipApplicationStatus.ACCEPTED;
-    else status = InternshipApplicationStatus.CANCELED;
+  public void verify(@NonNull VerifyApplicationDTO target) {
+    if (target.isAccepted() && status == WAITING) status = InternshipApplicationStatus.ACCEPTED;
+    else if (status == WAITING) status = InternshipApplicationStatus.CANCELED;
+    else throw new IllegalArgumentException("Sinh viên chưa gửi yêu cầu đăng ký thực tập.");
     Optional.ofNullable(Strings.trimToNull(target.getNote())).ifPresent(val -> note = val);
+  }
+
+  public void setStatus(@NonNull InternshipApplicationStatus status) {
+    this.status = status;
   }
 
   public static InternshipApplication getInstance(@NonNull CreateInternshipApplicationDTO dto) throws MSIException {

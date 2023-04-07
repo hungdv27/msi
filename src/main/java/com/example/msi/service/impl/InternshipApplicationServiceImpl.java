@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import static com.example.msi.shared.enums.InternshipApplicationStatus.NEW;
+import static com.example.msi.shared.enums.InternshipApplicationStatus.WAITING;
+
 @Service
 @RequiredArgsConstructor
 public class InternshipApplicationServiceImpl implements InternshipApplicationService {
@@ -84,7 +87,27 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   @Override
   @Transactional
   public void verify(@NonNull VerifyApplicationDTO dto) {
-    repository.findById(dto.getId()).ifPresent(entity -> entity.update(dto));
+    repository.findById(dto.getId()).ifPresent(entity -> entity.verify(dto));
+  }
+
+  @Override
+  @Transactional
+  public Optional<InternshipApplication> regis(int id) {
+    return repository.findById(id).map(ia -> {
+      if (ia.getStatus() == NEW)
+        ia.setStatus(WAITING);
+      return repository.save(ia);
+    });
+  }
+
+  @Override
+  @Transactional
+  public Optional<InternshipApplication> cancelRegis(int id) {
+    return repository.findById(id).map(ia -> {
+      if (ia.getStatus() == WAITING)
+        ia.setStatus(NEW);
+      return repository.save(ia);
+    });
   }
 
   private void attachFiles(int internshipApplicationFileId, List<MultipartFile> multipartFiles) throws IOException {
