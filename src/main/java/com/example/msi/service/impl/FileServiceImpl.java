@@ -130,11 +130,15 @@ public class FileServiceImpl implements FileService {
 
   @Override
   public void deleteByIds(List<Integer> ids) {
+    var files = repository.findAllByIdIn(ids);
     repository.deleteAllByIdIn(ids);
+    for(FileE file : files){
+      s3Client.deleteObject(bucketName, file.getFileKey());
+    }
   }
 
   @Override
-  public void deleteByUId(int id) {
+  public void deleteById(int id) {
     repository.deleteById(id);
   }
 

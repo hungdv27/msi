@@ -18,5 +18,5 @@ public interface FileService {
   List<FileE> findByIds(@NonNull List<Integer> ids);
 
   void deleteByIds(@NonNull List<Integer> ids);
-  void deleteByUId(int id);
+  void deleteById(int id);
 }

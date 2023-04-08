@@ -31,6 +31,4 @@ public interface InternshipApplicationService {
   Optional<InternshipApplication> regis(int id);
 
   Optional<InternshipApplication> cancelRegis(int id);
-
-
 }

@@ -92,8 +92,14 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   }
 
   @Override
+  @Transactional
   public void delete(int id) {
+    var fileIds = internshipApplicationFileService.findByInternshipApplicationId(id)
+        .stream()
+        .map(InternshipApplicationFile::getFileId)
+        .collect(Collectors.toList());
     internshipApplicationFileService.deleteByInternshipApplicationId(id);
+    fileService.deleteByIds(fileIds);
     repository.deleteById(id);
   }
 
