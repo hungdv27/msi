@@ -76,6 +76,7 @@ public class FileServiceImpl implements FileService {
       fileUrl = endpointUrl + "/" + fileName;
       uploadFileTos3bucket(fileName, file);
       entity.setFilename(fileName);
+      entity.setSize(multipartFile.getSize());
       file.delete();
     } catch (Exception e) {
       e.printStackTrace();
@@ -98,6 +99,7 @@ public class FileServiceImpl implements FileService {
         PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, file.getInputStream(), metadata);
         s3Client.putObject(putObjectRequest);
         newEntity.setFilename(key);
+        newEntity.setSize(file.getSize());
         entity.add(repository.save(newEntity));
       }
       return entity;
