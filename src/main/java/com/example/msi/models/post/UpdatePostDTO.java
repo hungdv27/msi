@@ -14,5 +14,6 @@ public class UpdatePostDTO {
   private String title;
   private Role applyTo;
   private String content;
-  private List<MultipartFile> files;
+  private List<String> existedFiles;
+  private List<MultipartFile> fileNews;
 }

@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface FileRepository extends JpaRepository<FileE, Integer> {
   List<FileE> findAllByIdIn(@NonNull List<Integer> ids);
+  void deleteAllByIdIn(List<Integer> ids);
 }

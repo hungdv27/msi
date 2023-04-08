@@ -16,4 +16,7 @@ public interface FileService {
   List<FileE> uploadFiles(List<MultipartFile> files) throws IOException;
 
   List<FileE> findByIds(@NonNull List<Integer> ids);
+
+  void deleteByIds(@NonNull List<Integer> ids);
+  void deleteByUId(int id);
 }

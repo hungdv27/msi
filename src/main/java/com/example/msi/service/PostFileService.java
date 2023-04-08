@@ -12,4 +12,5 @@ public interface PostFileService {
   void add(@NonNull CreatePostFileDTO dto);
 
   void deleteByPostId(int postId);
+  void deleteByFileIds(@NonNull List<Integer> fileIds);
 }

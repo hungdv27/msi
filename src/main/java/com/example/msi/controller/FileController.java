@@ -1,6 +1,6 @@
 package com.example.msi.controller;
 
-import com.example.msi.domains.FileE;
+import com.example.msi.models.file.FileDTO;
 import com.example.msi.service.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RequestMapping("api/file")
@@ -24,13 +25,12 @@ public class FileController {
   }
 
   @PostMapping("/uploadFiles")
-  public List<FileE> uploadFiles(@RequestParam("files") List<MultipartFile> files) throws IOException {
-    return service.uploadFiles(files);
+  public List<FileDTO> uploadFiles(@RequestParam("files") List<MultipartFile> files) throws IOException {
+    return service.uploadFiles(files).stream().map(FileDTO::getInstance).collect(Collectors.toList());
   }
 
   @GetMapping("/download")
-  public ResponseEntity<byte[]> downloadFile(@RequestParam String fileName) throws IOException {
-    return service.downloadFile(fileName);
+  public ResponseEntity<byte[]> downloadFile(@RequestParam String fileKey) throws IOException {
+    return service.downloadFile(fileKey);
   }
-
 }

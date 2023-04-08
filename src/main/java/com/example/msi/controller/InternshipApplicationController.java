@@ -30,11 +30,15 @@ public class InternshipApplicationController {
   }
 
   @GetMapping
-  public ResponseEntity<List<InternshipApplicationDTO>> findByUsername(Principal principal) throws MSIException {
-    var responseData = service.findByUsername(principal.getName()).stream()
-        .map(InternshipApplicationDTO::getInstance)
-        .collect(Collectors.toList());
-    return new ResponseEntity<>(responseData, HttpStatus.OK);
+  public ResponseEntity<Object> findByUsername(Principal principal) throws MSIException {
+    try {
+      var responseData = service.findByUsername(principal.getName()).stream()
+          .map(InternshipApplicationDTO::getInstance)
+          .collect(Collectors.toList());
+      return new ResponseEntity<>(responseData, HttpStatus.OK);
+    } catch (Exception e) {
+      throw new MSIException(e.getMessage(), "Không tìm thấy tên tài khoản/ Tài khoản chưa liên kết mã sinh viên");
+    }
   }
 
   @GetMapping("/search")
@@ -79,5 +83,4 @@ public class InternshipApplicationController {
     service.verify(dto);
     return new ResponseEntity<>(HttpStatus.OK);
   }
-
 }

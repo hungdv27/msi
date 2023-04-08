@@ -30,4 +30,9 @@ public class PostFileServiceImpl implements PostFileService {
   public void deleteByPostId(int postId) {
     repository.deleteAllByPostId(postId);
   }
+
+  @Override
+  public void deleteByFileIds(@NonNull List<Integer> fileIds) {
+    repository.deleteAllByFileIdIn(fileIds);
+  }
 }

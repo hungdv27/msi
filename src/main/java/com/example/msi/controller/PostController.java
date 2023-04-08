@@ -54,7 +54,7 @@ public class PostController {
   public ResponseEntity<PostDTO> updatePost(
       @RequestPart(value = "dto") UpdatePostDTO dto,
       @RequestPart(value = "files", required = false) List<MultipartFile> files) {
-    dto.setFiles(files);
+    dto.setFileNews(files);
     var response = service.update(dto).map(PostDTO::getInstance).orElseThrow(NoSuchElementException::new);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }

@@ -1,8 +1,8 @@
 package com.example.msi.models.post;
 
-import com.example.msi.domains.FileE;
 import com.example.msi.domains.Post;
 import com.example.msi.domains.PostFile;
+import com.example.msi.models.file.FileDTO;
 import com.example.msi.service.FileService;
 import com.example.msi.service.PostFileService;
 import com.example.msi.shared.ApplicationContextHolder;
@@ -20,7 +20,7 @@ public class PostDTO {
   private final String title;
   private final Role applyTo;
   private final String content;
-  private final List<FileE> files;
+  private final List<FileDTO> files;
   private final LocalDateTime createdDate;
   private final LocalDateTime updateDate;
 
@@ -35,7 +35,7 @@ public class PostDTO {
         .stream()
         .map(PostFile::getFileId)
         .collect(Collectors.toList());
-    this.files = SingletonHelper.FILE_SERVICE.findByIds(fileIds);
+    this.files = SingletonHelper.FILE_SERVICE.findByIds(fileIds).stream().map(FileDTO::getInstance).collect(Collectors.toList());
   }
 
   public static PostDTO getInstance(@NonNull Post entity) {

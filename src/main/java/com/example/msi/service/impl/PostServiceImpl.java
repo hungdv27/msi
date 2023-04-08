@@ -1,9 +1,6 @@
 package com.example.msi.service.impl;
 
-import com.example.msi.domains.FileE;
-import com.example.msi.domains.Notification;
-import com.example.msi.domains.Post;
-import com.example.msi.domains.User;
+import com.example.msi.domains.*;
 import com.example.msi.models.post.CreatePostDTO;
 import com.example.msi.models.post.UpdatePostDTO;
 import com.example.msi.models.postfile.CreatePostFileDTO;
@@ -23,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -75,12 +73,21 @@ public class PostServiceImpl implements PostService {
   public Optional<Post> update(@NonNull UpdatePostDTO dto) {
     return repository.findById(dto.getId()).map(post -> {
       post.update(dto);
-      if (dto.getFiles() != null) {
-        unattachedFiles(post.getId());
+      // unattached file
+      if (dto.getExistedFiles() != null) {
+        List<Integer> removeFileIds = new ArrayList<>();
+        var fileIds = postFileService.findByPostId(dto.getId())
+            .stream().map(PostFile::getFileId).collect(Collectors.toList());
+        var fileCurrents = fileService.findByIds(fileIds);
+        for (FileE file : fileCurrents){
+          if (!dto.getExistedFiles().contains(file.getFileKey())){
+            removeFileIds.add(file.getId());
+          }
+        }
+        unattachedFiles(removeFileIds);
       }
       try {
-
-        attachFiles(post.getId(), dto.getFiles());
+        attachFiles(post.getId(), dto.getFileNews());
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
@@ -97,14 +104,20 @@ public class PostServiceImpl implements PostService {
     }
   }
 
-  private void unattachedFiles(int postId) {
-    postFileService.deleteByPostId(postId);
+  private void unattachedFiles(@NonNull List<Integer> fileIds) {
+    postFileService.deleteByFileIds(fileIds);
+    fileService.deleteByIds(fileIds);
   }
 
   @Override
   @Transactional
   public void delete(int id) {
+    var fileIds = postFileService.findByPostId(id)
+        .stream()
+        .map(PostFile::getFileId)
+        .collect(Collectors.toList());
     postFileService.deleteByPostId(id);
+    fileService.deleteByIds(fileIds);
     repository.deleteById(id);
   }
 }
