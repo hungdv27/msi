@@ -110,10 +110,10 @@ public class InternshipApplication {
     totalHourPerShift = target.getTotalHourPerShift();
   }
 
-  public void verify(@NonNull VerifyApplicationDTO target) {
+  public void verify(@NonNull VerifyApplicationDTO target) throws MSIException {
     if (target.isAccepted() && status == WAITING) status = InternshipApplicationStatus.ACCEPTED;
     else if (status == WAITING) status = InternshipApplicationStatus.CANCELED;
-    else throw new IllegalArgumentException("Sinh viên chưa gửi yêu cầu đăng ký thực tập.");
+    else throw new MSIException("Verify Internship Application","Sinh viên chưa gửi yêu cầu đăng ký thực tập.");
     Optional.ofNullable(Strings.trimToNull(target.getNote())).ifPresent(val -> note = val);
   }
 

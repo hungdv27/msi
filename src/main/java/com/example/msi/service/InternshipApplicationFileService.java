@@ -12,4 +12,6 @@ public interface InternshipApplicationFileService {
   void add(@NonNull CreateInternshipApplicationFileDTO dto);
 
   void deleteByInternshipApplicationId(int internshipApplicationId);
+
+  void deleteByFileIds(@NonNull List<Integer> fileIds);
 }

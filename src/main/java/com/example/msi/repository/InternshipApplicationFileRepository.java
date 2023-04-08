@@ -12,4 +12,7 @@ public interface InternshipApplicationFileRepository extends JpaRepository<Inter
   List<InternshipApplicationFile> findAllByInternshipApplicationId(@NonNull int internshipApplicationFileId);
 
   void deleteAllByInternshipApplicationId(int internshipApplicationFileId);
+
+  void deleteAllByFileIdIn(List<Integer> fileIds);
+
 }

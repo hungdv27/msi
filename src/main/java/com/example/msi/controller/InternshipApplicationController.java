@@ -65,7 +65,7 @@ public class InternshipApplicationController {
   public ResponseEntity<InternshipApplicationDTO> update(
       @RequestPart(value = "dto") UpdateInternshipApplicationDTO dto,
       @RequestPart(value = "files", required = false) List<MultipartFile> files) {
-    dto.setFiles(files);
+    dto.setFileNews(files);
     var responseData = (service.update(dto))
         .map(InternshipApplicationDTO::getInstance)
         .orElseThrow(NoSuchElementException::new);

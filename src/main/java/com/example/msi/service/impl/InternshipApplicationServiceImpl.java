@@ -2,6 +2,7 @@ package com.example.msi.service.impl;
 
 import com.example.msi.domains.FileE;
 import com.example.msi.domains.InternshipApplication;
+import com.example.msi.domains.InternshipApplicationFile;
 import com.example.msi.models.internshipappication.CreateInternshipApplicationDTO;
 import com.example.msi.models.internshipappication.SearchInternshipApplicationDTO;
 import com.example.msi.models.internshipappication.UpdateInternshipApplicationDTO;
@@ -21,9 +22,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.example.msi.shared.enums.InternshipApplicationStatus.NEW;
 import static com.example.msi.shared.enums.InternshipApplicationStatus.WAITING;
@@ -67,11 +70,20 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   public Optional<InternshipApplication> update(@NonNull UpdateInternshipApplicationDTO dto) {
     return repository.findById(dto.getId()).map(entity -> {
       entity.update(dto);
-      if (dto.getFiles() != null) {
-        unattachedFiles(entity.getId());
+      if (dto.getExistedFiles() != null) {
+        List<Integer> removeFileIds = new ArrayList<>();
+        var fileIds = internshipApplicationFileService.findByInternshipApplicationId(dto.getId())
+            .stream().map(InternshipApplicationFile::getFileId).collect(Collectors.toList());
+        var fileCurrents = fileService.findByIds(fileIds);
+        for (FileE file : fileCurrents) {
+          if (!dto.getExistedFiles().contains(file.getFileKey())) {
+            removeFileIds.add(file.getId());
+          }
+        }
+        unattachedFiles(removeFileIds);
       }
       try {
-        attachFiles(entity.getId(), dto.getFiles());
+        attachFiles(entity.getId(), dto.getFileNews());
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
@@ -88,13 +100,26 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   @Override
   @Transactional
   public void verify(@NonNull VerifyApplicationDTO dto) {
-    repository.findById(dto.getId()).ifPresent(entity -> entity.verify(dto));
+    repository.findById(dto.getId()).ifPresent(entity -> {
+      try {
+        entity.verify(dto);
+      } catch (MSIException e) {
+        throw new RuntimeException(e);
+      }
+    });
   }
 
   @Override
   @Transactional
   public Optional<InternshipApplication> regis(int id) {
     return repository.findById(id).map(ia -> {
+      if (repository.existsByStudentCodeAndStatus(ia.getStudentCode(), WAITING)) {
+        try {
+          throw new MSIException("Regis Internship Appliacation", "Đã tồn tại yêu cầu duyệt đơn thực tập");
+        } catch (MSIException e) {
+          throw new RuntimeException(e);
+        }
+      }
       if (ia.getStatus() == NEW)
         ia.setStatus(WAITING);
       return repository.save(ia);
@@ -120,7 +145,8 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
     }
   }
 
-  private void unattachedFiles(int internshipApplicationId) {
-    internshipApplicationFileService.deleteByInternshipApplicationId(internshipApplicationId);
+  private void unattachedFiles(@NonNull List<Integer> fileIds) {
+    internshipApplicationFileService.deleteByFileIds(fileIds);
+    fileService.deleteByIds(fileIds);
   }
 }

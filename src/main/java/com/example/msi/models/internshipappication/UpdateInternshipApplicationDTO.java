@@ -12,7 +12,6 @@ import java.util.List;
 public class UpdateInternshipApplicationDTO {
   private int id;
   private Integer companyId;
-  private List<MultipartFile> files;
   private String courseName;
   private String instructor;
   private String instructorContact;
@@ -21,4 +20,6 @@ public class UpdateInternshipApplicationDTO {
   private LocalDate endDate;
   private Integer totalDayPerWeek;
   private Integer totalHourPerShift;
+  private List<String> existedFiles;
+  private List<MultipartFile> fileNews;
 }

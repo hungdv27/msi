@@ -1,6 +1,7 @@
 package com.example.msi.repository;
 
 import com.example.msi.domains.InternshipApplication;
+import com.example.msi.shared.enums.InternshipApplicationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -14,4 +15,6 @@ public interface InternshipApplicationRepository extends JpaRepository<Internshi
   Page<InternshipApplication> findAll(Specification<InternshipApplication> specification, Pageable pageable);
 
   List<InternshipApplication> findAllByStudentCode(String studentCode);
+
+  boolean existsByStudentCodeAndStatus(String studentCode, InternshipApplicationStatus status);
 }

@@ -29,4 +29,9 @@ public class InternshipApplicationFileServiceImpl implements InternshipApplicati
   public void deleteByInternshipApplicationId(int internshipApplicationId) {
     repository.deleteAllByInternshipApplicationId(internshipApplicationId);
   }
+
+  @Override
+  public void deleteByFileIds(@NonNull List<Integer> fileIds) {
+    repository.deleteAllByFileIdIn(fileIds);
+  }
 }
