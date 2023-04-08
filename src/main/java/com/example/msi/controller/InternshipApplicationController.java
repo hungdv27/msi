@@ -75,7 +75,7 @@ public class InternshipApplicationController {
   }
 
   @PutMapping("/verify")
-  public ResponseEntity<Object> verify(@RequestBody @NonNull VerifyApplicationDTO dto) throws Exception {
+  public ResponseEntity<Object> verify(@RequestBody @NonNull VerifyApplicationDTO dto) {
     service.verify(dto);
     return new ResponseEntity<>(HttpStatus.OK);
   }
@@ -95,4 +95,5 @@ public class InternshipApplicationController {
         .orElseThrow(NoSuchElementException::new);
     return new ResponseEntity<>(responData, HttpStatus.OK);
   }
+
 }

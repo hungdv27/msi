@@ -64,7 +64,7 @@ public class PostServiceImpl implements PostService {
 
     List<String> studentEmails = userService.findAllEmailByRole(Role.STUDENT);
     for (String username : studentEmails) {
-      messagingTemplate.convertAndSendToUser(username, "/notifications", notification);
+      messagingTemplate.convertAndSendToUser(username, "/topic/notifications", notification);
     }
 
     return post;

@@ -8,6 +8,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @Table(name = "user")
-public class User {
+public class User implements Principal {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
@@ -74,4 +75,11 @@ public class User {
 //  public boolean getEnabled() {
 //    return enabled;
 //  }
+  public User(String email) {
+    this.email = email;
+  }
+  @Override
+  public String getName() {
+  return email;
+  }
 }
