@@ -24,7 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
+import java.text.Normalizer;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Service
 @Slf4j
@@ -57,8 +59,8 @@ public class FileServiceImpl implements FileService {
     return convFile;
   }
 
-  private String generateFileName(MultipartFile multiPart) {
-    return new Date().getTime() + "-" + Objects.requireNonNull(multiPart.getOriginalFilename()).replace(" ", "_");
+  private String generateFileKey(MultipartFile multiPart) {
+    return new Date().getTime() + "_" + Objects.requireNonNull(deAccent(multiPart.getOriginalFilename())).replace(" ", "_");
   }
 
   private void uploadFileTos3bucket(String fileName, File file) {
@@ -72,10 +74,12 @@ public class FileServiceImpl implements FileService {
     String fileUrl = "";
     try {
       File file = convertMultiPartToFile(multipartFile);
-      String fileName = generateFileName(multipartFile);
-      fileUrl = endpointUrl + "/" + fileName;
-      uploadFileTos3bucket(fileName, file);
-      entity.setFilename(fileName);
+      String fileKey = generateFileKey(multipartFile);
+      fileUrl = endpointUrl + "/" + fileKey;
+      uploadFileTos3bucket(fileKey, file);
+      entity.setFileKey(fileKey);
+      entity.setFilename(multipartFile.getOriginalFilename());
+      entity.setSize(multipartFile.getSize());
       file.delete();
     } catch (Exception e) {
       e.printStackTrace();
@@ -91,13 +95,15 @@ public class FileServiceImpl implements FileService {
       List<FileE> entity = new ArrayList<>();
       for (MultipartFile file : files) {
         var newEntity = new FileE();
-        String key = generateFileName(file);
+        String key = generateFileKey(file);
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(file.getContentType());
         metadata.setContentLength(file.getSize());
         PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, file.getInputStream(), metadata);
         s3Client.putObject(putObjectRequest);
-        newEntity.setFilename(key);
+        newEntity.setFileKey(key);
+        newEntity.setFilename(file.getOriginalFilename());
+        newEntity.setSize(file.getSize());
         entity.add(repository.save(newEntity));
       }
       return entity;
@@ -105,12 +111,12 @@ public class FileServiceImpl implements FileService {
   }
 
   @Override
-  public ResponseEntity<byte[]> downloadFile(String fileName) throws IOException {
-    S3Object s3Object = s3Client.getObject(bucketName, fileName);
+  public ResponseEntity<byte[]> downloadFile(String fileKey) throws IOException {
+    S3Object s3Object = s3Client.getObject(bucketName, fileKey);
     byte[] content = s3Object.getObjectContent().readAllBytes();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-    headers.setContentDispositionFormData("attachment", fileName);
+    headers.setContentDispositionFormData("attachment", fileKey);
     headers.setContentLength(content.length);
     ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(content, headers, HttpStatus.OK);
     s3Object.close();
@@ -120,5 +126,21 @@ public class FileServiceImpl implements FileService {
   @Override
   public List<FileE> findByIds(@NonNull List<Integer> ids) {
     return repository.findAllByIdIn(ids);
+  }
+
+  @Override
+  public void deleteByIds(List<Integer> ids) {
+    repository.deleteAllByIdIn(ids);
+  }
+
+  @Override
+  public void deleteByUId(int id) {
+    repository.deleteById(id);
+  }
+
+  private String deAccent(String str) {
+    String nfdNormalizedString = Normalizer.normalize(str, Normalizer.Form.NFD);
+    Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+    return pattern.matcher(nfdNormalizedString).replaceAll("");
   }
 }

@@ -50,7 +50,8 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
 
   @Override
   public List<InternshipApplication> findByUsername(@NonNull String username) throws MSIException {
-    var student = studentService.findByUsername(username).orElseThrow(NoSuchElementException::new);
+    var student = studentService.findByUsername(username)
+        .orElseThrow(NoSuchElementException::new);
     return repository.findAllByStudentCode(student.getCode());
   }
 
