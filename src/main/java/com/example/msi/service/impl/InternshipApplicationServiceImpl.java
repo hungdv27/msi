@@ -13,6 +13,7 @@ import com.example.msi.service.FileService;
 import com.example.msi.service.InternshipApplicationFileService;
 import com.example.msi.service.InternshipApplicationService;
 import com.example.msi.service.StudentService;
+import com.example.msi.shared.enums.InternshipApplicationStatus;
 import com.example.msi.shared.exceptions.MSIException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -140,6 +141,11 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
         ia.setStatus(NEW);
       return repository.save(ia);
     });
+  }
+
+  @Override
+  public Optional<InternshipApplication> findByStudentCodeAndStatus(String studentCode, InternshipApplicationStatus status) {
+    return repository.findTopByStudentCodeAndStatus(studentCode, status);
   }
 
   private void attachFiles(int internshipApplicationFileId, List<MultipartFile> multipartFiles) throws IOException {
