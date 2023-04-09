@@ -1,9 +1,9 @@
-package com.example.msi.models.major;
+package com.example.msi.models.grade;
 
 import lombok.Data;
 
 @Data
-public class UpdateMajorDTO {
+public class UpdateGradeDTO {
   private int id;
 
   private String code;

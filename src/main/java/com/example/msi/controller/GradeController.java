@@ -3,24 +3,24 @@ package com.example.msi.controller;
 import com.example.msi.shared.exceptions.ExceptionUtils;
 import com.example.msi.shared.exceptions.MSIException;
 import com.example.msi.models.error.ErrorDTO;
-import com.example.msi.models.major.CreateMajorDTO;
-import com.example.msi.models.major.UpdateMajorDTO;
-import com.example.msi.service.MajorService;
+import com.example.msi.models.grade.CreateGradeDTO;
+import com.example.msi.models.grade.UpdateGradeDTO;
+import com.example.msi.service.GradeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
-@RequestMapping("api/major")
+@RequestMapping("api/grade")
 @RestController
-public class MajorController {
-  private final MajorService service;
+public class GradeController {
+  private final GradeService service;
 
   @GetMapping("")
-  public ResponseEntity<Object> getAllMajor() {
+  public ResponseEntity<Object> getAllGrade() {
     try {
-      return new ResponseEntity<>(service.getAllMajor(), HttpStatus.OK);
+      return new ResponseEntity<>(service.getAllGrade(), HttpStatus.OK);
     } catch (MSIException ex) {
       return new ResponseEntity<>(
           new ErrorDTO(ex.getMessageKey(), ex.getMessage()), HttpStatus.BAD_REQUEST);
@@ -32,9 +32,9 @@ public class MajorController {
   }
 
   @PostMapping("")
-  public ResponseEntity<Object> createMajor(@RequestBody CreateMajorDTO major) {
+  public ResponseEntity<Object> createGrade(@RequestBody CreateGradeDTO grade) {
     try {
-      service.addMajor(major);
+      service.addGrade(grade);
     } catch (MSIException ex) {
       return new ResponseEntity<>(
           new ErrorDTO(ex.getMessageKey(), ex.getMessage()), HttpStatus.BAD_REQUEST);
@@ -47,9 +47,9 @@ public class MajorController {
   }
 
   @PutMapping("")
-  public ResponseEntity<Object> updateMajor(@RequestBody UpdateMajorDTO payload) {
+  public ResponseEntity<Object> updateGrade(@RequestBody UpdateGradeDTO payload) {
     try {
-      service.updateMajor(payload);
+      service.updateGrade(payload);
     } catch (MSIException ex) {
       return new ResponseEntity<>(
           new ErrorDTO(ex.getMessageKey(), ex.getMessage()), HttpStatus.BAD_REQUEST);
@@ -62,9 +62,9 @@ public class MajorController {
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Object> deleteMajor(@PathVariable int id) {
+  public ResponseEntity<Object> deleteGrade(@PathVariable int id) {
     try {
-      service.deleteMajor(id);
+      service.deleteGrade(id);
     } catch (MSIException ex) {
       return new ResponseEntity<>(
           new ErrorDTO(ex.getMessageKey(), ex.getMessage()), HttpStatus.BAD_REQUEST);

@@ -1,9 +1,9 @@
-package com.example.msi.models.major;
+package com.example.msi.models.grade;
 
 import lombok.Data;
 
 @Data
-public class CreateMajorDTO {
+public class CreateGradeDTO {
   private String code;
 
   private String name;

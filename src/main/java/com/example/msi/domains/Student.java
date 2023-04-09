@@ -24,8 +24,8 @@ public class Student {
   @Column(name = "student_code", length = 50, unique = true)
   private String code;
 
-  @Column(name = "major_code", length = 10)
-  private String majorCode;
+  @Column(name = "grade_code", length = 10)
+  private String gradeCode;
 
   @Column(name = "user_id")
   private Integer userId;
@@ -33,8 +33,6 @@ public class Student {
   @Column(name = "status", nullable = false)
   private int status;
 
-  @Column(name = "grade", nullable = false, length = 10)
-  private String grade;
 
   @Column(name = "created_date", nullable = false, updatable = false)
   @CreatedDate
@@ -53,16 +51,14 @@ public class Student {
 
   private Student(@NonNull UpdateStudentDTO target, int userId) {
     this.code = target.getCode();
-    this.majorCode = target.getMajorCode();
+    this.gradeCode = target.getGradeCode();
     this.status = target.getStatus();
     this.userId = userId;
-    this.grade = target.getGrade();
   }
 
   public void update(@NonNull UpdateStudentDTO target) {
     this.code = target.getCode();
-    this.majorCode = target.getMajorCode();
-    this.grade = target.getGrade();
+    this.gradeCode = target.getGradeCode();
   }
 
   public static Student getInstance(@NonNull UpdateStudentDTO payload, int userId) {

@@ -5,7 +5,6 @@ import lombok.Data;
 @Data
 public class UpdateStudentDTO {
   private String code;
-  private String majorCode;
+  private String gradeCode;
   private int status;
-  private String grade;
 }

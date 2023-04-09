@@ -14,10 +14,9 @@ import java.time.LocalDate;
 public class StudentDetailDTO {
   private int id;
   private String code;
-  private String majorCode;
+  private String gradeCode;
   private Integer userId;
   private int status;
-  private String grade;
   private String fullName;
   private String email;
   private LocalDate dob;
@@ -25,10 +24,9 @@ public class StudentDetailDTO {
   public StudentDetailDTO(Student student, User user) {
     this.id = student.getId();
     this.code = student.getCode();
-    this.majorCode = student.getMajorCode();
+    this.gradeCode = student.getGradeCode();
     this.userId = student.getUserId();
     this.status = student.getId();
-    this.grade = student.getGrade();
     this.fullName = user.getFullName();
     this.email = user.getEmail();
     this.dob = user.getDob();
