@@ -5,6 +5,7 @@ import com.example.msi.models.internshipappication.CreateInternshipApplicationDT
 import com.example.msi.models.internshipappication.SearchInternshipApplicationDTO;
 import com.example.msi.models.internshipappication.UpdateInternshipApplicationDTO;
 import com.example.msi.models.internshipappication.VerifyApplicationDTO;
+import com.example.msi.shared.enums.InternshipApplicationStatus;
 import com.example.msi.shared.exceptions.MSIException;
 import org.springframework.data.domain.Page;
 import org.springframework.lang.NonNull;
@@ -31,4 +32,6 @@ public interface InternshipApplicationService {
   Optional<InternshipApplication> regis(int id);
 
   Optional<InternshipApplication> cancelRegis(int id);
+
+  Optional<InternshipApplication> findByStudentCodeAndStatus(String studentCode, InternshipApplicationStatus status);
 }

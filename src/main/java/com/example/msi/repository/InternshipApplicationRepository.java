@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface InternshipApplicationRepository extends JpaRepository<InternshipApplication, Integer> {
@@ -17,4 +18,6 @@ public interface InternshipApplicationRepository extends JpaRepository<Internshi
   List<InternshipApplication> findAllByStudentCode(String studentCode);
 
   boolean existsByStudentCodeAndStatus(String studentCode, InternshipApplicationStatus status);
+
+  Optional<InternshipApplication> findTopByStudentCodeAndStatus(String studentCode, InternshipApplicationStatus status);
 }

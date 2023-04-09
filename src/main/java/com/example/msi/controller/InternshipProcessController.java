@@ -1,0 +1,35 @@
+package com.example.msi.controller;
+
+import com.example.msi.models.error.ErrorDTO;
+import com.example.msi.models.internshipprocess.AssignTeacherDTO;
+import com.example.msi.service.InternshipProcessService;
+import com.example.msi.shared.exceptions.ExceptionUtils;
+import com.example.msi.shared.exceptions.MSIException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+
+@RestController
+@RequestMapping("api/internship-process")
+@RequiredArgsConstructor
+public class InternshipProcessController {
+  private final InternshipProcessService service;
+
+  @PutMapping("/assignTeacher")
+  public ResponseEntity<Object> assignTeacher(@RequestBody AssignTeacherDTO dto, Principal principal) {
+    try {
+      service.assignTeacher(dto, principal.getName());
+    } catch (MSIException ex) {
+      return new ResponseEntity<>(
+          new ErrorDTO(ex.getMessageKey(), ex.getMessage()), HttpStatus.BAD_REQUEST);
+    } catch (Exception ex) {
+      return new ResponseEntity<>(
+          ExceptionUtils.messages.get(ExceptionUtils.E_INTERNAL_SERVER),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<>(HttpStatus.ACCEPTED);
+  }
+}
