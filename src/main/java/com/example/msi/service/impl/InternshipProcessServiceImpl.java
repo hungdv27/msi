@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +35,11 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
       var entity = setTeacherId(dto, studentCode);
       repository.save(entity);
     }
+  }
+
+  @Override
+  public Optional<InternshipProcess> findByApplicationId(int applicationId) {
+    return repository.findTopByApplicationId(applicationId);
   }
 
   private void assignTeacherByAdmin(@NonNull AssignTeacherDTO dto) {

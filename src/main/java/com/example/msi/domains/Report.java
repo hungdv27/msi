@@ -1,10 +1,12 @@
 package com.example.msi.domains;
 
+import com.example.msi.models.report.CreateReportDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -20,8 +22,8 @@ public class Report {
   @Column(name = "id")
   private int id;
 
-  @Column(name = "week_number", nullable = false)
-  private int weekNumber;
+  @Column(name = "week_number")
+  private Integer weekNumber;
 
   @Column(name = "process_id", nullable = false)
   private int processId;
@@ -39,4 +41,14 @@ public class Report {
   @Column(name = "updated_date")
   @LastModifiedDate
   private LocalDateTime updatedDate;
+
+  private Report(@NonNull CreateReportDTO target, int processId) {
+    weekNumber = target.getWeekNumber();
+    submitted = false;
+    this.processId = processId;
+  }
+
+  public static Report getInstance(@NonNull CreateReportDTO dto, int processId) {
+    return new Report(dto, processId);
+  }
 }
