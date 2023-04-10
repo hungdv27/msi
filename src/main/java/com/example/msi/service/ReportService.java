@@ -9,4 +9,8 @@ import java.util.List;
 
 public interface ReportService {
   Report add(@NonNull CreateReportDTO dto, List<MultipartFile> multipartFiles, @NonNull String username) throws Exception;
+
+  Report findById(int id);
+
+  List<Report> findAllByProcessId(int processId);
 }

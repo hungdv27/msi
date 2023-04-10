@@ -6,14 +6,12 @@ import com.example.msi.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @RequestMapping("api/report")
@@ -28,6 +26,12 @@ public class ReportController {
       Principal principal
   ) throws Exception {
     var response = ReportDTO.getInstance(service.add(dto, files, principal.getName()));
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<ReportDTO> reportById(@PathVariable int id) throws NoSuchElementException {
+    var response = ReportDTO.getInstance(service.findById(id));
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 }

@@ -11,4 +11,6 @@ public interface InternshipProcessService {
   void assignTeacher(@NonNull AssignTeacherDTO dto, @NonNull String username) throws MSIException;
 
   Optional<InternshipProcess> findByApplicationId(int applicationId);
+
+  InternshipProcess findById(int id);
 }
