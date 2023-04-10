@@ -1,8 +1,10 @@
 package com.example.msi.domains;
 
+import com.example.msi.models.reportfile.CreateReportFileDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
 
@@ -22,4 +24,13 @@ public class ReportFile {
 
   @Column(name = "file_id", nullable = false)
   private int fileId;
+
+  private ReportFile(@NonNull CreateReportFileDTO target){
+    reportId = target.getReportId();
+    fileId = target.getFileId();
+  }
+
+  public static ReportFile getInstance(@NonNull CreateReportFileDTO dto){
+    return new ReportFile(dto);
+  }
 }
