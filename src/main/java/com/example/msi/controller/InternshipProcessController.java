@@ -2,12 +2,14 @@ package com.example.msi.controller;
 
 import com.example.msi.models.error.ErrorDTO;
 import com.example.msi.models.internshipprocess.AssignTeacherDTO;
+import com.example.msi.models.internshipprocess.InternshipProcessDTO;
 import com.example.msi.service.InternshipProcessService;
 import com.example.msi.shared.exceptions.ExceptionUtils;
 import com.example.msi.shared.exceptions.MSIException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -31,5 +33,11 @@ public class InternshipProcessController {
           HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<>(HttpStatus.ACCEPTED);
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<InternshipProcessDTO> findById(@PathVariable @NonNull int id) {
+    var responseData = InternshipProcessDTO.getInstance(service.findById(id));
+    return new ResponseEntity<>(responseData, HttpStatus.OK);
   }
 }

@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -40,6 +41,11 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
   @Override
   public Optional<InternshipProcess> findByApplicationId(int applicationId) {
     return repository.findTopByApplicationId(applicationId);
+  }
+
+  @Override
+  public InternshipProcess findById(int id) {
+    return repository.findById(id).orElseThrow(NoSuchElementException::new);
   }
 
   private void assignTeacherByAdmin(@NonNull AssignTeacherDTO dto) {

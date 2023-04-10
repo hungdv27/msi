@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +38,16 @@ public class ReportServiceImpl implements ReportService {
     attachFiles(report.getId(), multipartFiles);
 
     return report;
+  }
+
+  @Override
+  public Report findById(int id) {
+    return repository.findById(id).orElseThrow(NoSuchElementException::new);
+  }
+
+  @Override
+  public List<Report> findAllByProcessId(int processId) {
+    return repository.findAllByProcessId(processId);
   }
 
   private void attachFiles(int reportId, List<MultipartFile> multipartFiles) throws IOException {
