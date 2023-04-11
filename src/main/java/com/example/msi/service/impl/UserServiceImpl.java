@@ -23,10 +23,7 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -59,7 +56,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     StringBuilder url = new StringBuilder("159.65.4.245/login?verify=");
 
     Map<String, Object> props = new HashMap<>();
-    props.put("email", user.getEmail());
+    props.put("email", Arrays.stream(user.getEmail().split("@")).findFirst());
     props.put("url", url.append(user.getVerificationCode()).toString());
 
     mailService.sendMail(props, user.getEmail(), "sendMail", "Xác thực tài khoản");
