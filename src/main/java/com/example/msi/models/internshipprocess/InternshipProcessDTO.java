@@ -5,14 +5,14 @@ import com.example.msi.models.company.CompanyDTO;
 import com.example.msi.models.report.ReportDTO;
 import com.example.msi.service.*;
 import com.example.msi.shared.ApplicationContextHolder;
+import com.example.msi.shared.utils.Utils;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
@@ -25,7 +25,7 @@ public class InternshipProcessDTO {
   private String teacherName;
   private LocalDate startDate;
   private LocalDate endDate;
-  private Integer currentWeek;
+  private Long currentWeek;
 
   private InternshipProcessDTO(@NonNull InternshipProcess entity) {
     var appId = entity.getApplicationId();
@@ -48,6 +48,11 @@ public class InternshipProcessDTO {
     var reportDTOList = reportList.stream().map(ReportDTO::getInstance).collect(Collectors.toList());
     reports = new ArrayList<>();
     reports.addAll(reportDTOList);
+    // currentWeek
+    var checkCreatedDate = entity.getCreatedDate().toLocalDate();
+    var checkStartDate = internshipApplication.getStartDate();
+    var daysBetween = ChronoUnit.DAYS.between(checkStartDate, checkCreatedDate);
+    currentWeek = Utils.checkCurrentWeek(daysBetween);
   }
 
   public static InternshipProcessDTO getInstance(@NonNull InternshipProcess entity) {
@@ -63,11 +68,11 @@ public class InternshipProcessDTO {
 
     private static final ReportService REPORT_SERVICE =
         ApplicationContextHolder.getBean(ReportService.class);
-
-    private static final InternshipApplicationFileService INTERNSHIP_APPLICATION_FILE_SERVICE =
-        ApplicationContextHolder.getBean(InternshipApplicationFileService.class);
-
-    private static final FileService FILE_SERVICE =
-        ApplicationContextHolder.getBean(FileService.class);
   }
+
+//  public Map<String, Integer> dayAndNumberWeekMap(){
+//    Map<String, Integer> hashMap = new HashMap<>();
+//
+//    return hashMap;
+//  }
 }
