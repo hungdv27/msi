@@ -13,6 +13,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.NonNull;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,6 +54,7 @@ public class PostServiceImpl implements PostService {
   @Transactional
   public Post add(@NonNull CreatePostDTO dto, List<MultipartFile> multipartFiles) throws Exception {
     var post = repository.save(Post.getInstance(dto));
+    var role = post.getApplyTo();
     attachFiles(post.getId(), multipartFiles);
     List<User> recipients = userService.findAllByRole(Role.STUDENT);
     Notification notification = new Notification();
@@ -60,11 +63,11 @@ public class PostServiceImpl implements PostService {
     notification.setRecipients(recipients);
     notificationService.sendNotification(notification);
 
-    List<String> studentEmails = userService.findAllEmailByRole(Role.STUDENT);
-    for (String username : studentEmails) {
-      messagingTemplate.convertAndSendToUser(username, "/topic/notifications", notification);
-    }
-
+    List<User> users = userService.findAllByRole(role);
+    users.stream()
+        .map(User::getId)
+        .map(id -> "/queue/notification/" + id)
+        .forEach(queueName -> messagingTemplate.convertAndSend(queueName, notification.getMessage()));
     return post;
   }
 
