@@ -124,7 +124,7 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
         try {
           throw new MSIException("Regis Internship Appliacation", "Đã tồn tại yêu cầu duyệt đơn thực tập");
         } catch (MSIException e) {
-          throw new RuntimeException(e);
+          throw new RuntimeException("Đã tồn tại yêu cầu duyệt đơn thực tập");
         }
       }
       if (ia.getStatus() == NEW)
