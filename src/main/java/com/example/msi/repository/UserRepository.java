@@ -29,4 +29,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
   @Query("SELECT u.email FROM User u WHERE u.role = :role")
   List<String> findAllEmailByRole(@Param("role") Role role);
+
+  boolean existsByEmail(String email);
 }

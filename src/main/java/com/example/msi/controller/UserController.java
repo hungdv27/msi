@@ -1,23 +1,32 @@
 package com.example.msi.controller;
 
 import com.example.msi.domains.User;
+import com.example.msi.models.error.ErrorDTO;
 import com.example.msi.models.user.*;
 import com.example.msi.repository.UserRepository;
 import com.example.msi.response.Data;
+import com.example.msi.response.ImportError;
+import com.example.msi.response.ImportSuccess;
 import com.example.msi.response.LoginResponse;
 import com.example.msi.security.CustomUserDetails;
 import com.example.msi.security.jwt.JwtTokenProvider;
 import com.example.msi.service.impl.UserServiceImpl;
+import com.example.msi.shared.Constant;
+import com.example.msi.shared.exceptions.ExceptionUtils;
+import com.example.msi.shared.exceptions.MSIException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.mail.MessagingException;
@@ -30,6 +39,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("api/user")
 @RequiredArgsConstructor
+@Slf4j
 public class UserController {
   private final UserServiceImpl service;
   private final UserRepository repository;
@@ -71,6 +81,11 @@ public class UserController {
     return ResponseEntity.ok(service.register(user, request.getRequestURL()));
   }
 
+  @PostMapping("/register_teacher")
+  public ResponseEntity<Data> registerTeacherAccount(@Valid @RequestBody CreateUserDTO user, HttpServletRequest request) throws MessagingException, IllegalAccessException {
+    return ResponseEntity.ok(service.registerTeacherAccount(user, request.getRequestURL()));
+  }
+
   @GetMapping("/register/verify")
   public ResponseEntity<Data> verifyUser(@RequestParam("code") String code) throws IllegalAccessException {
     return ResponseEntity.ok(service.verify(code));
@@ -110,6 +125,40 @@ public class UserController {
   public ResponseEntity<Data> changeEnable(@PathVariable Integer userId) {
     var responseData = service.changeEnable(userId).map(UserDTO::getInstance);
     return ResponseEntity.ok(new Data(responseData));
+  }
+
+  @GetMapping(value = "/template/download", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Object> templateDownload(HttpServletRequest request) {
+    try {
+      var bytes = service.templateDownload(request);
+      return new ResponseEntity<>(bytes, HttpStatus.OK);
+    } catch (Exception ex) {
+      log.error(ex.getMessage());
+      return new ResponseEntity<>(
+          ExceptionUtils.messages.get(ExceptionUtils.E_INTERNAL_SERVER),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @PostMapping(value = "/import-file", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Object> importFile(
+      @RequestBody MultipartFile file, HttpServletRequest request) {
+    try {
+      var message = service.importFile(file, request);
+      if (message.equals(Constant.IMPORT_SUCCESS)) {
+        return new ResponseEntity<>(new ImportSuccess(message), HttpStatus.OK);
+      }
+      return new ResponseEntity<>(new ImportError(message), HttpStatus.OK);
+    } catch (MSIException ex) {
+      log.error(ex.getMessage());
+      return new ResponseEntity<>(
+          new ErrorDTO(ex.getMessageKey(), ex.getMessage()), HttpStatus.BAD_REQUEST);
+    } catch (Exception ex) {
+      log.error(ex.getMessage());
+      return new ResponseEntity<>(
+          ExceptionUtils.messages.get(ExceptionUtils.E_INTERNAL_SERVER),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
 }

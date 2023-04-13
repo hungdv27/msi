@@ -7,17 +7,22 @@ import com.example.msi.models.user.UpdateUserDTO;
 import com.example.msi.models.user.UpdatePasswordUserDTO;
 import com.example.msi.response.Data;
 import com.example.msi.shared.enums.Role;
+import com.example.msi.shared.exceptions.MSIException;
 import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
   Data register(CreateUserDTO userRegister, StringBuffer siteURL) throws IllegalAccessException, MessagingException;
+
+  Data registerTeacherAccount(CreateUserDTO userRegister, StringBuffer siteURL) throws IllegalAccessException, MessagingException;
 
   Data verify(String verificationCode) throws IllegalAccessException;
 
@@ -39,6 +44,8 @@ public interface UserService {
 
   List<User> findAllByRole(Role role);
 
-  List<String> findAllEmailByRole(Role role);
+  byte[] templateDownload(HttpServletRequest request) throws IOException;
+
+  String importFile(MultipartFile file, HttpServletRequest request) throws IOException, MSIException;
 
 }

@@ -1,5 +1,7 @@
 package com.example.msi.domains;
 
+import com.example.msi.models.company.IncomeCompanyCreateDTO;
+import com.example.msi.models.user.IncomeUserCreateDTO;
 import com.example.msi.shared.enums.Role;
 import com.example.msi.models.user.CreateUserDTO;
 import lombok.*;
@@ -11,6 +13,7 @@ import javax.persistence.*;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Random;
 
 @Getter
 @Setter
@@ -68,18 +71,37 @@ public class User implements Principal {
     this.dob = target.getDob();
   }
 
+  public User(@NonNull IncomeUserCreateDTO target) {
+    this.fullName = target.getName();
+    this.email = target.getEmail();
+    this.phoneNumber = target.getPhoneNumber();
+    this.dob = target.getDob();
+    this.password = generateRandomString(6);
+  }
+
   public static User getInstance(@NonNull CreateUserDTO payload) {
     return new User(payload);
   }
 
-//  public boolean getEnabled() {
-//    return enabled;
-//  }
   public User(String email) {
     this.email = email;
   }
+
   @Override
   public String getName() {
   return email;
+  }
+
+  private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  public static String generateRandomString(int length) {
+    Random random = new Random();
+    StringBuilder sb = new StringBuilder(length);
+
+    for (int i = 0; i < length; i++) {
+      sb.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
+    }
+
+    return sb.toString();
   }
 }
