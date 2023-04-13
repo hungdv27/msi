@@ -4,9 +4,9 @@ import com.example.msi.domains.Student;
 import com.example.msi.models.student.StudentDetailDTO;
 import com.example.msi.models.student.UpdateStudentDTO;
 import com.example.msi.shared.exceptions.MSIException;
-import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.NonNull;
 
 import java.util.Optional;
 
@@ -17,4 +17,6 @@ public interface StudentService {
   Optional<Student> findByUsername(String userName) throws MSIException;
 
   Page<StudentDetailDTO> search(String studentCode, String phone, String fullName, Pageable pageable) throws MSIException;
+
+  Optional<Student> findByCode(@NonNull String code);
 }

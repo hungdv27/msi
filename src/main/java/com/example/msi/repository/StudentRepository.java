@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface StudentRepository extends PagingAndSortingRepository<Student, Integer>, JpaSpecificationExecutor<Student> {
   Optional<Student> findTopByUserId(int userId);
-  
+  Optional<Student> findTopByCode(String code);
 }

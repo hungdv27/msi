@@ -8,11 +8,11 @@ import com.example.msi.service.StudentService;
 import com.example.msi.service.UserService;
 import com.example.msi.shared.Constant;
 import com.example.msi.shared.utils.Utils;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
@@ -81,11 +81,14 @@ public class StudentServiceImpl implements StudentService {
     var content = page.getContent();
     List<StudentDetailDTO> list = new ArrayList<>();
     for (Student s : content) {
-      var userId = s.getUserId();
-      var user = userService.findById(userId).orElseThrow();
-      var studentDetail = new StudentDetailDTO(s, user);
+      var studentDetail = new StudentDetailDTO(s);
       list.add(studentDetail);
     }
     return new PageImpl<>(list, page.getPageable(), page.getTotalElements());
+  }
+
+  @Override
+  public Optional<Student> findByCode(@NonNull String code) {
+    return repository.findTopByCode(code);
   }
 }

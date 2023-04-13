@@ -4,9 +4,11 @@ import com.example.msi.domains.InternshipApplication;
 import com.example.msi.domains.InternshipApplicationFile;
 import com.example.msi.models.company.CompanyDTO;
 import com.example.msi.models.file.FileDTO;
+import com.example.msi.models.student.StudentDetailDTO;
 import com.example.msi.service.CompanyService;
 import com.example.msi.service.FileService;
 import com.example.msi.service.InternshipApplicationFileService;
+import com.example.msi.service.StudentService;
 import com.example.msi.shared.ApplicationContextHolder;
 import com.example.msi.shared.enums.InternshipApplicationStatus;
 import lombok.Getter;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 @Getter
 public class InternshipApplicationDTO {
   private int id;
-  private String studentCode;
+  private StudentDetailDTO student;
   private InternshipApplicationStatus status;
   private List<FileDTO> files;
   private CompanyDTO company;
@@ -40,7 +42,8 @@ public class InternshipApplicationDTO {
 
   private InternshipApplicationDTO(@NonNull InternshipApplication entity) {
     id = entity.getId();
-    studentCode = entity.getStudentCode();
+    var stu = SingletonHelper.STUDENT_SERVICE.findByCode(entity.getStudentCode()).orElseThrow();
+    student = new StudentDetailDTO(stu);
     status = entity.getStatus();
     semesterId = entity.getSemesterId();
     note = entity.getNote();
@@ -74,6 +77,9 @@ public class InternshipApplicationDTO {
 
     private static final InternshipApplicationFileService INTERNSHIP_APPLICATION_FILE_SERVICE =
         ApplicationContextHolder.getBean(InternshipApplicationFileService.class);
+
+    private static final StudentService STUDENT_SERVICE =
+        ApplicationContextHolder.getBean(StudentService.class);
 
     private static final FileService FILE_SERVICE =
         ApplicationContextHolder.getBean(FileService.class);
