@@ -24,8 +24,8 @@ public class InternshipApplicationController {
   private final InternshipApplicationService service;
 
   @GetMapping("/{id}")
-  public ResponseEntity<InternshipApplicationDTO> findById(@PathVariable @NonNull int id) {
-    var responseData = InternshipApplicationDTO.getInstance(service.findById(id));
+  public ResponseEntity<Object> findById(@PathVariable @NonNull int id) {
+    var responseData = InternshipApplicationDetailDTO.getInstance(service.findById(id));
     return new ResponseEntity<>(responseData, HttpStatus.OK);
   }
 
@@ -51,23 +51,23 @@ public class InternshipApplicationController {
   }
 
   @PostMapping
-  public ResponseEntity<InternshipApplicationDTO> create(
+  public ResponseEntity<InternshipApplicationDetailDTO> create(
       @RequestPart(value = "dto") CreateInternshipApplicationDTO dto,
       @RequestPart(value = "files", required = false) List<MultipartFile> files,
       Principal principal) throws MSIException, IOException {
     dto.setUsername(principal.getName());
     dto.setFiles(files);
-    var responseData = InternshipApplicationDTO.getInstance(service.create(dto));
+    var responseData = InternshipApplicationDetailDTO.getInstance(service.create(dto));
     return new ResponseEntity<>(responseData, HttpStatus.OK);
   }
 
   @PutMapping
-  public ResponseEntity<InternshipApplicationDTO> update(
+  public ResponseEntity<InternshipApplicationDetailDTO> update(
       @RequestPart(value = "dto") UpdateInternshipApplicationDTO dto,
       @RequestPart(value = "files", required = false) List<MultipartFile> files) {
     dto.setFileNews(files);
     var responseData = (service.update(dto))
-        .map(InternshipApplicationDTO::getInstance)
+        .map(InternshipApplicationDetailDTO::getInstance)
         .orElseThrow(NoSuchElementException::new);
     return new ResponseEntity<>(responseData, HttpStatus.OK);
   }
@@ -85,17 +85,17 @@ public class InternshipApplicationController {
   }
 
   @PutMapping("/regisInternship/{id}")
-  public ResponseEntity<InternshipApplicationDTO> regis(@PathVariable int id) {
+  public ResponseEntity<InternshipApplicationDetailDTO> regis(@PathVariable int id) {
     var responData = service.regis(id)
-        .map(InternshipApplicationDTO::getInstance)
+        .map(InternshipApplicationDetailDTO::getInstance)
         .orElseThrow(NoSuchElementException::new);
     return new ResponseEntity<>(responData, HttpStatus.OK);
   }
 
   @PutMapping("/unregistedInternship/{id}")
-  public ResponseEntity<InternshipApplicationDTO> cancelRegis(@PathVariable int id) {
+  public ResponseEntity<InternshipApplicationDetailDTO> cancelRegis(@PathVariable int id) {
     var responData = service.cancelRegis(id)
-        .map(InternshipApplicationDTO::getInstance)
+        .map(InternshipApplicationDetailDTO::getInstance)
         .orElseThrow(NoSuchElementException::new);
     return new ResponseEntity<>(responData, HttpStatus.OK);
   }
