@@ -107,13 +107,8 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   @Override
   @Transactional
   public void verify(@NonNull VerifyApplicationDTO dto) {
-    repository.findById(dto.getId()).ifPresent(entity -> {
-      try {
-        entity.verify(dto);
-      } catch (MSIException e) {
-        throw new RuntimeException(e);
-      }
-    });
+    repository.findById(dto.getId())
+        .ifPresent(entity -> entity.verify(dto));
   }
 
   @Override
@@ -121,11 +116,7 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   public Optional<InternshipApplication> regis(int id) {
     return repository.findById(id).map(ia -> {
       if (repository.existsByStudentCodeAndStatus(ia.getStudentCode(), WAITING)) {
-        try {
-          throw new MSIException("Regis Internship Appliacation", "Đã tồn tại yêu cầu duyệt đơn thực tập");
-        } catch (MSIException e) {
-          throw new RuntimeException("Đã tồn tại yêu cầu duyệt đơn thực tập");
-        }
+        throw new RuntimeException("Đã tồn tại yêu cầu duyệt đơn thực tập");
       }
       if (ia.getStatus() == NEW)
         ia.setStatus(WAITING);
