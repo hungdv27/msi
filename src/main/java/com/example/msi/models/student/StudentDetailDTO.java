@@ -21,17 +21,20 @@ public class StudentDetailDTO {
   private String fullName;
   private String email;
   private LocalDate dob;
+  private String phoneNumber;
 
   public StudentDetailDTO(Student student) {
-    this.id = student.getId();
-    this.code = student.getCode();
-    this.gradeCode = student.getGradeCode();
-    this.userId = student.getUserId();
-    this.status = student.getId();
+    id = student.getId();
+    code = student.getCode();
+    gradeCode = student.getGradeCode();
+    userId = student.getUserId();
+    status = student.getId();
     var user = SingletonHelper.USER_SERVICE.findById(student.getUserId()).orElseThrow();
-    this.fullName = user.getFullName();
-    this.email = user.getEmail();
-    this.dob = user.getDob();
+    fullName = user.getFullName();
+    email = user.getEmail();
+    dob = user.getDob();
+    phoneNumber = user.getPhoneNumber();
+
   }
   private static class SingletonHelper {
     private static final UserService USER_SERVICE =
