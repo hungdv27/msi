@@ -5,13 +5,11 @@ import com.example.msi.models.company.CompanyDTO;
 import com.example.msi.models.report.ReportDTO;
 import com.example.msi.service.*;
 import com.example.msi.shared.ApplicationContextHolder;
-import com.example.msi.shared.utils.Utils;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -48,11 +46,10 @@ public class InternshipProcessDTO {
     var reportDTOList = reportList.stream().map(ReportDTO::getInstance).collect(Collectors.toList());
     reports = new ArrayList<>();
     reports.addAll(reportDTOList);
+    // teacherName
+    teacherName = SingletonHelper.TEACHER_SERVICE.findById(entity.getTeacherId()).orElseThrow().getName();
     // currentWeek
-    var checkCreatedDate = entity.getCreatedDate().toLocalDate();
-    var checkStartDate = internshipApplication.getStartDate();
-    var daysBetween = ChronoUnit.DAYS.between(checkStartDate, checkCreatedDate);
-    currentWeek = Utils.checkCurrentWeek(daysBetween);
+    currentWeek = SingletonHelper.INTERNSHIP_PROCESS_SERVICE.currentWeekProcess(internshipApplication);
   }
 
   public static InternshipProcessDTO getInstance(@NonNull InternshipProcess entity) {
@@ -62,17 +59,13 @@ public class InternshipProcessDTO {
   private static class SingletonHelper {
     private static final InternshipApplicationService INTERNSHIP_APPLICATION_SERVICE =
         ApplicationContextHolder.getBean(InternshipApplicationService.class);
-
+    private static final InternshipProcessService INTERNSHIP_PROCESS_SERVICE =
+        ApplicationContextHolder.getBean(InternshipProcessService.class);
     private static final CompanyService COMPANY_SERVICE =
         ApplicationContextHolder.getBean(CompanyService.class);
-
     private static final ReportService REPORT_SERVICE =
         ApplicationContextHolder.getBean(ReportService.class);
+    private static final TeacherService TEACHER_SERVICE =
+        ApplicationContextHolder.getBean(TeacherService.class);
   }
-
-//  public Map<String, Integer> dayAndNumberWeekMap(){
-//    Map<String, Integer> hashMap = new HashMap<>();
-//
-//    return hashMap;
-//  }
 }

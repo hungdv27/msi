@@ -1,15 +1,11 @@
 package com.example.msi.models.report;
 
-import com.example.msi.domains.Post;
-import com.example.msi.domains.PostFile;
 import com.example.msi.domains.Report;
 import com.example.msi.domains.ReportFile;
 import com.example.msi.models.file.FileDTO;
-import com.example.msi.models.post.PostDTO;
-import com.example.msi.service.FileService;
-import com.example.msi.service.PostFileService;
-import com.example.msi.service.ReportFileService;
+import com.example.msi.service.*;
 import com.example.msi.shared.ApplicationContextHolder;
+import com.example.msi.shared.utils.Utils;
 import lombok.Getter;
 import org.springframework.lang.NonNull;
 
@@ -27,6 +23,7 @@ public class ReportDTO {
   private final List<FileDTO> files;
   private final LocalDateTime createdDate;
   private final LocalDateTime updateDate;
+  private final boolean onTime;
 
   private ReportDTO(@NonNull Report target) {
     this.id = target.getId();
@@ -41,6 +38,12 @@ public class ReportDTO {
         .map(ReportFile::getFileId)
         .collect(Collectors.toList());
     this.files = ReportDTO.SingletonHelper.FILE_SERVICE.findByIds(fileIds).stream().map(FileDTO::getInstance).collect(Collectors.toList());
+    // onTime
+    var applicationId = SingletonHelper.INTERNSHIP_PROCESS_SERVICE.findById(target.getProcessId()).getApplicationId();
+    var internshipApplication = SingletonHelper.INTERNSHIP_APPLICATION_SERVICE.findById(applicationId);
+    var checkStartDate = internshipApplication.getStartDate();
+    var currentWeekReport = Utils.checkCurrentWeek(checkStartDate, target.getCreatedDate().toLocalDate());
+    this.onTime = currentWeekReport == target.getWeekNumber();
   }
 
   public static ReportDTO getInstance(@NonNull Report entity) {
@@ -50,8 +53,11 @@ public class ReportDTO {
   private static class SingletonHelper {
     private static final ReportFileService REPORT_FILE_SERVICE =
         ApplicationContextHolder.getBean(ReportFileService.class);
-
     private static final FileService FILE_SERVICE =
         ApplicationContextHolder.getBean(FileService.class);
+    private static final InternshipProcessService INTERNSHIP_PROCESS_SERVICE =
+        ApplicationContextHolder.getBean(InternshipProcessService.class);
+    private static final InternshipApplicationService INTERNSHIP_APPLICATION_SERVICE =
+        ApplicationContextHolder.getBean(InternshipApplicationService.class);
   }
 }

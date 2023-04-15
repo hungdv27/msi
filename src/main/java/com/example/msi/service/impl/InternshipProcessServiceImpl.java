@@ -1,5 +1,6 @@
 package com.example.msi.service.impl;
 
+import com.example.msi.domains.InternshipApplication;
 import com.example.msi.domains.InternshipProcess;
 import com.example.msi.models.internshipprocess.AssignTeacherDTO;
 import com.example.msi.repository.InternshipProcessRepository;
@@ -10,10 +11,12 @@ import com.example.msi.service.UserService;
 import com.example.msi.shared.enums.InternshipApplicationStatus;
 import com.example.msi.shared.enums.Role;
 import com.example.msi.shared.exceptions.MSIException;
+import com.example.msi.shared.utils.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -46,6 +49,13 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
   @Override
   public InternshipProcess findById(int id) {
     return repository.findById(id).orElseThrow(NoSuchElementException::new);
+  }
+
+  @Override
+  public long currentWeekProcess(InternshipApplication internshipApplication) {
+    var checkCreatedDate = LocalDate.now();
+    var checkStartDate = internshipApplication.getStartDate();
+    return Utils.checkCurrentWeek(checkStartDate, checkCreatedDate);
   }
 
   private void assignTeacherByAdmin(@NonNull AssignTeacherDTO dto) {
