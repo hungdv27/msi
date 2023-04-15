@@ -52,4 +52,9 @@ public class TeacherServiceImpl implements TeacherService {
   public Teacher save(@NonNull Teacher teacher) {
     return repository.save(teacher);
   }
+
+  @Override
+  public Optional<Teacher> findById(int id) {
+    return repository.findById(id);
+  }
 }

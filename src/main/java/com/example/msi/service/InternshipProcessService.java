@@ -1,5 +1,6 @@
 package com.example.msi.service;
 
+import com.example.msi.domains.InternshipApplication;
 import com.example.msi.domains.InternshipProcess;
 import com.example.msi.models.internshipprocess.AssignTeacherDTO;
 import com.example.msi.shared.exceptions.MSIException;
@@ -13,4 +14,6 @@ public interface InternshipProcessService {
   Optional<InternshipProcess> findByApplicationId(int applicationId);
 
   InternshipProcess findById(int id);
+
+  long currentWeekProcess(InternshipApplication internshipApplication);
 }

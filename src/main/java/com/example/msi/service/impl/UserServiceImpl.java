@@ -106,6 +106,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                       user.getId(),
                       null,
                       null,
+                      null,
                       false,
                       null
                   )
