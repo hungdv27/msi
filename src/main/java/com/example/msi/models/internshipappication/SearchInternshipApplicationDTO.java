@@ -6,6 +6,9 @@ import com.example.msi.shared.enums.InternshipApplicationStatus;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
 
@@ -30,6 +33,7 @@ public class SearchInternshipApplicationDTO implements BaseFilter<InternshipAppl
   public String studentCode() {
     return StringUtils.upperCase(trimToNull(studentCode));
   }
+
   public String courseName() {
     return trimToNull(courseName);
   }
@@ -44,6 +48,10 @@ public class SearchInternshipApplicationDTO implements BaseFilter<InternshipAppl
     return Math.max(page == null ? 0 : page, 0);
   }
 
+  @Override
+  public Pageable getPageable() {
+    return PageRequest.of(page(), size(), Sort.by("createdDate").descending());
+  }
 
   @Override
   public Specification<InternshipApplication> getSpecification() {

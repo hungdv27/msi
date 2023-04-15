@@ -34,7 +34,6 @@ public class StudentDetailDTO {
     email = user.getEmail();
     dob = user.getDob();
     phoneNumber = user.getPhoneNumber();
-
   }
   private static class SingletonHelper {
     private static final UserService USER_SERVICE =
