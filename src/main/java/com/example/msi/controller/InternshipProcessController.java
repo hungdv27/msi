@@ -3,10 +3,12 @@ package com.example.msi.controller;
 import com.example.msi.models.error.ErrorDTO;
 import com.example.msi.models.internshipprocess.AssignTeacherDTO;
 import com.example.msi.models.internshipprocess.InternshipProcessDTO;
+import com.example.msi.models.internshipprocess.SearchInternshipProcessDTO;
 import com.example.msi.service.InternshipProcessService;
 import com.example.msi.shared.exceptions.ExceptionUtils;
 import com.example.msi.shared.exceptions.MSIException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -38,6 +40,15 @@ public class InternshipProcessController {
   @GetMapping("/{id}")
   public ResponseEntity<InternshipProcessDTO> findById(@PathVariable @NonNull int id) {
     var responseData = InternshipProcessDTO.getInstance(service.findById(id));
+    return new ResponseEntity<>(responseData, HttpStatus.OK);
+  }
+
+  @GetMapping("/search")
+  public ResponseEntity<Page<InternshipProcessDTO>> search(
+      SearchInternshipProcessDTO searchDTO
+  ) {
+    var responseData = service.search(searchDTO)
+        .map(InternshipProcessDTO::getInstance);
     return new ResponseEntity<>(responseData, HttpStatus.OK);
   }
 }

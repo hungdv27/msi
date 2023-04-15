@@ -3,6 +3,7 @@ package com.example.msi.service.impl;
 import com.example.msi.domains.InternshipApplication;
 import com.example.msi.domains.InternshipProcess;
 import com.example.msi.models.internshipprocess.AssignTeacherDTO;
+import com.example.msi.models.internshipprocess.SearchInternshipProcessDTO;
 import com.example.msi.repository.InternshipProcessRepository;
 import com.example.msi.service.InternshipApplicationService;
 import com.example.msi.service.InternshipProcessService;
@@ -13,6 +14,7 @@ import com.example.msi.shared.enums.Role;
 import com.example.msi.shared.exceptions.MSIException;
 import com.example.msi.shared.utils.Utils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
@@ -56,6 +58,13 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
     var checkCreatedDate = LocalDate.now();
     var checkStartDate = internshipApplication.getStartDate();
     return Utils.checkCurrentWeek(checkStartDate, checkCreatedDate);
+  }
+
+  @Override
+  public Page<InternshipProcess> search(@NonNull SearchInternshipProcessDTO filter) {
+    var spec = filter.getSpecification();
+    var pageable = filter.getPageable();
+    return repository.findAll(spec, pageable);
   }
 
   private void assignTeacherByAdmin(@NonNull AssignTeacherDTO dto) {
