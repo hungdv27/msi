@@ -47,7 +47,9 @@ public class InternshipProcessDTO {
     reports = new ArrayList<>();
     reports.addAll(reportDTOList);
     // teacherName
-    teacherName = SingletonHelper.TEACHER_SERVICE.findById(entity.getTeacherId()).orElseThrow().getName();
+    if (entity.getTeacherId() != null) {
+      teacherName = SingletonHelper.TEACHER_SERVICE.findById(entity.getTeacherId()).orElseThrow().getName();
+    }
     // currentWeek
     currentWeek = SingletonHelper.INTERNSHIP_PROCESS_SERVICE.currentWeekProcess(internshipApplication);
   }
