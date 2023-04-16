@@ -1,6 +1,7 @@
 package com.example.msi.service.impl;
 
 import com.example.msi.domains.Semester;
+import com.example.msi.service.UserService;
 import com.example.msi.shared.exceptions.ExceptionUtils;
 import com.example.msi.shared.exceptions.MSIException;
 import com.example.msi.models.semester.CreateSemesterDTO;
@@ -11,14 +12,18 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import static com.example.msi.shared.enums.Role.ADMIN;
 
 @Service
 @RequiredArgsConstructor
 public class SemesterServiceImpl implements SemesterService {
   private final SemesterRepository repository;
+  private final UserService userService;
 
   @Override
   public List<Semester> getAllSemester() {
@@ -53,7 +58,10 @@ public class SemesterServiceImpl implements SemesterService {
   }
 
   @Override
-  public void deleteSemester(int id) {
+  public void deleteSemester(int id) throws MSIException {
+    if (id != 0) {
+      throw new MSIException("Internship Application Errors.", "Học kỳ tồn tại liên kết đơn đăng ký thực tập của sinh viên.");
+    }
     repository.deleteById(id);
   }
 
@@ -82,6 +90,22 @@ public class SemesterServiceImpl implements SemesterService {
   @Override
   public Optional<Semester> findSemesterActive() {
     return repository.findTopByStatusIs(true);
+  }
+
+  @Override
+  @Transactional
+  public void acceptInternshipRegistration(int semesterId, boolean acceptStatus, @NonNull String username) {
+    if (userService.getRole(username) != ADMIN)
+      throw new RuntimeException("Chức năng yêu cầu quyền admin.");
+    repository.findAllByAcceptInternshipRegistration(true)
+        .forEach(entity -> entity.setAcceptInternshipRegistration(false));
+    var semester = repository.findById(semesterId).orElseThrow();
+    semester.setAcceptInternshipRegistration(acceptStatus);
+  }
+
+  @Override
+  public Optional<Semester> findById(int id) {
+    return repository.findById(id);
   }
 
   private boolean validateDate(String startDate, String endDate) {

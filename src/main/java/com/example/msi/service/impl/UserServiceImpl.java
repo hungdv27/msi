@@ -16,7 +16,6 @@ import com.example.msi.service.UserService;
 import com.example.msi.shared.exceptions.ExceptionUtils;
 import com.example.msi.shared.exceptions.MSIException;
 import com.example.msi.shared.utils.ExcelUtils;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.bytebuddy.utility.RandomString;
 import org.apache.commons.lang3.BooleanUtils;
@@ -28,6 +27,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -317,13 +317,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         .map(User::new)
         .collect(Collectors.toList());
 
-    Optional.ofNullable(dataInt).orElseGet(Collections::emptyList).forEach(
+    Optional.of(dataInt).orElseGet(Collections::emptyList).forEach(
         user -> {
           try {
             registerTeacherAccount(CreateUserDTO.getInstance(user), request.getRequestURL());
-          } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-          } catch (MessagingException e) {
+          } catch (IllegalAccessException | MessagingException e) {
             throw new RuntimeException(e);
           }
         }
@@ -334,6 +332,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     } else {
       return message.substring(0, message.length() - 2);
     }
+  }
+
+  @Override
+  public Role getRole(@NonNull String username) {
+    return repository.findByEmail(username).orElseThrow().getRole();
   }
 
   private String getDataFromFileImport(Sheet sheet, List<IncomeUserCreateDTO> allData) {

@@ -8,9 +8,8 @@ import com.example.msi.models.user.UpdatePasswordUserDTO;
 import com.example.msi.response.Data;
 import com.example.msi.shared.enums.Role;
 import com.example.msi.shared.exceptions.MSIException;
-import lombok.NonNull;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.lang.NonNull;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
@@ -47,5 +46,7 @@ public interface UserService {
   byte[] templateDownload(HttpServletRequest request) throws IOException;
 
   String importFile(MultipartFile file, HttpServletRequest request) throws IOException, MSIException;
+
+  Role getRole(@NonNull String username);
 
 }

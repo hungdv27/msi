@@ -46,11 +46,15 @@ public class Semester {
   @LastModifiedDate
   private LocalDateTime updatedDate;
 
+  @Column(name = "accept_internship_registration", nullable = false)
+  private boolean acceptInternshipRegistration;
+
   private Semester(@NonNull CreateSemesterDTO target) {
     this.semesterName = target.getSemesterName();
     this.startDate = LocalDate.parse(target.getStartDate());
     this.endDate = LocalDate.parse(target.getEndDate());
     this.status = false;
+    acceptInternshipRegistration = false;
   }
 
   public void update(@NonNull UpdateSemesterDTO target) {

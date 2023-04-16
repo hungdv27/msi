@@ -21,4 +21,8 @@ public interface SemesterService {
   void changeStatus(int id) throws MSIException;
 
   Optional<Semester> findSemesterActive();
+
+  void acceptInternshipRegistration(int semesterId, boolean acceptStatus, @NonNull String username);
+
+  Optional<Semester> findById(int id);
 }

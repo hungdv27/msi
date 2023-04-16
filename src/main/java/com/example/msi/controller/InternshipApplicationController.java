@@ -2,6 +2,7 @@ package com.example.msi.controller;
 
 import com.example.msi.models.internshipappication.*;
 import com.example.msi.service.InternshipApplicationService;
+import com.example.msi.service.SemesterService;
 import com.example.msi.service.StudentService;
 import com.example.msi.shared.exceptions.MSIException;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,16 @@ import java.util.stream.Collectors;
 public class InternshipApplicationController {
   private final InternshipApplicationService service;
   private final StudentService studentService;
+  private final SemesterService semesterService;
+
+  @PutMapping("/accept-registration")
+  public ResponseEntity<Object> acceptRegistration(
+      @RequestParam int semesterId,
+      @RequestParam boolean acceptStatus,
+      Principal principal) {
+    semesterService.acceptInternshipRegistration(semesterId, acceptStatus, principal.getName());
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 
   @GetMapping("/{id}")
   public ResponseEntity<Object> findById(@PathVariable @NonNull int id) {

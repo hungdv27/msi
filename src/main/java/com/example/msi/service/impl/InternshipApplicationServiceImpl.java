@@ -10,10 +10,7 @@ import com.example.msi.models.internshipappication.VerifyApplicationDTO;
 import com.example.msi.models.internshipapplication_file.CreateInternshipApplicationFileDTO;
 import com.example.msi.models.internshipprocess.CreateInternshipProcessDTO;
 import com.example.msi.repository.InternshipApplicationRepository;
-import com.example.msi.service.FileService;
-import com.example.msi.service.InternshipApplicationFileService;
-import com.example.msi.service.InternshipApplicationService;
-import com.example.msi.service.InternshipProcessService;
+import com.example.msi.service.*;
 import com.example.msi.shared.enums.InternshipApplicationStatus;
 import com.example.msi.shared.exceptions.MSIException;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +37,7 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   private final FileService fileService;
   private final InternshipApplicationFileService internshipApplicationFileService;
   private final InternshipProcessService internshipProcessService;
+  private final SemesterService semesterService;
 
   @Override
   public Page<InternshipApplication> search(@NonNull SearchInternshipApplicationDTO filter) {
@@ -61,6 +59,9 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   @Override
   @Transactional
   public InternshipApplication create(@NonNull CreateInternshipApplicationDTO dto) throws MSIException, IOException {
+    var semesterActive = semesterService.findSemesterActive().orElseThrow();
+    if (!semesterActive.isAcceptInternshipRegistration())
+      throw new RuntimeException("Chức năng đăng ký thực tập chưa được mở.");
     var entity = repository.save(InternshipApplication.getInstance(dto));
     attachFiles(entity.getId(), dto.getFiles());
     return entity;
@@ -116,6 +117,9 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   @Override
   @Transactional
   public Optional<InternshipApplication> regis(int id) {
+    var semesterActive = semesterService.findSemesterActive().orElseThrow();
+    if (!semesterActive.isAcceptInternshipRegistration())
+      throw new RuntimeException("Chức năng đăng ký thực tập chưa được mở.");
     return repository.findById(id).map(ia -> {
       if (repository.existsByStudentCodeAndStatus(ia.getStudentCode(), WAITING)) {
         throw new RuntimeException("Đã tồn tại yêu cầu duyệt đơn thực tập");
@@ -139,6 +143,11 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   @Override
   public Optional<InternshipApplication> findByStudentCodeAndStatus(String studentCode, InternshipApplicationStatus status) {
     return repository.findTopByStudentCodeAndStatus(studentCode, status);
+  }
+
+  @Override
+  public boolean existsBySemesterId(int semesterId) {
+    return repository.existsBySemesterId(semesterId);
   }
 
   private void attachFiles(int internshipApplicationFileId, List<MultipartFile> multipartFiles) throws IOException {

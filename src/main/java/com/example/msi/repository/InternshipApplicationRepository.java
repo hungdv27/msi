@@ -20,4 +20,6 @@ public interface InternshipApplicationRepository extends JpaRepository<Internshi
   boolean existsByStudentCodeAndStatus(String studentCode, InternshipApplicationStatus status);
 
   Optional<InternshipApplication> findTopByStudentCodeAndStatus(String studentCode, InternshipApplicationStatus status);
+
+  boolean existsBySemesterId(int semesterId);
 }
