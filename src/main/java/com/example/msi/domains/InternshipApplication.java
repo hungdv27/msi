@@ -50,8 +50,8 @@ public class InternshipApplication {
   @Column(name = "note", length = 10000)
   private String note;
 
-  @Column(name = "course_name")
-  private String courseName;
+  @Column(name = "course_code", length = 10)
+  private String courseCode;
 
   @Column(name = "instructor")
   private String instructor;
@@ -88,7 +88,7 @@ public class InternshipApplication {
     status = InternshipApplicationStatus.NEW;
     companyId = target.getCompanyId();
     note = target.getNote();
-    courseName = target.getCourseName();
+    courseCode = target.getCourseCode();
     instructor = target.getInstructor();
     instructorContact = target.getInstructorContact();
     description = target.getDescription();
@@ -100,7 +100,7 @@ public class InternshipApplication {
 
   public void update(@NonNull UpdateInternshipApplicationDTO target) {
     companyId = target.getCompanyId();
-    courseName = target.getCourseName();
+    courseCode = target.getCourseCode();
     instructor = target.getInstructor();
     instructorContact = target.getInstructorContact();
     description = target.getDescription();
