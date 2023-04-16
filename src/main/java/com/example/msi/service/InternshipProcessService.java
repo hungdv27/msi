@@ -3,6 +3,7 @@ package com.example.msi.service;
 import com.example.msi.domains.InternshipApplication;
 import com.example.msi.domains.InternshipProcess;
 import com.example.msi.models.internshipprocess.AssignTeacherDTO;
+import com.example.msi.models.internshipprocess.CreateInternshipProcessDTO;
 import com.example.msi.models.internshipprocess.SearchInternshipProcessDTO;
 import com.example.msi.shared.exceptions.MSIException;
 import org.springframework.data.domain.Page;
@@ -16,9 +17,10 @@ public interface InternshipProcessService {
   Optional<InternshipProcess> findByApplicationId(int applicationId);
 
   InternshipProcess findById(int id);
-  InternshipProcess findByMe(String username) throws MSIException;
 
   long currentWeekProcess(InternshipApplication internshipApplication);
 
   Page<InternshipProcess> search(@NonNull SearchInternshipProcessDTO filter);
+
+  InternshipProcess create(@NonNull CreateInternshipProcessDTO dto);
 }

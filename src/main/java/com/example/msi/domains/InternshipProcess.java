@@ -1,5 +1,6 @@
 package com.example.msi.domains;
 
+import com.example.msi.models.internshipprocess.CreateInternshipProcessDTO;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,7 @@ import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -44,4 +46,12 @@ public class InternshipProcess {
   @Setter(AccessLevel.NONE)
   @Getter(AccessLevel.NONE)
   private InternshipApplication internshipApplication;
+
+  private InternshipProcess(@NonNull CreateInternshipProcessDTO target) {
+    applicationId = target.getInternshipApplicationId();
+  }
+
+  public static InternshipProcess getInstance(@NonNull CreateInternshipProcessDTO dto) {
+    return new InternshipProcess(dto);
+  }
 }

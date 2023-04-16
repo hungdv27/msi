@@ -2,6 +2,7 @@ package com.example.msi.controller;
 
 import com.example.msi.models.internshipappication.*;
 import com.example.msi.service.InternshipApplicationService;
+import com.example.msi.service.StudentService;
 import com.example.msi.shared.exceptions.MSIException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class InternshipApplicationController {
   private final InternshipApplicationService service;
+  private final StudentService studentService;
 
   @GetMapping("/{id}")
   public ResponseEntity<Object> findById(@PathVariable @NonNull int id) {
@@ -32,7 +34,7 @@ public class InternshipApplicationController {
   @GetMapping
   public ResponseEntity<Object> findByUsername(Principal principal) throws MSIException {
     try {
-      var responseData = service.findByUsername(principal.getName()).stream()
+      var responseData = studentService.getAllInternshipApplication(principal.getName()).stream()
           .map(InternshipApplicationDTO::getInstance)
           .collect(Collectors.toList());
       return new ResponseEntity<>(responseData, HttpStatus.OK);

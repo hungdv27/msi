@@ -1,12 +1,17 @@
 package com.example.msi.service.impl;
 
+import com.example.msi.domains.InternshipApplication;
+import com.example.msi.domains.InternshipProcess;
 import com.example.msi.domains.Student;
 import com.example.msi.models.student.StudentDetailDTO;
 import com.example.msi.models.student.UpdateStudentDTO;
 import com.example.msi.repository.StudentRepository;
+import com.example.msi.service.InternshipApplicationService;
+import com.example.msi.service.InternshipProcessService;
 import com.example.msi.service.StudentService;
 import com.example.msi.service.UserService;
 import com.example.msi.shared.Constant;
+import com.example.msi.shared.enums.InternshipApplicationStatus;
 import com.example.msi.shared.utils.Utils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +23,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
@@ -27,6 +33,8 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 public class StudentServiceImpl implements StudentService {
   private final StudentRepository repository;
   private final UserService userService;
+  private final InternshipApplicationService internshipApplicationService;
+  private final InternshipProcessService internshipProcessService;
 
   @Override
   public void updateStudent(@NonNull UpdateStudentDTO payload, String userName) {
@@ -90,5 +98,20 @@ public class StudentServiceImpl implements StudentService {
   @Override
   public Optional<Student> findByCode(@NonNull String code) {
     return repository.findTopByCode(code);
+  }
+
+  @Override
+  public InternshipProcess getInternshipProcess(@NonNull String username) {
+    var studentCode = repository.findTopByCode(username).orElseThrow(NoSuchElementException::new).getCode();
+    var applicationId = internshipApplicationService
+        .findByStudentCodeAndStatus(studentCode, InternshipApplicationStatus.ACCEPTED)
+        .orElseThrow(NoSuchElementException::new).getId();
+    return internshipProcessService.findByApplicationId(applicationId).orElseThrow(NoSuchElementException::new);
+  }
+
+  @Override
+  public List<InternshipApplication> getAllInternshipApplication(@NonNull String username) {
+    var studentCode = repository.findTopByCode(username).orElseThrow(NoSuchElementException::new).getCode();
+    return internshipApplicationService.findByStudentCCode(studentCode);
   }
 }

@@ -19,9 +19,9 @@ public interface InternshipApplicationService {
 
   InternshipApplication findById(int id);
 
-  List<InternshipApplication> findByUsername(@NonNull String username) throws MSIException;
+  List<InternshipApplication> findByStudentCCode(@NonNull String studentCode);
 
-  InternshipApplication create(@NonNull CreateInternshipApplicationDTO dtoe) throws MSIException, IOException;
+  InternshipApplication create(@NonNull CreateInternshipApplicationDTO dto) throws MSIException, IOException;
 
   Optional<InternshipApplication> update(@NonNull UpdateInternshipApplicationDTO dto);
 

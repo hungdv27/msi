@@ -8,11 +8,12 @@ import com.example.msi.models.internshipappication.SearchInternshipApplicationDT
 import com.example.msi.models.internshipappication.UpdateInternshipApplicationDTO;
 import com.example.msi.models.internshipappication.VerifyApplicationDTO;
 import com.example.msi.models.internshipapplication_file.CreateInternshipApplicationFileDTO;
+import com.example.msi.models.internshipprocess.CreateInternshipProcessDTO;
 import com.example.msi.repository.InternshipApplicationRepository;
 import com.example.msi.service.FileService;
 import com.example.msi.service.InternshipApplicationFileService;
 import com.example.msi.service.InternshipApplicationService;
-import com.example.msi.service.StudentService;
+import com.example.msi.service.InternshipProcessService;
 import com.example.msi.shared.enums.InternshipApplicationStatus;
 import com.example.msi.shared.exceptions.MSIException;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   private final InternshipApplicationRepository repository;
   private final FileService fileService;
   private final InternshipApplicationFileService internshipApplicationFileService;
-  private final StudentService studentService;
+  private final InternshipProcessService internshipProcessService;
 
   @Override
   public Page<InternshipApplication> search(@NonNull SearchInternshipApplicationDTO filter) {
@@ -53,13 +54,12 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   }
 
   @Override
-  public List<InternshipApplication> findByUsername(@NonNull String username) throws MSIException {
-    var student = studentService.findByUsername(username)
-        .orElseThrow(NoSuchElementException::new);
-    return repository.findAllByStudentCode(student.getCode());
+  public List<InternshipApplication> findByStudentCCode(@NonNull String studentCode) {
+    return repository.findAllByStudentCode(studentCode);
   }
 
   @Override
+  @Transactional
   public InternshipApplication create(@NonNull CreateInternshipApplicationDTO dto) throws MSIException, IOException {
     var entity = repository.save(InternshipApplication.getInstance(dto));
     attachFiles(entity.getId(), dto.getFiles());
@@ -107,8 +107,10 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   @Override
   @Transactional
   public void verify(@NonNull VerifyApplicationDTO dto) {
-    repository.findById(dto.getId())
-        .ifPresent(entity -> entity.verify(dto));
+    var entity = repository.findById(dto.getId()).orElseThrow();
+    entity.verify(dto);
+    var process = new CreateInternshipProcessDTO(entity.getId());
+    internshipProcessService.create(process);
   }
 
   @Override

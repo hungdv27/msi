@@ -5,6 +5,7 @@ import com.example.msi.models.internshipprocess.AssignTeacherDTO;
 import com.example.msi.models.internshipprocess.InternshipProcessDTO;
 import com.example.msi.models.internshipprocess.SearchInternshipProcessDTO;
 import com.example.msi.service.InternshipProcessService;
+import com.example.msi.service.StudentService;
 import com.example.msi.shared.exceptions.ExceptionUtils;
 import com.example.msi.shared.exceptions.MSIException;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class InternshipProcessController {
   private final InternshipProcessService service;
+  private final StudentService studentService;
 
   @PutMapping("/assignTeacher")
   public ResponseEntity<Object> assignTeacher(@RequestBody AssignTeacherDTO dto, Principal principal) {
@@ -44,8 +46,8 @@ public class InternshipProcessController {
   }
 
   @GetMapping("/me")
-  public ResponseEntity<InternshipProcessDTO> findByMe(Principal principal) throws MSIException {
-    var responseData = InternshipProcessDTO.getInstance(service.findByMe(principal.getName()));
+  public ResponseEntity<InternshipProcessDTO> findByMe(Principal principal) {
+    var responseData = InternshipProcessDTO.getInstance(studentService.getInternshipProcess(principal.getName()));
     return new ResponseEntity<>(responseData, HttpStatus.OK);
   }
 

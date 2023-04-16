@@ -7,5 +7,5 @@ import java.util.List;
 @Data
 public class AssignTeacherDTO {
   private int teacherId;
-  private List<String> studentCodeList;
+  private List<Integer> applicationId;
 }
