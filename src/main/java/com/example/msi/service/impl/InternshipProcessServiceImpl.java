@@ -54,6 +54,16 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
   }
 
   @Override
+  public InternshipProcess findByMe(String username) throws MSIException {
+    var studentCode = studentService.findByUsername(username).orElseThrow(NoSuchElementException::new).getCode();
+    var applicationId = internshipApplicationService
+        .findByStudentCodeAndStatus(studentCode, InternshipApplicationStatus.ACCEPTED)
+        .orElseThrow(NoSuchElementException::new).getId();
+    var idProcess = repository.findTopByApplicationId(applicationId).orElseThrow(NoSuchElementException::new).getId();
+    return repository.findById(idProcess).orElseThrow(NoSuchElementException::new);
+  }
+
+  @Override
   public long currentWeekProcess(InternshipApplication internshipApplication) {
     var checkCreatedDate = LocalDate.now();
     var checkStartDate = internshipApplication.getStartDate();

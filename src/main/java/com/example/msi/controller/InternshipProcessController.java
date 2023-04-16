@@ -43,6 +43,12 @@ public class InternshipProcessController {
     return new ResponseEntity<>(responseData, HttpStatus.OK);
   }
 
+  @GetMapping("/me")
+  public ResponseEntity<InternshipProcessDTO> findByMe(Principal principal) throws MSIException {
+    var responseData = InternshipProcessDTO.getInstance(service.findByMe(principal.getName()));
+    return new ResponseEntity<>(responseData, HttpStatus.OK);
+  }
+
   @GetMapping("/search")
   public ResponseEntity<Page<InternshipProcessDTO>> search(
       SearchInternshipProcessDTO searchDTO

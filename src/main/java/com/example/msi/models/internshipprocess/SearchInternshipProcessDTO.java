@@ -19,6 +19,7 @@ import static org.apache.logging.log4j.util.Strings.trimToNull;
 public class SearchInternshipProcessDTO implements BaseFilter<InternshipProcess> {
   private final String studentCode;
   private final Integer teacherId;
+  private final Integer semesterId;
   private final Integer page;
   private final Integer size;
 
@@ -45,6 +46,14 @@ public class SearchInternshipProcessDTO implements BaseFilter<InternshipProcess>
                     cb::equal,
                     attr -> root.join("internshipApplication").get(attr).as(String.class),
                     "studentCode",
+                    () -> value
+                )
+            ),
+            Optional.ofNullable(semesterId).map(
+                value -> build(
+                    cb::equal,
+                    attr -> root.join("internshipApplication").get(attr).as(Integer.class),
+                    "semesterId",
                     () -> value
                 )
             ),

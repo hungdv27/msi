@@ -16,6 +16,7 @@ public interface InternshipProcessService {
   Optional<InternshipProcess> findByApplicationId(int applicationId);
 
   InternshipProcess findById(int id);
+  InternshipProcess findByMe(String username) throws MSIException;
 
   long currentWeekProcess(InternshipApplication internshipApplication);
 
