@@ -11,6 +11,8 @@ public class ExceptionUtils {
 
   // Server
   public static final String E_INTERNAL_SERVER = "E_INTERNAL_SERVER";
+  // InternshipProcess
+  public static final String E_NOT_ADMIN = "E_NOT_ADMIN";
   // ExportExcel
   public static final String E_EXPORT_COMPANY = "E_EXPORT_COMPANY";
   public static final String E_EXPORT_EXCEL = "E_EXPORT_EXCEL";
@@ -34,6 +36,7 @@ public class ExceptionUtils {
     messages.put(ExceptionUtils.E_FILE_IS_NOT_EXCEL, "File không đúng định dạng excel");
     messages.put(ExceptionUtils.TRUE_STATUS_IS_EXIST, "Status true đã tồn tại");
     messages.put(ExceptionUtils.E_COMMON_NOT_EXISTS_ID, "ID không tồn tại");
+    messages.put(ExceptionUtils.E_NOT_ADMIN, "Không phải là admin");
   }
 
   public static String buildMessage(String messKey, Object... arg) {
