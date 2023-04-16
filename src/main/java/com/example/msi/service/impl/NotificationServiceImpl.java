@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
@@ -31,6 +33,11 @@ public class NotificationServiceImpl implements NotificationService {
     var allNotifications = notificationRepository.findAllNotificationByUser(pageable1, userName);
 
     return allNotifications;
+  }
+
+  @Override
+  public Notification getById(Long id) {
+    return notificationRepository.findById(id).orElse(null);
   }
 
 

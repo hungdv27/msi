@@ -85,15 +85,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
     var user = User.getInstance(userRegister);
     user.setPassword(passwordEncoder.encode(userRegister.getPassword()));
-    user.setEnabled(false);
+    user.setEnabled(role == Role.TEACHER ? true : false);
     user.setRole(role);
     user.setVerificationCode(RandomString.make(64));
     StringBuilder url = new StringBuilder("159.65.4.245/login?verify=");
 
     Map<String, Object> props = new HashMap<>();
-    props.put("email", Arrays.stream(user.getEmail().split("@")).findFirst());
+    props.put("full_name", user.getFullName());
+    props.put("email", user.getEmail());
     props.put("url", url.append(user.getVerificationCode()).toString());
-
+    props.put("pass", userRegister.getPassword());
     mailService.sendMail(props, user.getEmail(), "sendMail", "Xác thực tài khoản");
     repository.save(user);
 
@@ -159,6 +160,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     user.setPassword(passwordEncoder.encode(pass));
     repository.save(user);
     Map<String, Object> props = new HashMap<>();
+    props.put("full_name", user.getFullName());
     props.put("email", user.getEmail());
     props.put("pass", pass);
 

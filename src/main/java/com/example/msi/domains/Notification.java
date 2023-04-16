@@ -1,5 +1,6 @@
 package com.example.msi.domains;
 
+import com.example.msi.shared.enums.NotificationType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,9 @@ public class Notification {
   private Long id;
   private String title;
   private String message;
+  private NotificationType type;
+  @Column(name = "post_id")
+  private Integer postId;
   @ManyToMany
   private List<User> recipients;
 
