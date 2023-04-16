@@ -12,6 +12,7 @@ import com.example.msi.service.TeacherService;
 import com.example.msi.service.UserService;
 import com.example.msi.shared.exceptions.ExceptionUtils;
 import com.example.msi.shared.exceptions.MSIException;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -70,5 +71,17 @@ public class TeacherController {
         }
     );
     return new ResponseEntity<>(responseData, HttpStatus.OK);
+  }
+
+  @PutMapping("/change_status/{id}")
+  public ResponseEntity<Object> changeStatus(@NonNull @PathVariable int id) {
+    try {
+      service.changeStatus(id);
+      return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    } catch (Exception ex) {
+      return new ResponseEntity<>(
+          ExceptionUtils.messages.get(ExceptionUtils.E_INTERNAL_SERVER),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

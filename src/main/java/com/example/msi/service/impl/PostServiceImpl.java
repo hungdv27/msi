@@ -6,6 +6,7 @@ import com.example.msi.models.post.UpdatePostDTO;
 import com.example.msi.models.postfile.CreatePostFileDTO;
 import com.example.msi.repository.PostRepository;
 import com.example.msi.service.*;
+import com.example.msi.shared.enums.NotificationType;
 import com.example.msi.shared.enums.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -61,6 +62,8 @@ public class PostServiceImpl implements PostService {
     notification.setTitle("New post created");
     notification.setMessage("A new post has been created: " + post.getTitle());
     notification.setRecipients(recipients);
+    notification.setType(NotificationType.POST);
+    notification.setPostId(post.getId());
     notificationService.sendNotification(notification);
 
     List<User> users = userService.findAllByRole(role);
