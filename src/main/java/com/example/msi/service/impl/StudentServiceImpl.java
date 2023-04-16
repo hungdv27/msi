@@ -102,7 +102,7 @@ public class StudentServiceImpl implements StudentService {
 
   @Override
   public InternshipProcess getInternshipProcess(@NonNull String username) {
-    var studentCode = repository.findTopByCode(username).orElseThrow(NoSuchElementException::new).getCode();
+    var studentCode = getStudentCode(username);
     var applicationId = internshipApplicationService
         .findByStudentCodeAndStatus(studentCode, InternshipApplicationStatus.ACCEPTED)
         .orElseThrow(NoSuchElementException::new).getId();
@@ -111,7 +111,12 @@ public class StudentServiceImpl implements StudentService {
 
   @Override
   public List<InternshipApplication> getAllInternshipApplication(@NonNull String username) {
-    var studentCode = repository.findTopByCode(username).orElseThrow(NoSuchElementException::new).getCode();
+    var studentCode = getStudentCode(username);
     return internshipApplicationService.findByStudentCCode(studentCode);
+  }
+
+  private String getStudentCode(@NonNull String username) {
+    var user = userService.findByEmail(username).orElseThrow(NoSuchElementException::new);
+    return repository.findTopByUserId(user.getId()).orElseThrow(NoSuchElementException::new).getCode();
   }
 }
