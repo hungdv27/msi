@@ -18,5 +18,8 @@ public interface TeacherService {
   Page<Teacher> search(@NonNull SearchTeacherDTO filter) throws MSIException;
 
   Teacher save(@NonNull Teacher teacher);
+
   Optional<Teacher> findById(int id);
+
+  Teacher changeStatus(int id);
 }

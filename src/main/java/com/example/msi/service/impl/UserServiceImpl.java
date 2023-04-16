@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
     var user = User.getInstance(userRegister);
     user.setPassword(passwordEncoder.encode(userRegister.getPassword()));
-    user.setEnabled(false);
+    user.setEnabled(role == Role.TEACHER ? true : false);
     user.setRole(role);
     user.setVerificationCode(RandomString.make(64));
     StringBuilder url = new StringBuilder("159.65.4.245/login?verify=");

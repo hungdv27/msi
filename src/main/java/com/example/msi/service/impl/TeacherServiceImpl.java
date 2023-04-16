@@ -57,4 +57,14 @@ public class TeacherServiceImpl implements TeacherService {
   public Optional<Teacher> findById(int id) {
     return repository.findById(id);
   }
+
+  @Override
+  public Teacher changeStatus(int id) {
+    var entity = repository.findById(id);
+    entity.ifPresent(e -> {
+      e.setStatus(!e.isStatus());
+      repository.save(e);
+    });
+    return entity.orElse(null);
+  }
 }
