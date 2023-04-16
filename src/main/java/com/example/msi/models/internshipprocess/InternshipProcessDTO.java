@@ -4,6 +4,7 @@ import com.example.msi.domains.InternshipProcess;
 import com.example.msi.models.company.CompanyDTO;
 import com.example.msi.models.report.ReportDTO;
 import com.example.msi.models.student.StudentDetailDTO;
+import com.example.msi.models.teacher.TeacherDTO;
 import com.example.msi.service.*;
 import com.example.msi.shared.ApplicationContextHolder;
 import lombok.Getter;
@@ -19,11 +20,10 @@ import java.util.stream.Collectors;
 public class InternshipProcessDTO {
   private int id;
   private StudentDetailDTO student;
+  private TeacherDTO teacher;
   private CompanyDTO company;
   private List<ReportDTO> reports;
   private int applicationId;
-  private int teacherId;
-  private String teacherName;
   private LocalDate startDate;
   private LocalDate endDate;
   private Long currentWeek;
@@ -37,6 +37,15 @@ public class InternshipProcessDTO {
     // student
     Optional.ofNullable(internshipApplication.getStudentCode()).ifPresent(
         value -> student = StudentDetailDTO.getInstance(InternshipProcessDTO.SingletonHelper.STUDENT_SERVICE.findByCode(internshipApplication.getStudentCode()).orElseThrow())
+    );
+    // teacher
+    Optional.ofNullable(entity.getTeacherId()).ifPresent(
+        value -> {
+          var userId = SingletonHelper.TEACHER_SERVICE.findById(entity.getTeacherId()).orElseThrow().getUserId();
+          var user = SingletonHelper.USER_SERVICE.findById(userId).orElseThrow();
+          teacher = TeacherDTO
+              .getInstance(InternshipProcessDTO.SingletonHelper.TEACHER_SERVICE.findById(entity.getTeacherId()).orElseThrow(), user);
+        }
     );
     // company
     Optional.ofNullable(internshipApplication.getCompanyId()).ifPresent(
@@ -53,11 +62,6 @@ public class InternshipProcessDTO {
     reports.addAll(reportDTOList);
     // applicationId
     applicationId = entity.getApplicationId();
-    // teacherId, teacherName
-    if (entity.getTeacherId() != null) {
-      teacherId = entity.getTeacherId();
-      teacherName = SingletonHelper.TEACHER_SERVICE.findById(entity.getTeacherId()).orElseThrow().getName();
-    }
     // currentWeek
     currentWeek = SingletonHelper.INTERNSHIP_PROCESS_SERVICE.currentWeekProcess(internshipApplication);
   }
@@ -79,5 +83,7 @@ public class InternshipProcessDTO {
         ApplicationContextHolder.getBean(ReportService.class);
     private static final TeacherService TEACHER_SERVICE =
         ApplicationContextHolder.getBean(TeacherService.class);
+    private static final UserService USER_SERVICE =
+        ApplicationContextHolder.getBean(UserService.class);
   }
 }

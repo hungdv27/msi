@@ -9,6 +9,8 @@ import com.example.msi.repository.InternshipProcessRepository;
 import com.example.msi.service.InternshipProcessService;
 import com.example.msi.service.UserService;
 import com.example.msi.shared.enums.Role;
+import com.example.msi.shared.exceptions.ExceptionUtils;
+import com.example.msi.shared.exceptions.MSIException;
 import com.example.msi.shared.utils.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,10 +30,13 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
 
   @Override
   @Transactional
-  public void assignTeacher(@NonNull AssignTeacherDTO dto, @NonNull String username) {
+  public void assignTeacher(@NonNull AssignTeacherDTO dto, @NonNull String username) throws MSIException {
     var role = userService.findByEmail(username).orElseThrow().getRole();
-    if (!role.equals(Role.ADMIN))
-      return;
+    if (!role.equals(Role.ADMIN)) {
+      throw new MSIException(
+          ExceptionUtils.E_NOT_ADMIN,
+          ExceptionUtils.messages.get(ExceptionUtils.E_NOT_ADMIN));
+    }
     var teacherId = dto.getTeacherId();
     dto.getApplicationId().forEach(applicationId -> {
       var process = repository.findTopByApplicationId(applicationId).orElseThrow();
