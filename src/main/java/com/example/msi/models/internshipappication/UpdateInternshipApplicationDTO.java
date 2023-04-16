@@ -12,7 +12,7 @@ import java.util.List;
 public class UpdateInternshipApplicationDTO {
   private int id;
   private Integer companyId;
-  private String courseName;
+  private String courseCode;
   private String instructor;
   private String instructorContact;
   private String description;

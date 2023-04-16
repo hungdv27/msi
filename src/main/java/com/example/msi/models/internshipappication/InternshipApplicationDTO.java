@@ -24,7 +24,7 @@ public class InternshipApplicationDTO {
   private String note;
   private LocalDateTime createdDate;
   private LocalDateTime updatedDate;
-  private String courseName;
+  private String courseCode;
   private String instructor;
   private String instructorContact;
   private String description;
@@ -42,7 +42,7 @@ public class InternshipApplicationDTO {
     note = entity.getNote();
     createdDate = entity.getCreatedDate();
     updatedDate = entity.getUpdatedDate();
-    courseName = entity.getCourseName();
+    courseCode = entity.getCourseCode();
     instructor = entity.getInstructor();
     instructorContact = entity.getInstructorContact();
     description = entity.getDescription();

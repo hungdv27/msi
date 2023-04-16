@@ -14,7 +14,7 @@ public class CreateInternshipApplicationDTO {
   private String note;
   private String username;
   private List<MultipartFile> files;
-  private String courseName;
+  private String courseCode;
   private String instructor;
   private String instructorContact;
   private String description;
