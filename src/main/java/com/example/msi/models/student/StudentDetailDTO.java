@@ -6,6 +6,7 @@ import com.example.msi.shared.ApplicationContextHolder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.lang.NonNull;
 
 import java.time.LocalDate;
 
@@ -28,12 +29,16 @@ public class StudentDetailDTO {
     code = student.getCode();
     gradeCode = student.getGradeCode();
     userId = student.getUserId();
-    status = student.getId();
+    status = student.getStatus();
     var user = SingletonHelper.USER_SERVICE.findById(student.getUserId()).orElseThrow();
     fullName = user.getFullName();
     email = user.getEmail();
     dob = user.getDob();
     phoneNumber = user.getPhoneNumber();
+  }
+
+  public static StudentDetailDTO getInstance(@NonNull Student entity){
+    return new StudentDetailDTO(entity);
   }
   private static class SingletonHelper {
     private static final UserService USER_SERVICE =
