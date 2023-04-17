@@ -36,7 +36,6 @@ public class ReportServiceImpl implements ReportService {
     var processId = internshipProcessService.findByApplicationId(applicationId).orElseThrow().getId();
     var report = repository.save(Report.getInstance(dto, processId));
     attachFiles(report.getId(), multipartFiles);
-
     return report;
   }
 

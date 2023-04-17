@@ -41,7 +41,7 @@ public class InternshipProcessController {
 
   @GetMapping("/{id}")
   public ResponseEntity<InternshipProcessDTO> findById(@PathVariable @NonNull int id) {
-    var responseData = InternshipProcessDTO.getInstance(service.findById(id));
+    var responseData = InternshipProcessDTO.getInstance(service.findById(id).orElseThrow());
     return new ResponseEntity<>(responseData, HttpStatus.OK);
   }
 

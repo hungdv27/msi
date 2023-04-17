@@ -16,7 +16,7 @@ public interface InternshipProcessService {
 
   Optional<InternshipProcess> findByApplicationId(int applicationId);
 
-  InternshipProcess findById(int id);
+  Optional<InternshipProcess> findById(int id);
 
   long currentWeekProcess(InternshipApplication internshipApplication);
 

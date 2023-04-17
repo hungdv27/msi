@@ -115,7 +115,8 @@ public class StudentServiceImpl implements StudentService {
     return internshipApplicationService.findByStudentCCode(studentCode);
   }
 
-  private String getStudentCode(@NonNull String username) {
+  @Override
+  public String getStudentCode(@NonNull String username) {
     var user = userService.findByEmail(username).orElseThrow(NoSuchElementException::new);
     return repository.findTopByUserId(user.getId()).orElseThrow(NoSuchElementException::new).getCode();
   }

@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -51,8 +50,8 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
   }
 
   @Override
-  public InternshipProcess findById(int id) {
-    return repository.findById(id).orElseThrow(NoSuchElementException::new);
+  public Optional<InternshipProcess> findById(int id) {
+    return repository.findById(id);
   }
 
   @Override

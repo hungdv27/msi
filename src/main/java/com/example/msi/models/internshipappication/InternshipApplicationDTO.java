@@ -3,9 +3,6 @@ package com.example.msi.models.internshipappication;
 import com.example.msi.domains.InternshipApplication;
 import com.example.msi.models.company.CompanyDTO;
 import com.example.msi.models.student.StudentDetailDTO;
-import com.example.msi.service.CompanyService;
-import com.example.msi.service.StudentService;
-import com.example.msi.shared.ApplicationContextHolder;
 import com.example.msi.shared.enums.InternshipApplicationStatus;
 import lombok.Getter;
 import org.springframework.lang.NonNull;
@@ -13,6 +10,9 @@ import org.springframework.lang.NonNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
+
+import static com.example.msi.shared.utils.ServiceUtils.getCompanyService;
+import static com.example.msi.shared.utils.ServiceUtils.getStudentService;
 
 @Getter
 public class InternshipApplicationDTO {
@@ -35,7 +35,7 @@ public class InternshipApplicationDTO {
 
   private InternshipApplicationDTO(@NonNull InternshipApplication entity) {
     id = entity.getId();
-    var stu = SingletonHelper.STUDENT_SERVICE.findByCode(entity.getStudentCode()).orElseThrow();
+    var stu = getStudentService().findByCode(entity.getStudentCode()).orElseThrow();
     student = new StudentDetailDTO(stu);
     status = entity.getStatus();
     semesterId = entity.getSemesterId();
@@ -51,20 +51,11 @@ public class InternshipApplicationDTO {
     totalDayPerWeek = entity.getTotalDayPerWeek();
     totalHourPerShift = entity.getTotalHourPerShift();
     Optional.ofNullable(entity.getCompanyId()).ifPresent(
-        value -> company = CompanyDTO.getInstance(SingletonHelper.COMPANY_SERVICE.getCompanyById(entity.getCompanyId()))
+        value -> company = CompanyDTO.getInstance(getCompanyService().getCompanyById(entity.getCompanyId()))
     );
   }
 
   public static InternshipApplicationDTO getInstance(@NonNull InternshipApplication entity) {
     return new InternshipApplicationDTO(entity);
-  }
-
-  private static class SingletonHelper {
-    private static final CompanyService COMPANY_SERVICE =
-        ApplicationContextHolder.getBean(CompanyService.class);
-
-    private static final StudentService STUDENT_SERVICE =
-        ApplicationContextHolder.getBean(StudentService.class);
-
   }
 }

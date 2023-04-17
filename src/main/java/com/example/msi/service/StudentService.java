@@ -26,4 +26,5 @@ public interface StudentService {
   InternshipProcess getInternshipProcess(@NonNull String username);
 
   List<InternshipApplication> getAllInternshipApplication(@NonNull String username);
+  String getStudentCode(@NonNull String username);
 }
