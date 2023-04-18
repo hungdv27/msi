@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface UserService {
   Data register(CreateUserDTO userRegister, StringBuffer siteURL) throws IllegalAccessException, MessagingException;
@@ -41,7 +42,7 @@ public interface UserService {
 
   Optional<User> findById(int id);
 
-  List<User> findAllByRole(Role role);
+  Set<User> findAllByRole(Role role);
 
   byte[] templateDownload(HttpServletRequest request) throws IOException;
 
