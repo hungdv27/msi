@@ -5,10 +5,7 @@ import com.example.msi.repository.NotificationRepository;
 import com.example.msi.service.NotificationService;
 import com.example.msi.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -39,12 +36,10 @@ public class NotificationServiceImpl implements NotificationService {
           }
         }
     );
-    System.out.println(notifications);
     Sort sort1 = Sort.by("created_date").descending();
     Pageable pageable1 = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort1);
-    var allNotifications = notificationRepository.findAllNotificationByUser(pageable1, userId);
-
-    return allNotifications;
+    Page<Notification> page = new PageImpl<>(notifications, pageable1, notifications.size());
+    return page;
   }
 
   @Override
