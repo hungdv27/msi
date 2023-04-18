@@ -23,7 +23,7 @@ public class ResultController {
   }
 
   @PostMapping
-  public ResponseEntity<Object> createResult(@NonNull CreateResultDTO dto){
+  public ResponseEntity<Object> createResult(@NonNull @RequestBody CreateResultDTO dto){
     var responseData = ResultDTO.getInstance(service.create(dto));
     return new ResponseEntity<>(responseData, HttpStatus.OK);
   }
