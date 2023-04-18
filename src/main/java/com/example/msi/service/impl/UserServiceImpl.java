@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   @Transactional
   public UserDetails loadUserById(Integer id) {
     User user = repository.findById(id).orElseThrow(
-        () -> new UsernameNotFoundException("User not found with id : " + id)
+        () -> new UsernameNotFoundException("Không tìm thấy người dùng với id: " + id)
     );
 
     return new CustomUserDetails(user);
@@ -217,7 +217,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   }
 
   @Override
-  public List<User> findAllByRole(Role role) {
+  public Set<User> findAllByRole(Role role) {
     return repository.findAllByRole(role);
   }
 

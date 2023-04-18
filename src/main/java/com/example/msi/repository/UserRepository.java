@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
   @Query("SELECT u FROM User u WHERE u.email = :email")
@@ -25,7 +26,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
   Page<User> findAll(Specification<User> specification, Pageable pageable);
 
-  List<User> findAllByRole(Role role);
+  Set<User> findAllByRole(Role role);
 
   @Query("SELECT u.email FROM User u WHERE u.role = :role")
   List<String> findAllEmailByRole(@Param("role") Role role);

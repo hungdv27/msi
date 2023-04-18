@@ -57,16 +57,16 @@ public class PostServiceImpl implements PostService {
     var post = repository.save(Post.getInstance(dto));
     var role = post.getApplyTo();
     attachFiles(post.getId(), multipartFiles);
-    List<User> recipients = userService.findAllByRole(Role.STUDENT);
+    Set<User> users = userService.findAllByRole(role);
+    var userIds = users.stream().map(User::getId).collect(Collectors.toSet());
     Notification notification = new Notification();
     notification.setTitle("New post created");
     notification.setMessage("A new post has been created: " + post.getTitle());
-    notification.setRecipients(recipients);
+    notification.setUserIds(userIds);
     notification.setType(NotificationType.POST);
     notification.setPostId(post.getId());
     notificationService.sendNotification(notification);
 
-    List<User> users = userService.findAllByRole(role);
     users.stream()
         .map(User::getId)
         .map(id -> "/queue/notification/" + id)

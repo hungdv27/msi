@@ -5,11 +5,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
-import java.time.LocalDate;
+import org.springframework.data.repository.query.Param;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
-  @Query(value = "SELECT * FROM notification n join notification_recipients nr on nr.notification_id = n.id join user u on nr.recipients_id = u.id Where u.email = :username",
-      nativeQuery = true)
-  Page<Notification> findAllNotificationByUser(Pageable pageable, String username);
+  @Query(value = "SELECT * FROM notification WHERE JSON_SEARCH(user_ids, 'one', :userId) IS NOT NULL", nativeQuery = true)
+  Page<Notification> findAllNotificationByUser(Pageable pageable, @Param("userId") Integer userId);
+
+
 }
