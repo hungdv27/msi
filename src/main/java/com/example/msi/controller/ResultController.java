@@ -17,13 +17,15 @@ public class ResultController {
   private final ResultService service;
 
   @GetMapping("/{processId}")
-  public ResponseEntity<Object> findByProcessId(@PathVariable int processId){
-    var responseData = ResultDTO.getInstance(service.findByProcessId(processId).orElseThrow());
-    return new ResponseEntity<>(responseData, HttpStatus.OK);
+  public ResponseEntity<Object> findByProcessId(@PathVariable int processId) {
+    var entity = service.findByProcessId(processId);
+    return entity.<ResponseEntity<Object>>
+            map(result -> new ResponseEntity<>(ResultDTO.getInstance(result), HttpStatus.OK))
+        .orElseGet(() -> new ResponseEntity<>(HttpStatus.OK));
   }
 
   @PostMapping
-  public ResponseEntity<Object> createResult(@NonNull @RequestBody CreateResultDTO dto){
+  public ResponseEntity<Object> createResult(@NonNull @RequestBody CreateResultDTO dto) {
     var responseData = ResultDTO.getInstance(service.create(dto));
     return new ResponseEntity<>(responseData, HttpStatus.OK);
   }
