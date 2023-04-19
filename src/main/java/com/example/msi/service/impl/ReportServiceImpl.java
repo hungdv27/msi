@@ -1,21 +1,26 @@
 package com.example.msi.service.impl;
 
 import com.example.msi.domains.FileE;
+import com.example.msi.domains.Notification;
 import com.example.msi.domains.Report;
 import com.example.msi.models.report.CreateReportDTO;
 import com.example.msi.models.reportfile.CreateReportFileDTO;
 import com.example.msi.repository.ReportRepository;
 import com.example.msi.service.*;
 import com.example.msi.shared.enums.InternshipApplicationStatus;
+import com.example.msi.shared.enums.NotificationType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +31,10 @@ public class ReportServiceImpl implements ReportService {
   private final InternshipProcessService internshipProcessService;
   private final FileService fileService;
   private final ReportFileService reportFileService;
+  private final UserService userService;
+  private final SimpMessagingTemplate messagingTemplate;
+  private final NotificationService notificationService;
+  private final TeacherService teacherService;
 
   @Override
   @Transactional
@@ -33,9 +42,25 @@ public class ReportServiceImpl implements ReportService {
     var studentCode = studentService.findByUsername(username).orElseThrow().getCode();
     var applicationId = internshipApplicationService.findByStudentCodeAndStatus(studentCode, InternshipApplicationStatus.ACCEPTED)
         .orElseThrow().getId();
-    var processId = internshipProcessService.findByApplicationId(applicationId).orElseThrow().getId();
-    var report = repository.save(Report.getInstance(dto, processId));
+    var process = internshipProcessService.findByApplicationId(applicationId).orElseThrow();
+    var report = repository.save(Report.getInstance(dto, process.getId()));
     attachFiles(report.getId(), multipartFiles);
+
+    var teacher = teacherService.findById(process.getTeacherId()).orElse(null);
+    var user = userService.findById(teacher.getUserId()).orElse(null);
+    Set<Integer> userIds = new HashSet<>();
+    userIds.add(user.getId());
+    Notification notification = new Notification();
+    notification.setTitle("Thông Báo Sinh Viên Nộp Báo Cáo");
+    notification.setMessage("Có Sinh Viên Mới Nộp Báo Cáo");
+    notification.setUserIds(userIds);
+    notification.setType(NotificationType.REPORT);
+    notification.setPostId(report.getId());
+    notificationService.sendNotification(notification);
+
+    String queueName = "/queue/notification/" + user.getId();
+    messagingTemplate.convertAndSend(queueName, notification.getMessage());
+
     return report;
   }
 

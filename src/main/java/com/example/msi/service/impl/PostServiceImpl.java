@@ -71,6 +71,7 @@ public class PostServiceImpl implements PostService {
         .map(User::getId)
         .map(id -> "/queue/notification/" + id)
         .forEach(queueName -> messagingTemplate.convertAndSend(queueName, notification.getMessage()));
+
     return post;
   }
 
@@ -85,8 +86,8 @@ public class PostServiceImpl implements PostService {
         var fileIds = postFileService.findByPostId(dto.getId())
             .stream().map(PostFile::getFileId).collect(Collectors.toList());
         var fileCurrents = fileService.findByIds(fileIds);
-        for (FileE file : fileCurrents){
-          if (!dto.getExistedFiles().contains(file.getFileKey())){
+        for (FileE file : fileCurrents) {
+          if (!dto.getExistedFiles().contains(file.getFileKey())) {
             removeFileIds.add(file.getId());
           }
         }
