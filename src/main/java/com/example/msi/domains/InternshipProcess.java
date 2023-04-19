@@ -51,6 +51,14 @@ public class InternshipProcess {
     applicationId = target.getInternshipApplicationId();
   }
 
+  public InternshipProcess(int id, int applicationId, Integer teacherId, LocalDateTime createdDate, LocalDateTime updatedDate) {
+    this.id = id;
+    this.applicationId = applicationId;
+    this.teacherId = teacherId;
+    this.createdDate = createdDate;
+    this.updatedDate = updatedDate;
+  }
+
   public static InternshipProcess getInstance(@NonNull CreateInternshipProcessDTO dto) {
     return new InternshipProcess(dto);
   }
