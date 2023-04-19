@@ -329,17 +329,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         .map(User::new)
         .collect(Collectors.toList());
 
-    Optional.of(dataInt).orElseGet(Collections::emptyList).forEach(
-        user -> {
-          try {
-            registerTeacherAccount(CreateUserDTO.getInstance(user), request.getRequestURL());
-          } catch (IllegalAccessException | MessagingException e) {
-            throw new RuntimeException(e);
-          }
-        }
-    );
 
     if (message.trim().isEmpty()) {
+      Optional.of(dataInt).orElseGet(Collections::emptyList).forEach(
+          user -> {
+            try {
+              registerTeacherAccount(CreateUserDTO.getInstance(user), request.getRequestURL());
+            } catch (IllegalAccessException | MessagingException e) {
+              throw new RuntimeException(e);
+            }
+          }
+      );
       return Constant.IMPORT_SUCCESS;
     } else {
       return message.substring(0, message.length() - 2);
@@ -369,8 +369,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
       item.setNumberSort(i);
       // set data
       this.setDataFromFile(item, dataFormatter, row);
-
-      allData.add(item);
+      if (validateEmail(item.getEmail())) {
+        if (!repository.existsByEmail(item.getEmail())) {
+          allData.add(item);
+        } else {
+          error.append(String.format("Row <%d>: %s |", item.getNumberSort(), "Email duplicate"));
+        }
+      } else {
+        error.append(String.format("Row <%d>: %s |", item.getNumberSort(), "Email invalid"));
+      }
     }
     return error.toString();
   }

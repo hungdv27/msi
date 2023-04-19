@@ -3,9 +3,7 @@ package com.example.msi.service.impl;
 import com.example.msi.domains.InternshipApplication;
 import com.example.msi.domains.InternshipProcess;
 import com.example.msi.domains.Notification;
-import com.example.msi.models.internshipprocess.AssignTeacherDTO;
-import com.example.msi.models.internshipprocess.CreateInternshipProcessDTO;
-import com.example.msi.models.internshipprocess.SearchInternshipProcessDTO;
+import com.example.msi.models.internshipprocess.*;
 import com.example.msi.repository.InternshipApplicationRepository;
 import com.example.msi.repository.InternshipProcessRepository;
 import com.example.msi.repository.StudentRepository;
@@ -14,18 +12,20 @@ import com.example.msi.shared.enums.NotificationType;
 import com.example.msi.shared.enums.Role;
 import com.example.msi.shared.exceptions.ExceptionUtils;
 import com.example.msi.shared.exceptions.MSIException;
+import com.example.msi.shared.utils.ExcelUtils;
 import com.example.msi.shared.utils.Utils;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.data.domain.Page;
 import org.springframework.lang.NonNull;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -115,5 +115,34 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
   public InternshipProcess create(@NonNull CreateInternshipProcessDTO dto) {
     var entity = InternshipProcess.getInstance(dto);
     return repository.save(entity);
+  }
+
+  @Override
+  public Object export(HttpServletRequest request, Object req) throws MSIException {
+    SearchInternshipProcessDTO reqDTO = (SearchInternshipProcessDTO) req;
+
+    Page<InternshipProcess> page = this.search(reqDTO);
+    List<InternshipProcess> list = page.getContent();
+    if (list.isEmpty()) {
+      throw new MSIException(
+          ExceptionUtils.E_EXPORT_INTERNSHIP_PROCESS,
+          ExceptionUtils.messages.get(ExceptionUtils.E_EXPORT_INTERNSHIP_PROCESS));
+    }
+    // chuyển sang list obj
+    List<Object> dataExport = new ArrayList<>();
+    for (int i = 0; i < list.size(); i++) {
+      dataExport.add(new InternshipProcessExportDTO(i + 1, list.get(i)));
+    }
+    // tạo workbook
+    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    try (Workbook workbook = ExcelUtils.executeExport(dataExport);
+         bos) {
+      workbook.write(bos);
+    } catch (Exception e) {
+      throw new MSIException(
+          ExceptionUtils.E_EXPORT_EXCEL,
+          ExceptionUtils.messages.get(ExceptionUtils.E_EXPORT_EXCEL));
+    }
+    return bos.toByteArray();
   }
 }
