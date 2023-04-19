@@ -81,7 +81,7 @@ public class UserController {
     return ResponseEntity.ok(service.register(user, request.getRequestURL()));
   }
 
-  @PostMapping("/register_teacher")
+  @PostMapping("/register-teacher")
   public ResponseEntity<Data> registerTeacherAccount(@Valid @RequestBody CreateUserDTO user, HttpServletRequest request) throws MessagingException, IllegalAccessException {
     return ResponseEntity.ok(service.registerTeacherAccount(user, request.getRequestURL()));
   }
@@ -101,7 +101,7 @@ public class UserController {
     return ResponseEntity.ok(service.forgotPassword(mail));
   }
 
-  @GetMapping("/user_access_information")
+  @GetMapping("/user-access-information")
   public ResponseEntity<Data> userAccessInformation() throws IllegalAccessException {
     Optional<User> user = service.userAccessInformation();
     return ResponseEntity.ok(new Data(user));

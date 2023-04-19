@@ -6,7 +6,9 @@ import com.example.msi.domains.Notification;
 import com.example.msi.models.internshipprocess.AssignTeacherDTO;
 import com.example.msi.models.internshipprocess.CreateInternshipProcessDTO;
 import com.example.msi.models.internshipprocess.SearchInternshipProcessDTO;
+import com.example.msi.repository.InternshipApplicationRepository;
 import com.example.msi.repository.InternshipProcessRepository;
+import com.example.msi.repository.StudentRepository;
 import com.example.msi.service.*;
 import com.example.msi.shared.enums.NotificationType;
 import com.example.msi.shared.enums.Role;
@@ -33,8 +35,8 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
   private final SimpMessagingTemplate messagingTemplate;
   private final NotificationService notificationService;
   private final TeacherService teacherService;
-  private final StudentService studentService;
-  private final InternshipApplicationService internshipApplicationService;
+  private final StudentRepository studentRepository;
+  private final InternshipApplicationRepository internshipApplicationRepository;
 
   @Override
   @Transactional
@@ -66,8 +68,8 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
       String queueName = "/queue/notification/" + user.getId();
       messagingTemplate.convertAndSend(queueName, notification.getMessage());
 
-      var internshipProcess = internshipApplicationService.findById(process.getApplicationId());
-      var student = studentService.findByCode(internshipProcess.getStudentCode()).orElse(null);
+      var internshipProcess = internshipApplicationRepository.findById(process.getApplicationId()).orElse(null);
+      var student = studentRepository.findTopByCode(internshipProcess.getStudentCode()).orElse(null);
       var user1 = userService.findById(student.getUserId()).orElse(null);
       Set<Integer> userIds1 = new HashSet<>();
       userIds1.add(user1.getId());

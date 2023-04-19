@@ -19,12 +19,12 @@ import java.util.stream.Collectors;
 public class FileController {
   private final FileService service;
 
-  @PostMapping("/uploadFile")
+  @PostMapping("/upload-file")
   public String uploadFile(@RequestPart(value = "file") MultipartFile file) {
     return this.service.uploadFile(file);
   }
 
-  @PostMapping("/uploadFiles")
+  @PostMapping("/upload-files")
   public List<FileDTO> uploadFiles(@RequestParam("files") List<MultipartFile> files) throws IOException {
     return service.uploadFiles(files).stream().map(FileDTO::getInstance).collect(Collectors.toList());
   }
