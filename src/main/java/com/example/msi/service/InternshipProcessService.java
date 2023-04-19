@@ -9,6 +9,7 @@ import com.example.msi.shared.exceptions.MSIException;
 import org.springframework.data.domain.Page;
 import org.springframework.lang.NonNull;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 public interface InternshipProcessService {
@@ -23,4 +24,6 @@ public interface InternshipProcessService {
   Page<InternshipProcess> search(@NonNull SearchInternshipProcessDTO filter);
 
   InternshipProcess create(@NonNull CreateInternshipProcessDTO dto);
+
+  Object export(HttpServletRequest request, Object req) throws MSIException;
 }
