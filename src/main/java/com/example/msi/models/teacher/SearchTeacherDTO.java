@@ -24,6 +24,10 @@ public class SearchTeacherDTO implements BaseFilter<TeacherDTO> {
   private final Integer page;
   private final Integer size;
 
+  public Boolean getStatus() {
+    return status;
+  }
+
   @Override
   public int page() {
     return Math.max(page == null ? 0 : page, 0);
@@ -38,7 +42,7 @@ public class SearchTeacherDTO implements BaseFilter<TeacherDTO> {
   public Specification<Teacher> getSpecification() {
     return (root, cq, cb) -> toPredicate(
         List.of(
-            Optional.ofNullable(status).map(
+            Optional.ofNullable(getStatus()).map(
                 value -> build(
                     cb::equal,
                     attr -> root.get(attr).as(Boolean.class),
