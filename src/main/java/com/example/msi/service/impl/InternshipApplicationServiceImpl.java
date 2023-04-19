@@ -8,6 +8,7 @@ import com.example.msi.models.internshipappication.VerifyApplicationDTO;
 import com.example.msi.models.internshipapplication_file.CreateInternshipApplicationFileDTO;
 import com.example.msi.models.internshipprocess.CreateInternshipProcessDTO;
 import com.example.msi.repository.InternshipApplicationRepository;
+import com.example.msi.repository.StudentRepository;
 import com.example.msi.service.*;
 import com.example.msi.shared.enums.InternshipApplicationStatus;
 import com.example.msi.shared.enums.NotificationType;
@@ -37,7 +38,7 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   private final InternshipProcessService internshipProcessService;
   private final SemesterService semesterService;
   private final UserService userService;
-  private final StudentService studentService;
+  private final StudentRepository studentRepository;
   private final NotificationService notificationService;
   private final SimpMessagingTemplate messagingTemplate;
 
@@ -115,7 +116,7 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
     var process = new CreateInternshipProcessDTO(entity.getId());
     internshipProcessService.create(process);
 
-    var student = studentService.findByCode(entity.getStudentCode()).orElse(null);
+    var student = studentRepository.findTopByCode(entity.getStudentCode()).orElse(null);
     var user = userService.findById(student.getUserId()).orElse(null);
     Set<Integer> userIds = new HashSet<>();
     userIds.add(user.getId());

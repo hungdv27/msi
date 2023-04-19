@@ -73,7 +73,7 @@ public class TeacherController {
     return new ResponseEntity<>(responseData, HttpStatus.OK);
   }
 
-  @PutMapping("/change_status/{id}")
+  @PutMapping("/change-status/{id}")
   public ResponseEntity<Object> changeStatus(@NonNull @PathVariable int id) {
     try {
       service.changeStatus(id);
