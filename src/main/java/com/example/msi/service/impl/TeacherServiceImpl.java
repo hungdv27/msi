@@ -1,5 +1,6 @@
 package com.example.msi.service.impl;
 
+import com.example.msi.domains.InternshipProcess;
 import com.example.msi.domains.Teacher;
 import com.example.msi.models.teacher.SearchTeacherDTO;
 import com.example.msi.models.teacher.UpdateTeacherDTO;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,6 +21,7 @@ import java.util.Optional;
 public class TeacherServiceImpl implements TeacherService {
   private final TeacherRepository repository;
   private final UserService userService;
+
   @Override
   public void updateTeacher(@NonNull UpdateTeacherDTO payload, String userName) throws MSIException {
     var user = userService.findByEmail(userName).orElseThrow();
@@ -66,5 +69,18 @@ public class TeacherServiceImpl implements TeacherService {
       repository.save(e);
     });
     return entity.orElse(null);
+  }
+
+  @Override
+  public int countNumberOfManagementStudents(int teacherId) {
+    return repository.countNumberOfManagementStudents(teacherId);
+  }
+
+  @Override
+  public List<InternshipProcess> findManagementStudents(int teacherId) {
+    var entity = repository.findById(teacherId);
+    if (entity.isEmpty())
+      throw new RuntimeException("Không tồn tại Teacher_id");
+    return repository.findManagementStudents(teacherId);
   }
 }

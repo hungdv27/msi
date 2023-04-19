@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
+import static com.example.msi.shared.utils.ServiceUtils.getTeacherService;
+
 @NoArgsConstructor
 @Getter
 @Setter
@@ -19,6 +21,7 @@ public class TeacherDTO {
   private String email;
   private LocalDate dob;
   private String phoneNumber;
+  private Integer numberOfManagementStudents;
 
   public TeacherDTO(Teacher teacher, User user) {
     id = teacher.getId();
@@ -28,6 +31,7 @@ public class TeacherDTO {
     email = user.getEmail();
     dob = user.getDob();
     phoneNumber = user.getPhoneNumber();
+    numberOfManagementStudents = getTeacherService().countNumberOfManagementStudents(teacher.getId());
   }
 
   public TeacherDTO(Teacher teacher) {

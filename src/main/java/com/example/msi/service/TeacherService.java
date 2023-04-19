@@ -1,6 +1,7 @@
 package com.example.msi.service;
 
 
+import com.example.msi.domains.InternshipProcess;
 import com.example.msi.domains.Teacher;
 import com.example.msi.models.teacher.SearchTeacherDTO;
 import com.example.msi.models.teacher.UpdateTeacherDTO;
@@ -8,6 +9,7 @@ import com.example.msi.shared.exceptions.MSIException;
 import lombok.NonNull;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface TeacherService {
@@ -22,4 +24,8 @@ public interface TeacherService {
   Optional<Teacher> findById(int id);
 
   Teacher changeStatus(int id);
+
+  int countNumberOfManagementStudents(int teacherId);
+
+  List<InternshipProcess> findManagementStudents(int teacherId);
 }
