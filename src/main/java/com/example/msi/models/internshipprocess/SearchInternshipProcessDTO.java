@@ -2,8 +2,7 @@ package com.example.msi.models.internshipprocess;
 
 import com.example.msi.domains.InternshipProcess;
 import com.example.msi.shared.base.BaseFilter;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -16,6 +15,11 @@ import static org.apache.logging.log4j.util.Strings.trimToNull;
 
 @Getter
 @RequiredArgsConstructor
+//@NoArgsConstructor
+//@AllArgsConstructor
+//@Builder
+//@Getter
+//@Setter
 public class SearchInternshipProcessDTO implements BaseFilter<InternshipProcess> {
   private final String studentCode;
   private final Integer teacherId;
@@ -23,6 +27,22 @@ public class SearchInternshipProcessDTO implements BaseFilter<InternshipProcess>
   private final String courseCode;
   private final Integer page;
   private final Integer size;
+
+  public SearchInternshipProcessDTO(String studentCode, Integer teacherId, Integer semesterId, String courseCode) {
+    this.studentCode = studentCode;
+    this.teacherId = teacherId;
+    this.semesterId = semesterId;
+    this.courseCode = courseCode;
+    this.page = page();
+    this.size = size();
+  }
+
+//private String studentCode;
+//  private Integer teacherId;
+//  private Integer semesterId;
+//  private String courseCode;
+//  private Integer page;
+//  private Integer size;
 
   public String studentCode() {
     return StringUtils.upperCase(trimToNull(studentCode));

@@ -11,10 +11,12 @@ import com.example.msi.shared.exceptions.MSIException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 
 @RestController
@@ -58,5 +60,27 @@ public class InternshipProcessController {
     var responseData = service.search(searchDTO)
         .map(InternshipProcessDTO::getInstance);
     return new ResponseEntity<>(responseData, HttpStatus.OK);
+  }
+
+  @GetMapping(value = "/export", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Object> exportListProcess(
+      @RequestParam(value = "studentCode", required = false) String studentCode,
+      @RequestParam(value = "teacherId", required = false) Integer teacherId,
+      @RequestParam(value = "semesterId", required = false) Integer semesterId,
+      @RequestParam(value = "courseCode", required = false) String courseCode,
+      HttpServletRequest request) {
+    byte[] bytes;
+    try {
+      SearchInternshipProcessDTO reqDTO = new SearchInternshipProcessDTO(studentCode, teacherId, semesterId, courseCode);
+      bytes = (byte[]) service.export(request, reqDTO);
+      return new ResponseEntity<>(bytes, HttpStatus.OK);
+    } catch (MSIException ex) {
+      return new ResponseEntity<>(
+          new ErrorDTO(ex.getMessageKey(), ex.getMessage()), HttpStatus.BAD_REQUEST);
+    } catch (Exception ex) {
+      return new ResponseEntity<>(
+          ExceptionUtils.messages.get(ExceptionUtils.E_INTERNAL_SERVER),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }
