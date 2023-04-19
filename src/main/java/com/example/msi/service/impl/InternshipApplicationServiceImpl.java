@@ -1,8 +1,6 @@
 package com.example.msi.service.impl;
 
-import com.example.msi.domains.FileE;
-import com.example.msi.domains.InternshipApplication;
-import com.example.msi.domains.InternshipApplicationFile;
+import com.example.msi.domains.*;
 import com.example.msi.models.internshipappication.CreateInternshipApplicationDTO;
 import com.example.msi.models.internshipappication.SearchInternshipApplicationDTO;
 import com.example.msi.models.internshipappication.UpdateInternshipApplicationDTO;
@@ -12,19 +10,19 @@ import com.example.msi.models.internshipprocess.CreateInternshipProcessDTO;
 import com.example.msi.repository.InternshipApplicationRepository;
 import com.example.msi.service.*;
 import com.example.msi.shared.enums.InternshipApplicationStatus;
+import com.example.msi.shared.enums.NotificationType;
+import com.example.msi.shared.enums.Role;
 import com.example.msi.shared.exceptions.MSIException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.lang.NonNull;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.example.msi.shared.enums.InternshipApplicationStatus.NEW;
@@ -38,6 +36,10 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   private final InternshipApplicationFileService internshipApplicationFileService;
   private final InternshipProcessService internshipProcessService;
   private final SemesterService semesterService;
+  private final UserService userService;
+  private final StudentService studentService;
+  private final NotificationService notificationService;
+  private final SimpMessagingTemplate messagingTemplate;
 
   @Override
   public Page<InternshipApplication> search(@NonNull SearchInternshipApplicationDTO filter) {
@@ -112,6 +114,22 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
     entity.verify(dto);
     var process = new CreateInternshipProcessDTO(entity.getId());
     internshipProcessService.create(process);
+
+    var student = studentService.findByCode(entity.getStudentCode()).orElse(null);
+    var user = userService.findById(student.getUserId()).orElse(null);
+    Set<Integer> userIds = new HashSet<>();
+    userIds.add(user.getId());
+    Notification notification = new Notification();
+    notification.setTitle("Thông Báo Kết Quả Xét Đơn");
+    notification.setMessage(dto.isAccepted() ? "Đơn Được Xác Nhận" : "Đơn Không Được Xác Nhận");
+    notification.setUserIds(userIds);
+    notification.setType(NotificationType.APPLICATION_APPROVE);
+    notification.setPostId(entity.getId());
+    notificationService.sendNotification(notification);
+
+    String queueName = "/queue/notification/" + user.getId();
+
+    messagingTemplate.convertAndSend(queueName, notification.getMessage());
   }
 
   @Override
@@ -126,6 +144,22 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
       }
       if (ia.getStatus() == NEW)
         ia.setStatus(WAITING);
+
+      var users = userService.findAllByRole(Role.ADMIN);
+      var userIds = users.stream().map(User::getId).collect(Collectors.toSet());
+      Notification notification = new Notification();
+      notification.setTitle("Thông Đơn Gửi Duyệt");
+      notification.setMessage("Thông Báo Đơn Gửi Duyệt Mới");
+      notification.setUserIds(userIds);
+      notification.setType(NotificationType.APPLICATION);
+      notification.setPostId(id);
+      notificationService.sendNotification(notification);
+
+      users.stream()
+          .map(User::getId)
+          .map(idi -> "/queue/notification/" + idi)
+          .forEach(queueName -> messagingTemplate.convertAndSend(queueName, notification.getMessage()));
+
       return repository.save(ia);
     });
   }

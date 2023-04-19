@@ -4,5 +4,6 @@ public enum NotificationType {
   POST,
   APPLICATION,
   APPLICATION_APPROVE,
-  REPORT
+  REPORT,
+  ASSIGN
 }
