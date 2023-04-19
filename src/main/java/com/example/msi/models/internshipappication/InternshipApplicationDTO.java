@@ -35,7 +35,7 @@ public class InternshipApplicationDTO {
 
   private InternshipApplicationDTO(@NonNull InternshipApplication entity) {
     id = entity.getId();
-    var stu = getStudentService().findByCode(entity.getStudentCode()).orElseThrow();
+    var stu = getStudentService().findByCode(entity.getStudentCode()).orElse(null);
     student = new StudentDetailDTO(stu);
     status = entity.getStatus();
     semesterId = entity.getSemesterId();

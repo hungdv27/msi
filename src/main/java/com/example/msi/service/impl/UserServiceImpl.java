@@ -48,6 +48,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.example.msi.domains.User.generateRandomString;
 import static com.example.msi.shared.Constant.DATETIME_FORMATTER_2;
 
 @Service
@@ -84,18 +85,27 @@ public class UserServiceImpl implements UserService, UserDetailsService {
       throw new IllegalAccessException("Email đã tồn tại trong hệ thống");
     }
     var user = User.getInstance(userRegister);
-    user.setPassword(passwordEncoder.encode(userRegister.getPassword()));
+    var randomPassword = generateRandomString(6);
+    String password = (role == Role.TEACHER) ?
+        passwordEncoder.encode(randomPassword) :
+        passwordEncoder.encode(userRegister.getPassword());
+    user.setPassword(password);
     user.setEnabled(role == Role.TEACHER ? true : false);
     user.setRole(role);
     user.setVerificationCode(RandomString.make(64));
-    StringBuilder url = new StringBuilder("159.65.4.245/login?verify=");
+    StringBuilder url = new StringBuilder("http://159.65.4.245/login?verify=");
 
     Map<String, Object> props = new HashMap<>();
     props.put("full_name", user.getFullName());
     props.put("email", user.getEmail());
     props.put("url", url.append(user.getVerificationCode()).toString());
-    props.put("pass", userRegister.getPassword());
-    mailService.sendMail(props, user.getEmail(), "sendMail", "Xác thực tài khoản");
+    props.put("pass", randomPassword);
+    if (role == Role.STUDENT){
+      mailService.sendMail(props, user.getEmail(), "sendMail", "Xác thực tài khoản");
+    }
+    else {
+      mailService.sendMail(props, user.getEmail(), "sendMailToTeacher", "Xác thực tài khoản");
+    }
     repository.save(user);
 
     if (role == Role.TEACHER) {

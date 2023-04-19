@@ -3,7 +3,9 @@ package com.example.msi.models.teacher;
 import com.example.msi.domains.Teacher;
 import com.example.msi.shared.base.BaseFilter;
 import com.example.msi.shared.enums.Role;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -14,15 +16,18 @@ import static com.example.msi.shared.Constant.SQL_CONTAINS_PATTERN;
 import static com.example.msi.shared.utils.PredicateUtils.build;
 import static com.example.msi.shared.utils.PredicateUtils.toPredicate;
 
-@Getter
+@Data
 @RequiredArgsConstructor
-public class SearchTeacherDTO implements BaseFilter<TeacherDTO> {
+public class SearchTeacherDTO implements BaseFilter<Teacher> {
   private final String email;
-  private final Role role;
   private final String fullName;
   private final Boolean status;
   private final Integer page;
   private final Integer size;
+
+  public Boolean getStatus() {
+    return status;
+  }
 
   @Override
   public int page() {
@@ -38,7 +43,7 @@ public class SearchTeacherDTO implements BaseFilter<TeacherDTO> {
   public Specification<Teacher> getSpecification() {
     return (root, cq, cb) -> toPredicate(
         List.of(
-            Optional.ofNullable(status).map(
+            Optional.ofNullable(getStatus()).map(
                 value -> build(
                     cb::equal,
                     attr -> root.get(attr).as(Boolean.class),
@@ -60,14 +65,6 @@ public class SearchTeacherDTO implements BaseFilter<TeacherDTO> {
                     attr -> root.join("user").get(attr).as(String.class),
                     "email",
                     () -> SQL_CONTAINS_PATTERN.formatted(value.toLowerCase())
-                )
-            ),
-            Optional.ofNullable(role).map(
-                value -> build(
-                    cb::equal,
-                    attr -> root.join("user").get(attr).as(Role.class),
-                    "role",
-                    () -> value
                 )
             )
         ),
