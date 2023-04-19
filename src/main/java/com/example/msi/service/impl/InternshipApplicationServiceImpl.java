@@ -15,6 +15,9 @@ import com.example.msi.shared.enums.NotificationType;
 import com.example.msi.shared.enums.Role;
 import com.example.msi.shared.exceptions.MSIException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.lang.NonNull;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -30,7 +33,6 @@ import static com.example.msi.shared.enums.InternshipApplicationStatus.NEW;
 import static com.example.msi.shared.enums.InternshipApplicationStatus.WAITING;
 
 @Service
-@RequiredArgsConstructor
 public class InternshipApplicationServiceImpl implements InternshipApplicationService {
   private final InternshipApplicationRepository repository;
   private final FileService fileService;
@@ -38,7 +40,19 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   private final InternshipProcessService internshipProcessService;
   private final SemesterService semesterService;
   private final UserService userService;
-  private final StudentRepository studentRepository;
+  private StudentService studentService;
+  @Autowired
+  public InternshipApplicationServiceImpl(@Lazy StudentService circB, InternshipApplicationRepository repository, FileService fileService, InternshipApplicationFileService internshipApplicationFileService, InternshipProcessService internshipProcessService, SemesterService semesterService, UserService userService, NotificationService notificationService, SimpMessagingTemplate messagingTemplate) {
+    this.studentService = circB;
+    this.repository = repository;
+    this.fileService = fileService;
+    this.internshipApplicationFileService = internshipApplicationFileService;
+    this.internshipProcessService = internshipProcessService;
+    this.semesterService = semesterService;
+    this.userService = userService;
+    this.notificationService = notificationService;
+    this.messagingTemplate = messagingTemplate;
+  }
   private final NotificationService notificationService;
   private final SimpMessagingTemplate messagingTemplate;
 
@@ -116,7 +130,7 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
     var process = new CreateInternshipProcessDTO(entity.getId());
     internshipProcessService.create(process);
 
-    var student = studentRepository.findTopByCode(entity.getStudentCode()).orElse(null);
+    var student = studentService.findByCode(entity.getStudentCode()).orElse(null);
     var user = userService.findById(student.getUserId()).orElse(null);
     Set<Integer> userIds = new HashSet<>();
     userIds.add(user.getId());
