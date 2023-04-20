@@ -60,8 +60,8 @@ public class PostServiceImpl implements PostService {
     Set<User> users = userService.findAllByRole(role);
     var userIds = users.stream().map(User::getId).collect(Collectors.toSet());
     Notification notification = new Notification();
-    notification.setTitle("New post created");
-    notification.setMessage("A new post has been created: " + post.getTitle());
+    notification.setTitle("Thông Báo");
+    notification.setMessage("Một tin tức mới vừa được đăng");
     notification.setUserIds(userIds);
     notification.setType(NotificationType.POST);
     notification.setPostId(post.getId());
