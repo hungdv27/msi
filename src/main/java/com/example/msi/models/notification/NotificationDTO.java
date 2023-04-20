@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.lang.NonNull;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -18,6 +20,7 @@ public class NotificationDTO {
   private String title;
   private NotificationType type;
   private Integer postId;
+  private LocalDateTime createdDate;
 
   private NotificationDTO(@NonNull Notification target) {
     id = target.getId();
@@ -25,6 +28,7 @@ public class NotificationDTO {
     title = target.getTitle();
     type = target.getType();
     postId = target.getPostId();
+    createdDate = target.getCreatedDate();
   }
 
   public static NotificationDTO getInstance(@NonNull Notification entity) {
