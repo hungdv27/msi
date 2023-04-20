@@ -11,5 +11,6 @@ import javax.validation.constraints.NotBlank;
 @NotBlank
 public class LoginResponse {
   private String jwt;
+  private Long expirationTime;
   private LoginUserDTO user;
 }
