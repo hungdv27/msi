@@ -27,20 +27,14 @@ public class NotificationServiceImpl implements NotificationService {
   public Page<Notification> getAllNotifications(Pageable pageable, String userName) {
     var user = userService.findByEmail(userName).orElseThrow();
     var userId = user.getId();
-    var allNotification = notificationRepository.findAll();
-    List<Notification> notifications =  new ArrayList<>();
-    allNotification.stream().forEach(
-        value -> {
-          if(value.getUserIds().contains(userId)){
-            notifications.add(value);
-          }
-        }
-    );
-    Sort sort1 = Sort.by("created_date").descending();
-    Pageable pageable1 = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort1);
-    Page<Notification> page = new PageImpl<>(notifications, pageable1, notifications.size());
-    return page;
+    Sort sort = Sort.by("createdDate").descending(); // Sắp xếp theo trường createdDate, giảm dần
+    Pageable pageableWithSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort); // Kết hợp Pageable với Sort
+    Page<Notification> allNotification = notificationRepository.findAllByUserIdsContaining(userId, pageableWithSort); // Sử dụng câu truy vấn với Sort
+    return allNotification;
   }
+
+
+
 
   @Override
   public Notification getById(Long id) {
