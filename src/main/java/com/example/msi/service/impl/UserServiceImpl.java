@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
       mailService.sendMail(props, user.getEmail(), "sendMail", "Xác thực tài khoản");
     }
     else {
-      mailService.sendMail(props, user.getEmail(), "sendMailToTeacher", "Xác thực tài khoản");
+      mailService.sendMail(props, user.getEmail(), "sendMailToTeacher", "Thông tin đăng nhập");
     }
     repository.save(user);
 
