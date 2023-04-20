@@ -97,7 +97,7 @@ public class InternshipApplicationController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @PutMapping("/regisInternship/{id}")
+  @PutMapping("/regis-internship/{id}")
   public ResponseEntity<InternshipApplicationDetailDTO> regis(@PathVariable int id) {
     var responData = service.regis(id)
         .map(InternshipApplicationDetailDTO::getInstance)
@@ -105,7 +105,7 @@ public class InternshipApplicationController {
     return new ResponseEntity<>(responData, HttpStatus.OK);
   }
 
-  @PutMapping("/unregistedInternship/{id}")
+  @PutMapping("/unregister-internship/{id}")
   public ResponseEntity<InternshipApplicationDetailDTO> cancelRegis(@PathVariable int id) {
     var responData = service.cancelRegis(id)
         .map(InternshipApplicationDetailDTO::getInstance)

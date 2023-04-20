@@ -3,6 +3,7 @@ package com.example.msi.security;
 import com.example.msi.security.jwt.JwtAuthenticationFilter;
 import com.example.msi.service.impl.UserDetailsServiceImpl;
 import com.example.msi.service.impl.UserServiceImpl;
+import com.example.msi.shared.enums.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
@@ -79,11 +80,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .authorizeRequests()
         .antMatchers("/api/user/**").permitAll()
         .antMatchers(HttpMethod.POST, "*/swagger-ui.html/*").permitAll()
-//        .antMatchers("/company/*").hasAnyAuthority(RoleEnum.TEACHER.name(), RoleEnum.ADMIN.name())
+//        .antMatchers("/api/company/**", "/api/courses/**","/api/file/**"
+//            ,"/api/grade/**","/api/internship-application/**","/api/internship-process/**",
+//            "/api/post/**","/api/report/**","/api/result/**","/api/semester/**",
+//            "/api/student/**").hasAnyAuthority(Role.STUDENT.name(),Role.TEACHER.name(),Role.ADMIN.name())
+//        .antMatchers("api/user/register-teacher","/api/user/import-file","/api/internship-application/verify",
+//            "/api/internship-application/accept-registration","/api/internship-process/assignTeacher",
+//            "/api/internship-process/export","/api/post/delete/{id}").hasAnyAuthority(Role.ADMIN.name())
         .anyRequest().authenticated()
         .and()
         .httpBasic()
-        //        * Thêm một lớp Filter kiểm tra jwt
         .and()
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
   }
@@ -91,7 +97,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   public void configure(WebSecurity web) {
     web.ignoring()
-        .antMatchers("/swagger-ui.html")
+//        .antMatchers("/swagger-ui.html")
         .antMatchers("/user/**");
   }
 }
