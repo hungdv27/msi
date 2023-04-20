@@ -1,8 +1,6 @@
 package com.example.msi.service.impl;
 
-import com.example.msi.domains.InternshipApplication;
-import com.example.msi.domains.InternshipProcess;
-import com.example.msi.domains.Notification;
+import com.example.msi.domains.*;
 import com.example.msi.models.internshipprocess.AssignTeacherDTO;
 import com.example.msi.models.internshipprocess.CreateInternshipProcessDTO;
 import com.example.msi.models.internshipprocess.SearchInternshipProcessDTO;
@@ -16,6 +14,8 @@ import com.example.msi.shared.exceptions.ExceptionUtils;
 import com.example.msi.shared.exceptions.MSIException;
 import com.example.msi.shared.utils.Utils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.lang.NonNull;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -28,15 +28,24 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
-@RequiredArgsConstructor
 public class InternshipProcessServiceImpl implements InternshipProcessService {
   private final InternshipProcessRepository repository;
   private final UserService userService;
   private final SimpMessagingTemplate messagingTemplate;
   private final NotificationService notificationService;
   private final TeacherService teacherService;
-  private final StudentRepository studentRepository;
+  private final StudentService studentService;
   private final InternshipApplicationRepository internshipApplicationRepository;
+
+  public InternshipProcessServiceImpl(InternshipProcessRepository repository, UserService userService, SimpMessagingTemplate messagingTemplate, NotificationService notificationService, TeacherService teacherService, @Lazy StudentService studentService, InternshipApplicationRepository internshipApplicationRepository) {
+    this.repository = repository;
+    this.userService = userService;
+    this.messagingTemplate = messagingTemplate;
+    this.notificationService = notificationService;
+    this.teacherService = teacherService;
+    this.studentService = studentService;
+    this.internshipApplicationRepository = internshipApplicationRepository;
+  }
 
   @Override
   @Transactional
@@ -53,39 +62,49 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
       process.setTeacherId(teacherId);
       repository.save(process);
 
-      var teacher = teacherService.findById(process.getTeacherId()).orElse(null);
-      var user = userService.findById(teacher.getUserId()).orElse(null);
-      Set<Integer> userIds = new HashSet<>();
-      userIds.add(user.getId());
-      Notification notification = new Notification();
-      notification.setTitle("Phân Công Hướng Dẫn Sinh Viên");
-      notification.setMessage("Phân Công Hướng Dẫn Sinh Viên");
-      notification.setUserIds(userIds);
-      notification.setType(NotificationType.REPORT);
-      notification.setPostId(process.getId());
-      notificationService.sendNotification(notification);
+      var internshipProcess = internshipApplicationRepository.findById(process.getApplicationId())
+          .map(i -> studentService.findByCode(i.getStudentCode()).orElse(null))
+          .orElse(null);
 
-      String queueName = "/queue/notification/" + user.getId();
-      messagingTemplate.convertAndSend(queueName, notification.getMessage());
+      var teacher = findUserByTeacherId(process.getTeacherId());
+      sendNotificationAndConvertToQueue(teacher, "Phân Công Hướng Dẫn Sinh Viên",
+          "Phân Công Hướng Dẫn Sinh Viên", process.getId());
 
-      var internshipProcess = internshipApplicationRepository.findById(process.getApplicationId()).orElse(null);
-      var student = studentRepository.findTopByCode(internshipProcess.getStudentCode()).orElse(null);
-      var user1 = userService.findById(student.getUserId()).orElse(null);
-      Set<Integer> userIds1 = new HashSet<>();
-      userIds1.add(user1.getId());
-      Notification notification1 = new Notification();
-      notification1.setTitle("Phân Công Giáo Viên Hướng Dẫn");
-      notification1.setMessage("Phân Công Giáo Viên Hướng Dẫn");
-      notification1.setUserIds(userIds1);
-      notification1.setType(NotificationType.REPORT);
-      notification1.setPostId(process.getId());
-      notificationService.sendNotification(notification1);
+      var student = userService.findById(internshipProcess.getUserId()).orElse(null);
+      sendNotificationAndConvertToQueue(student, "Phân Công Giáo Viên Hướng Dẫn",
+          "Phân Công Giáo Viên Hướng Dẫn", process.getId());
 
-      String queueName1 = "/queue/notification/" + user1.getId();
-      messagingTemplate.convertAndSend(queueName1, notification1.getMessage());
 
     });
   }
+
+  private void sendNotificationAndConvertToQueue(User user, String title, String message, Integer postId) {
+    Optional<User> optionalUser = Optional.ofNullable(user);
+    optionalUser.ifPresent(u -> {
+      Set<Integer> userIds = new HashSet<>();
+      userIds.add(u.getId());
+
+      Notification notification = new Notification();
+      notification.setTitle(title);
+      notification.setMessage(message);
+      notification.setUserIds(userIds);
+      notification.setType(NotificationType.REPORT);
+      notification.setPostId(postId);
+      notificationService.sendNotification(notification);
+
+      String queueName = "/queue/notification/" + u.getId();
+      messagingTemplate.convertAndSend(queueName, notification.getMessage());
+    });
+  }
+
+  // Phương thức tìm kiếm user theo teacherId
+  private User findUserByTeacherId(Integer teacherId) {
+    return teacherService.findById(teacherId)
+        .map(t -> userService.findById(t.getUserId()).orElse(null))
+        .orElse(null);
+  }
+
+
 
   @Override
   public Optional<InternshipProcess> findByApplicationId(int applicationId) {
