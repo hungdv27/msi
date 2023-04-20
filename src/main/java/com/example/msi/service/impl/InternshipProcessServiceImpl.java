@@ -10,7 +10,6 @@ import com.example.msi.domains.Notification;
 import com.example.msi.models.internshipprocess.*;
 import com.example.msi.repository.InternshipApplicationRepository;
 import com.example.msi.repository.InternshipProcessRepository;
-import com.example.msi.repository.StudentRepository;
 import com.example.msi.service.*;
 import com.example.msi.shared.enums.NotificationType;
 import com.example.msi.shared.enums.Role;
@@ -18,8 +17,6 @@ import com.example.msi.shared.exceptions.ExceptionUtils;
 import com.example.msi.shared.exceptions.MSIException;
 import com.example.msi.shared.utils.ExcelUtils;
 import com.example.msi.shared.utils.Utils;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.data.domain.Page;
@@ -109,8 +106,6 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
         .map(t -> userService.findById(t.getUserId()).orElse(null))
         .orElse(null);
   }
-
-
 
   @Override
   public Optional<InternshipProcess> findByApplicationId(int applicationId) {
