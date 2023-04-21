@@ -78,7 +78,7 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   public InternshipApplication create(@NonNull CreateInternshipApplicationDTO dto) throws MSIException, IOException {
     var semesterActive = semesterService.findSemesterActive().orElseThrow();
     if (!semesterActive.isAcceptInternshipRegistration())
-      throw new RuntimeException("Chức năng đăng ký thực tập chưa được mở.");
+      throw new RuntimeException("Hiện không trong thời gian đăng ký thực tập");
     var entity = repository.save(InternshipApplication.getInstance(dto));
     attachFiles(entity.getId(), dto.getFiles());
     return entity;
@@ -87,6 +87,9 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   @Override
   @Transactional
   public Optional<InternshipApplication> update(@NonNull UpdateInternshipApplicationDTO dto) {
+    var semesterActive = semesterService.findSemesterActive().orElseThrow();
+    if (!semesterActive.isAcceptInternshipRegistration())
+      throw new RuntimeException("Hiện không trong thời gian đăng ký thực tập");
     return repository.findById(dto.getId()).map(entity -> {
       entity.update(dto);
       if (dto.getExistedFiles() != null) {
@@ -152,7 +155,7 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   public Optional<InternshipApplication> regis(int id) {
     var semesterActive = semesterService.findSemesterActive().orElseThrow();
     if (!semesterActive.isAcceptInternshipRegistration())
-      throw new RuntimeException("Chức năng đăng ký thực tập chưa được mở.");
+      throw new RuntimeException("Hiện không trong thời gian đăng ký thực tập");
     return repository.findById(id).map(ia -> {
       if (repository.existsByStudentCodeAndStatus(ia.getStudentCode(), WAITING)) {
         throw new RuntimeException("Đã tồn tại yêu cầu duyệt đơn thực tập");
