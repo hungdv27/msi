@@ -70,12 +70,12 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
           .orElse(null);
 
       var teacher = findUserByTeacherId(process.getTeacherId());
-      sendNotificationAndConvertToQueue(teacher, "Phân Công Hướng Dẫn Sinh Viên",
-          "Phân Công Hướng Dẫn Sinh Viên", process.getId());
+      sendNotificationAndConvertToQueue(teacher, "Thông báo",
+          "Bạn vừa được phân công hướng dẫn sinh viên", process.getId());
 
       var student = userService.findById(internshipProcess.getUserId()).orElse(null);
-      sendNotificationAndConvertToQueue(student, "Phân Công Giáo Viên Hướng Dẫn",
-          "Phân Công Giáo Viên Hướng Dẫn", process.getId());
+      sendNotificationAndConvertToQueue(student, "Thông báo",
+          "Bạn vừa được gán giảng viên hướng dẫn", process.getId());
 
 
     });

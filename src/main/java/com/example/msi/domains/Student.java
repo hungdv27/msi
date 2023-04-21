@@ -57,6 +57,7 @@ public class Student {
     this.gradeCode = target.getGradeCode();
     this.status = target.getStatus();
     this.userId = userId;
+    this.semesterId  = target.getSemesterId();
   }
 
   public void update(@NonNull UpdateStudentDTO target) {
