@@ -100,10 +100,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     props.put("email", user.getEmail());
     props.put("url", url.append(user.getVerificationCode()).toString());
     props.put("pass", randomPassword);
-    if (role == Role.STUDENT){
+    if (role == Role.STUDENT) {
       mailService.sendMail(props, user.getEmail(), "sendMail", "Xác thực tài khoản");
-    }
-    else {
+    } else {
       mailService.sendMail(props, user.getEmail(), "sendMailToTeacher", "Thông tin đăng nhập");
     }
     repository.save(user);
@@ -239,8 +238,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
   @Override
   public byte[] templateDownload(HttpServletRequest request) throws IOException {
-    // Số lượng bản ghi được cấu hình chp phép import
-//    var totalImport = new AtomicInteger(10000);
 
     var columns = Constant.INCOME_TEACHER_ACCOUNT_IMPORT_HEADER;
     var workbook = new XSSFWorkbook();
@@ -379,6 +376,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         error.append(String.format("Dòng <%d>: %s |", item.getNumberSort(), "Email sai định dạng"));
       }
     }
+    // Sử dụng Set để lưu trữ các email trùng lặp
+    Set<String> duplicateEmails = allData.stream()
+        .map(IncomeUserCreateDTO::getEmail) // Lấy danh sách các email từ danh sách allData
+        .filter(email -> !email.isEmpty()) // Lọc bỏ các email rỗng
+        .collect(Collectors.toCollection(HashSet::new));
+    // Kiểm tra các email trùng lặp và in ra màn hình
+    duplicateEmails.stream()
+        .filter(email -> allData.stream().filter(dto -> dto.getEmail().equals(email)).count() > 1)
+        .forEach(email -> error.append(String.format("Email trùng lặp: " + email + " | ")));
+
     return error.toString();
   }
 
