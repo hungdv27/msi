@@ -135,8 +135,8 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
     Set<Integer> userIds = new HashSet<>();
     userIds.add(user.getId());
     Notification notification = new Notification();
-    notification.setTitle("Thông Báo Kết Quả Xét Đơn");
-    notification.setMessage(dto.isAccepted() ? "Đơn Được Xác Nhận" : "Đơn Không Được Xác Nhận");
+    notification.setTitle("Thông Báo");
+    notification.setMessage(dto.isAccepted() ? "Đơn đăng ký được xét duyệt" : "Đơn đăng ký bị từ chối");
     notification.setUserIds(userIds);
     notification.setType(NotificationType.APPLICATION_APPROVE);
     notification.setPostId(entity.getId());
@@ -163,8 +163,8 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
       var users = userService.findAllByRole(Role.ADMIN);
       var userIds = users.stream().map(User::getId).collect(Collectors.toSet());
       Notification notification = new Notification();
-      notification.setTitle("Thông Đơn Gửi Duyệt");
-      notification.setMessage("Thông Báo Đơn Gửi Duyệt Mới");
+      notification.setTitle("Thông Báo");
+      notification.setMessage("Đơn đăng ký thực tập mới");
       notification.setUserIds(userIds);
       notification.setType(NotificationType.APPLICATION);
       notification.setPostId(id);

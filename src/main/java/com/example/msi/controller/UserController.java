@@ -33,7 +33,9 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Optional;
+
 
 @CrossOrigin
 @RestController
@@ -67,7 +69,7 @@ public class UserController {
       // Trả về jwt cho người dùng.
       CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
       String jwt = tokenProvider.generateToken(userDetails);
-      return ResponseEntity.ok(new Data(new LoginResponse("Bearer " + jwt, mapper.map(userDetails.getUser(), LoginUserDTO.class))));
+      return ResponseEntity.ok(new Data(new LoginResponse("Bearer " + jwt, new Date((new Date()).getTime() + 3600000).getTime(), mapper.map(userDetails.getUser(), LoginUserDTO.class))));
     } catch (Exception e) {
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST,"Sai thông tin đăng nhập", e

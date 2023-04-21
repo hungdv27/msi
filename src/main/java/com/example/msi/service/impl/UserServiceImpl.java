@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
       mailService.sendMail(props, user.getEmail(), "sendMail", "Xác thực tài khoản");
     }
     else {
-      mailService.sendMail(props, user.getEmail(), "sendMailToTeacher", "Xác thực tài khoản");
+      mailService.sendMail(props, user.getEmail(), "sendMailToTeacher", "Thông tin đăng nhập");
     }
     repository.save(user);
 
@@ -373,10 +373,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (!repository.existsByEmail(item.getEmail())) {
           allData.add(item);
         } else {
-          error.append(String.format("Row <%d>: %s |", item.getNumberSort(), "Email duplicate"));
+          error.append(String.format("Dòng <%d>: %s |", item.getNumberSort(), "Email đã tồn tại trong hệ thống"));
         }
       } else {
-        error.append(String.format("Row <%d>: %s |", item.getNumberSort(), "Email invalid"));
+        error.append(String.format("Dòng <%d>: %s |", item.getNumberSort(), "Email sai định dạng"));
       }
     }
     return error.toString();
