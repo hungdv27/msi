@@ -51,8 +51,8 @@ public class ReportServiceImpl implements ReportService {
     Set<Integer> userIds = new HashSet<>();
     userIds.add(user.getId());
     Notification notification = new Notification();
-    notification.setTitle("Thông Báo Sinh Viên Nộp Báo Cáo");
-    notification.setMessage("Có Sinh Viên Mới Nộp Báo Cáo");
+    notification.setTitle("Thông Báo");
+    notification.setMessage("Có sinh viên vừa nộp báo cáo");
     notification.setUserIds(userIds);
     notification.setType(NotificationType.REPORT);
     notification.setPostId(report.getId());
