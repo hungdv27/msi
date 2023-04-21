@@ -63,6 +63,9 @@ public class User implements Principal {
   @Column(name = "update_password_token", length = 64)
   private String updatePasswordToken;
 
+  @Column(name = "last_read_time")
+  private LocalDateTime lastReadTime;
+
   private User(@NonNull CreateUserDTO target) {
     this.fullName = target.getFullName();
     this.password = target.getPassword();
