@@ -8,6 +8,8 @@ public class ExceptionUtils {
   public static final String END_DATE_IS_NOT_BEFORE_OR_EQUAL_START_DATE = "END_DATE_IS_NOT_BEFORE_OR_EQUAL_START_DATE";
   public static final String TRUE_STATUS_IS_EXIST = "TRUE_STATUS_IS_EXIST";
   public static final String E_COMMON_NOT_EXISTS_ID = "E_COMMON_NOT_EXISTS_ID";
+  // Student
+  public static final String E_STUDENT_CODE_EXISTED = "E_STUDENT_CODE_EXISTED";
 
   // Server
   public static final String E_INTERNAL_SERVER = "E_INTERNAL_SERVER";
@@ -39,6 +41,7 @@ public class ExceptionUtils {
     messages.put(ExceptionUtils.TRUE_STATUS_IS_EXIST, "Status true đã tồn tại");
     messages.put(ExceptionUtils.E_COMMON_NOT_EXISTS_ID, "ID không tồn tại");
     messages.put(ExceptionUtils.E_NOT_ADMIN, "Không phải là admin");
+    messages.put(ExceptionUtils.E_STUDENT_CODE_EXISTED, "Mã sinh viên đã tồn tại");
   }
 
   public static String buildMessage(String messKey, Object... arg) {

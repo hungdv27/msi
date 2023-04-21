@@ -14,4 +14,5 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
   Optional<Student> findTopByUserId(int userId);
   Optional<Student> findTopByCode(String code);
   Page<Student> findAll(Specification<Student> specification, Pageable pageable);
+  boolean existsByCode(String code);
 }
