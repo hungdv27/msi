@@ -2,8 +2,8 @@ package com.example.msi.models.internshipprocess;
 
 import com.example.msi.domains.InternshipProcess;
 import com.example.msi.shared.base.BaseFilter;
+import lombok.Data;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -15,7 +15,7 @@ import static com.example.msi.shared.utils.PredicateUtils.toPredicate;
 import static org.apache.logging.log4j.util.Strings.trimToNull;
 
 @Getter
-@RequiredArgsConstructor
+@Data
 public class SearchInternshipProcessDTO implements BaseFilter<InternshipProcess> {
   private String studentCode;
   private Integer teacherId;
@@ -23,6 +23,8 @@ public class SearchInternshipProcessDTO implements BaseFilter<InternshipProcess>
   private String courseCode;
   private Integer page;
   private Integer size;
+
+  public SearchInternshipProcessDTO() {}
 
   public SearchInternshipProcessDTO(String studentCode, Integer teacherId, Integer semesterId, String courseCode) {
     this.studentCode = studentCode;
