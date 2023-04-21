@@ -18,6 +18,7 @@ public class StudentDetailDTO {
   private String code;
   private String gradeCode;
   private Integer userId;
+  private Integer semesterId;
   private int status;
   private String fullName;
   private String email;
@@ -29,6 +30,7 @@ public class StudentDetailDTO {
     code = student.getCode();
     gradeCode = student.getGradeCode();
     userId = student.getUserId();
+    semesterId = student.getSemesterId();
     status = student.getStatus();
     var user = SingletonHelper.USER_SERVICE.findById(student.getUserId()).orElseThrow();
     fullName = user.getFullName();

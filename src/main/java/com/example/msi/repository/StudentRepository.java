@@ -1,12 +1,17 @@
 package com.example.msi.repository;
 
 import com.example.msi.domains.Student;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-public interface StudentRepository extends PagingAndSortingRepository<Student, Integer>, JpaSpecificationExecutor<Student> {
+@Repository
+public interface StudentRepository extends JpaRepository<Student, Integer> {
   Optional<Student> findTopByUserId(int userId);
   Optional<Student> findTopByCode(String code);
+  Page<Student> findAll(Specification<Student> specification, Pageable pageable);
 }

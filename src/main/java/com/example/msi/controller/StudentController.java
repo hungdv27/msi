@@ -1,20 +1,20 @@
 package com.example.msi.controller;
 
 import com.example.msi.models.error.ErrorDTO;
+import com.example.msi.models.student.SearchStudentDTO;
+import com.example.msi.models.student.StudentDetailDTO;
 import com.example.msi.models.student.UpdateStudentDTO;
 import com.example.msi.service.StudentService;
 import com.example.msi.shared.exceptions.ExceptionUtils;
 import com.example.msi.shared.exceptions.MSIException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
-import static com.example.msi.service.impl.CompanyServiceImpl.getPageable;
 
 @RequiredArgsConstructor
 @RequestMapping("api/student")
@@ -53,23 +53,12 @@ public class StudentController {
     }
   }
 
-  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Object> findAll(
-      @RequestParam(required = false) String code,
-      @RequestParam(required = false) String phoneNumber,
-      @RequestParam(required = false) String fullName,
-      @RequestParam(defaultValue = "0") Integer page,
-      @RequestParam(defaultValue = "5") Integer size) {
-    try {
-      Pageable pageable = getPageable(page, size);
-      return new ResponseEntity<>(service.search(code, phoneNumber, fullName, pageable), HttpStatus.OK);
-    } catch (MSIException ex) {
-      return new ResponseEntity<>(
-          new ErrorDTO(ex.getMessageKey(), ex.getMessage()), HttpStatus.BAD_REQUEST);
-    } catch (Exception ex) {
-      return new ResponseEntity<>(
-          ExceptionUtils.messages.get(ExceptionUtils.E_INTERNAL_SERVER),
-          HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+  @GetMapping("/search")
+  public ResponseEntity<Page<StudentDetailDTO>> search(
+      SearchStudentDTO searchDTO
+  ) throws MSIException {
+    var responseData = service.search(searchDTO)
+        .map(StudentDetailDTO::getInstance);
+    return new ResponseEntity<>(responseData, HttpStatus.OK);
   }
 }

@@ -7,4 +7,5 @@ public class UpdateStudentDTO {
   private String code;
   private String gradeCode;
   private int status;
+  private int semesterId;
 }
