@@ -2,11 +2,9 @@ package com.example.msi.models.teacher;
 
 import com.example.msi.domains.Teacher;
 import com.example.msi.shared.base.BaseFilter;
-import com.example.msi.shared.enums.Role;
-import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
@@ -15,8 +13,9 @@ import java.util.Optional;
 import static com.example.msi.shared.Constant.SQL_CONTAINS_PATTERN;
 import static com.example.msi.shared.utils.PredicateUtils.build;
 import static com.example.msi.shared.utils.PredicateUtils.toPredicate;
+import static org.apache.logging.log4j.util.Strings.trimToNull;
 
-@Data
+@Getter
 @RequiredArgsConstructor
 public class SearchTeacherDTO implements BaseFilter<Teacher> {
   private final String email;
@@ -25,8 +24,12 @@ public class SearchTeacherDTO implements BaseFilter<Teacher> {
   private final Integer page;
   private final Integer size;
 
-  public Boolean getStatus() {
-    return status;
+  public String email() {
+    return StringUtils.upperCase(trimToNull(email));
+  }
+
+  public String fullName() {
+    return StringUtils.upperCase(trimToNull(fullName));
   }
 
   @Override
@@ -43,10 +46,10 @@ public class SearchTeacherDTO implements BaseFilter<Teacher> {
   public Specification<Teacher> getSpecification() {
     return (root, cq, cb) -> toPredicate(
         List.of(
-            Optional.ofNullable(getStatus()).map(
+            Optional.ofNullable(status).map(
                 value -> build(
                     cb::equal,
-                    attr -> root.get(attr).as(Boolean.class),
+                    attr -> root.get(attr).as(boolean.class),
                     "status",
                     () -> value
                 )
