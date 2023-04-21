@@ -30,6 +30,9 @@ public class Student {
   @Column(name = "user_id")
   private Integer userId;
 
+  @Column(name = "semester_id")
+  private int semesterId;
+
   @Column(name = "status", nullable = false)
   private int status;
 
@@ -59,6 +62,7 @@ public class Student {
   public void update(@NonNull UpdateStudentDTO target) {
     this.code = target.getCode();
     this.gradeCode = target.getGradeCode();
+    this.semesterId = target.getSemesterId();
   }
 
   public static Student getInstance(@NonNull UpdateStudentDTO payload, int userId) {
