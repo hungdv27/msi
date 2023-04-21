@@ -61,7 +61,8 @@ public class InternshipProcessExportDTO {
     // courseCode
     this.courseCode = internshipApplication.getCourseCode();
     // fullNameTeacher
-    var userTeacher = getUserService().findById(entity.getTeacherId()).orElseThrow();
+    var teacherEntity = getTeacherService().findById(entity.getTeacherId()).orElseThrow();
+    var userTeacher = getUserService().findById(teacherEntity.getUserId()).orElseThrow();
     this.fullNameTeacher = userTeacher.getFullName();
     // emailTeacher
     this.emailTeacher = userTeacher.getEmail();

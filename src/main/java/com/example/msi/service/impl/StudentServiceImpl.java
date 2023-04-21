@@ -11,6 +11,7 @@ import com.example.msi.service.InternshipProcessService;
 import com.example.msi.service.StudentService;
 import com.example.msi.service.UserService;
 import com.example.msi.shared.enums.InternshipApplicationStatus;
+import com.example.msi.shared.exceptions.ExceptionUtils;
 import com.example.msi.shared.exceptions.MSIException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -30,18 +32,30 @@ public class StudentServiceImpl implements StudentService {
   private final InternshipProcessService internshipProcessService;
 
   @Override
-  public void updateStudent(@NonNull UpdateStudentDTO payload, String userName) {
+  public void updateStudent(@NonNull UpdateStudentDTO payload, String userName) throws MSIException {
     var userId = userService.findByEmail(userName).orElseThrow().getId();
-    repository.findTopByUserId(userId).ifPresentOrElse(
-        entity -> {
-          entity.update(payload);
-          repository.save(entity);
-        },
-        () -> {
-          var entity = Student.getInstance(payload, userId);
-          repository.save(entity);
-        }
-    );
+    var optional = repository.findTopByUserId(userId);
+    if (optional.isEmpty()) {
+      // check trung code
+      if (repository.existsByCode(payload.getCode())) {
+        throw new MSIException(
+            ExceptionUtils.E_STUDENT_CODE_EXISTED,
+            ExceptionUtils.messages.get(ExceptionUtils.E_STUDENT_CODE_EXISTED));
+      }
+      var entity = Student.getInstance(payload, userId);
+      repository.save(entity);
+    } else {
+      var entity = optional.get();
+      // check trung code
+      if (repository.existsByCode(payload.getCode()) && !Objects.equals(entity.getCode(), payload.getCode())) {
+        throw new MSIException(
+            ExceptionUtils.E_STUDENT_CODE_EXISTED,
+            ExceptionUtils.messages.get(ExceptionUtils.E_STUDENT_CODE_EXISTED));
+      }
+      entity.update(payload);
+      repository.save(entity);
+    }
+
   }
 
   @Override
