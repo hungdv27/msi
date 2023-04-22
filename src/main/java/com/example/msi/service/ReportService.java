@@ -2,6 +2,8 @@ package com.example.msi.service;
 
 import com.example.msi.domains.Report;
 import com.example.msi.models.report.CreateReportDTO;
+import com.example.msi.models.report.ReportDescriptionDTO;
+import com.example.msi.shared.exceptions.MSIException;
 import org.springframework.lang.NonNull;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,4 +15,8 @@ public interface ReportService {
   Report findById(int id);
 
   List<Report> findAllByProcessId(int processId);
+
+  void addDescription(@NonNull ReportDescriptionDTO payload) throws MSIException;
+
+  void delete(int id);
 }
