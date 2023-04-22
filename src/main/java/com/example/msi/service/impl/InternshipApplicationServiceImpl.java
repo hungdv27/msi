@@ -8,15 +8,12 @@ import com.example.msi.models.internshipappication.VerifyApplicationDTO;
 import com.example.msi.models.internshipapplication_file.CreateInternshipApplicationFileDTO;
 import com.example.msi.models.internshipprocess.CreateInternshipProcessDTO;
 import com.example.msi.repository.InternshipApplicationRepository;
-import com.example.msi.repository.StudentRepository;
 import com.example.msi.service.*;
 import com.example.msi.shared.enums.InternshipApplicationStatus;
 import com.example.msi.shared.enums.NotificationType;
 import com.example.msi.shared.enums.Role;
 import com.example.msi.shared.exceptions.MSIException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.lang.NonNull;
@@ -40,7 +37,10 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   private final InternshipProcessService internshipProcessService;
   private final SemesterService semesterService;
   private final UserService userService;
-  private StudentService studentService;
+  private final NotificationService notificationService;
+  private final SimpMessagingTemplate messagingTemplate;
+  private final StudentService studentService;
+
   @Autowired
   public InternshipApplicationServiceImpl(@Lazy StudentService circB, InternshipApplicationRepository repository, FileService fileService, InternshipApplicationFileService internshipApplicationFileService, InternshipProcessService internshipProcessService, SemesterService semesterService, UserService userService, NotificationService notificationService, SimpMessagingTemplate messagingTemplate) {
     this.studentService = circB;
@@ -53,8 +53,6 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
     this.notificationService = notificationService;
     this.messagingTemplate = messagingTemplate;
   }
-  private final NotificationService notificationService;
-  private final SimpMessagingTemplate messagingTemplate;
 
   @Override
   public Page<InternshipApplication> search(@NonNull SearchInternshipApplicationDTO filter) {
@@ -78,7 +76,7 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   public InternshipApplication create(@NonNull CreateInternshipApplicationDTO dto) throws MSIException, IOException {
     var semesterActive = semesterService.findSemesterActive().orElseThrow();
     if (!semesterActive.isAcceptInternshipRegistration())
-      throw new RuntimeException("Hiện không trong thời gian đăng ký thực tập");
+      throw new RuntimeException("Thời gian đăng ký thực tập chưa bắt đầu");
     var entity = repository.save(InternshipApplication.getInstance(dto));
     attachFiles(entity.getId(), dto.getFiles());
     return entity;
@@ -89,7 +87,7 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   public Optional<InternshipApplication> update(@NonNull UpdateInternshipApplicationDTO dto) {
     var semesterActive = semesterService.findSemesterActive().orElseThrow();
     if (!semesterActive.isAcceptInternshipRegistration())
-      throw new RuntimeException("Hiện không trong thời gian đăng ký thực tập");
+      throw new RuntimeException("Thời gian đăng ký thực tập chưa bắt đầu");
     return repository.findById(dto.getId()).map(entity -> {
       entity.update(dto);
       if (dto.getExistedFiles() != null) {
@@ -129,12 +127,14 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
   @Transactional
   public void verify(@NonNull VerifyApplicationDTO dto) {
     var entity = repository.findById(dto.getId()).orElseThrow();
-    entity.verify(dto);
-    var process = new CreateInternshipProcessDTO(entity.getId());
-    internshipProcessService.create(process);
+    var accepted = entity.verify(dto);
+    if (accepted) {
+      var process = new CreateInternshipProcessDTO(entity.getId());
+      internshipProcessService.create(process);
+    }
 
-    var student = studentService.findByCode(entity.getStudentCode()).orElse(null);
-    var user = userService.findById(student.getUserId()).orElse(null);
+    var student = studentService.findByCode(entity.getStudentCode()).orElseThrow();
+    var user = userService.findById(student.getUserId()).orElseThrow();
     Set<Integer> userIds = new HashSet<>();
     userIds.add(user.getId());
     Notification notification = new Notification();
