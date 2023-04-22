@@ -10,4 +10,6 @@ public interface ReportFileService {
   void add(@NonNull CreateReportFileDTO dto);
 
   List<ReportFile> findByReportId(@NonNull Integer reportId);
+
+  void deleteByReportId(int reportId);
 }

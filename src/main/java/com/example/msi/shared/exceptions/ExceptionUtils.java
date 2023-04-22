@@ -10,7 +10,8 @@ public class ExceptionUtils {
   public static final String E_COMMON_NOT_EXISTS_ID = "E_COMMON_NOT_EXISTS_ID";
   // Student
   public static final String E_STUDENT_CODE_EXISTED = "E_STUDENT_CODE_EXISTED";
-
+  // Report
+  public static final String E_DESCRIPTION_TOO_LONG = "E_DESCRIPTION_TOO_LONG";
   // Server
   public static final String E_INTERNAL_SERVER = "E_INTERNAL_SERVER";
   // InternshipProcess
@@ -42,6 +43,7 @@ public class ExceptionUtils {
     messages.put(ExceptionUtils.E_COMMON_NOT_EXISTS_ID, "ID không tồn tại");
     messages.put(ExceptionUtils.E_NOT_ADMIN, "Không phải là admin");
     messages.put(ExceptionUtils.E_STUDENT_CODE_EXISTED, "Mã sinh viên đã tồn tại");
+    messages.put(ExceptionUtils.E_DESCRIPTION_TOO_LONG, "Nhận xét dài hơn 255 ký tự");
   }
 
   public static String buildMessage(String messKey, Object... arg) {

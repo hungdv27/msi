@@ -1,6 +1,7 @@
 package com.example.msi.domains;
 
 import com.example.msi.models.report.CreateReportDTO;
+import com.example.msi.models.report.ReportDescriptionDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -50,5 +51,9 @@ public class Report {
 
   public static Report getInstance(@NonNull CreateReportDTO dto, int processId) {
     return new Report(dto, processId);
+  }
+
+  public void addDescription(@NonNull ReportDescriptionDTO target) {
+    this.description = target.getDescription();
   }
 }
