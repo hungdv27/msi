@@ -1,10 +1,60 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
-<head></head>
+<head>
+    <style>
+        /* Định dạng form */
+        .email-form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f7f7f7;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .email-form h2 {
+            text-align: center;
+        }
+
+        .email-form label,
+        .email-form button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+
+        .email-form button {
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .email-form button:hover {
+            background-color: #0069d9;
+        }
+
+        .email-form p.success-msg {
+            color: #28a745;
+        }
+
+        .email-form p.error-msg {
+            color: #dc3545;
+        }
+    </style>
+</head>
 <body>
-<h3 th:text="${'Xin chào, ' + full_name}"></h3>
-<p th:text="${'- Tên truy cập: ' + email}"></p>
-<h2>Để kích hoạt tài khoản, vui lòng bấm vào <a th:href="${url}" th:text="${'Xác nhận'}"></a></h2>
+<div class="email-form">
+    <h2>Đăng ký nhận tin tức</h2>
+    <form id="subscribe-form" method="post" action="#">
+        <label th:text="${'Xin chào, ' + full_name}" for="email"></label>
+        <label th:text="${'- Tên truy cập: ' + email}" for="email"></label>
+        <h3>Để kích hoạt tài khoản, vui lòng bấm vào <a th:href="${url}" th:text="${'Xác nhận'}"></a></h3>
+    </form>
+    <p id="subscribe-msg" class="success-msg"></p>
+</div>
 </body>
 </html>
