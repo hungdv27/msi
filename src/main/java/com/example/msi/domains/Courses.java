@@ -25,7 +25,7 @@ public class Courses {
   @Column(name = "id")
   private int id;
 
-  @Column(name = "code", length = 10)
+  @Column(name = "code", length = 50)
   private String code;
 
   @Column(name = "name", length = 255)
@@ -48,13 +48,13 @@ public class Courses {
     this.description = target.getDescription();
   }
 
-  public void update(@NonNull UpdateCoursesDTO target){
+  public static Courses getInstance(@NonNull CreateCoursesDTO payload) {
+    return new Courses(payload);
+  }
+
+  public void update(@NonNull UpdateCoursesDTO target) {
     this.code = target.getCode();
     this.name = target.getName();
     this.description = target.getDescription();
-  }
-
-  public static Courses getInstance(@NonNull CreateCoursesDTO payload){
-    return new Courses(payload);
   }
 }

@@ -41,9 +41,14 @@ public class ServiceUtils {
     return SingletonHelper.REPORT_SERVICE;
   }
 
+  public static SemesterService getSemesterService() {
+    return SingletonHelper.SEMESTER_SERVICE;
+  }
+
   public static TeacherService getTeacherService() {
     return SingletonHelper.TEACHER_SERVICE;
   }
+
   public static ResultService getResultService() {
     return SingletonHelper.RESULT_SERVICE;
   }
@@ -64,5 +69,6 @@ public class ServiceUtils {
     private static final TeacherService TEACHER_SERVICE = ApplicationContextHolder.getBean(TeacherService.class);
     private static final ResultService RESULT_SERVICE = ApplicationContextHolder.getBean(ResultService.class);
     private static final UserService USER_SERVICE = ApplicationContextHolder.getBean(UserService.class);
+    private static final SemesterService SEMESTER_SERVICE = ApplicationContextHolder.getBean(SemesterService.class);
   }
 }

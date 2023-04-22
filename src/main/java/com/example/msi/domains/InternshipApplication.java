@@ -3,9 +3,6 @@ package com.example.msi.domains;
 import com.example.msi.models.internshipappication.CreateInternshipApplicationDTO;
 import com.example.msi.models.internshipappication.UpdateInternshipApplicationDTO;
 import com.example.msi.models.internshipappication.VerifyApplicationDTO;
-import com.example.msi.service.SemesterService;
-import com.example.msi.service.StudentService;
-import com.example.msi.shared.ApplicationContextHolder;
 import com.example.msi.shared.enums.InternshipApplicationStatus;
 import com.example.msi.shared.exceptions.MSIException;
 import lombok.Getter;
@@ -22,6 +19,8 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.example.msi.shared.enums.InternshipApplicationStatus.WAITING;
+import static com.example.msi.shared.utils.ServiceUtils.getSemesterService;
+import static com.example.msi.shared.utils.ServiceUtils.getStudentService;
 
 @Getter
 @Entity
@@ -50,7 +49,7 @@ public class InternshipApplication {
   @Column(name = "note", length = 10000)
   private String note;
 
-  @Column(name = "course_code", length = 10)
+  @Column(name = "course_code", length = 50)
   private String courseCode;
 
   @Column(name = "instructor")
@@ -83,8 +82,8 @@ public class InternshipApplication {
   private LocalDateTime updatedDate;
 
   private InternshipApplication(@NonNull CreateInternshipApplicationDTO target) throws MSIException {
-    SingletonHelper.STUDENT_SERVICE.findByUsername(target.getUsername()).ifPresent(val -> studentCode = val.getCode());
-    SingletonHelper.SEMESTER_SERVICE.findSemesterActive().ifPresent(val -> semesterId = val.getId());
+    getStudentService().findByUsername(target.getUsername()).ifPresent(val -> studentCode = val.getCode());
+    getSemesterService().findSemesterActive().ifPresent(val -> semesterId = val.getId());
     status = InternshipApplicationStatus.NEW;
     companyId = target.getCompanyId();
     note = target.getNote();
@@ -96,6 +95,10 @@ public class InternshipApplication {
     endDate = target.getEndDate();
     totalDayPerWeek = target.getTotalDayPerWeek();
     totalHourPerShift = target.getTotalHourPerShift();
+  }
+
+  public static InternshipApplication getInstance(@NonNull CreateInternshipApplicationDTO dto) throws MSIException {
+    return new InternshipApplication(dto);
   }
 
   public void update(@NonNull UpdateInternshipApplicationDTO target) {
@@ -110,25 +113,17 @@ public class InternshipApplication {
     totalHourPerShift = target.getTotalHourPerShift();
   }
 
-  public void verify(@NonNull VerifyApplicationDTO target) {
-    if (target.isAccepted() && status == WAITING) status = InternshipApplicationStatus.ACCEPTED;
-    else if (status == WAITING) status = InternshipApplicationStatus.CANCELED;
-    else throw new RuntimeException("Sinh viên chưa gửi yêu cầu đăng ký thực tập.");
+  public boolean verify(@NonNull VerifyApplicationDTO target) {
     Optional.ofNullable(Strings.trimToNull(target.getNote())).ifPresent(val -> note = val);
+    if (target.isAccepted() && status == WAITING) {
+      status = InternshipApplicationStatus.ACCEPTED;
+      return true;
+    } else if (status == WAITING) status = InternshipApplicationStatus.CANCELED;
+    else throw new RuntimeException("Sinh viên chưa gửi yêu cầu đăng ký thực tập.");
+    return false;
   }
 
   public void setStatus(@NonNull InternshipApplicationStatus status) {
     this.status = status;
-  }
-
-  public static InternshipApplication getInstance(@NonNull CreateInternshipApplicationDTO dto) throws MSIException {
-    return new InternshipApplication(dto);
-  }
-
-  private static class SingletonHelper {
-    private static final StudentService STUDENT_SERVICE = ApplicationContextHolder.getBean(StudentService.class);
-
-    private static final SemesterService SEMESTER_SERVICE = ApplicationContextHolder.getBean(SemesterService.class);
-
   }
 }
