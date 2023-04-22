@@ -61,7 +61,7 @@ public class ReportServiceImpl implements ReportService {
     notification.setMessage("Có sinh viên vừa nộp báo cáo");
     notification.setUserIds(userIds);
     notification.setType(NotificationType.REPORT);
-    notification.setPostId(report.getId());
+    notification.setPostId(process.getId());
     notificationService.sendNotification(notification);
 
     String queueName = "/queue/notification/" + user.getId();
