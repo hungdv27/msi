@@ -12,7 +12,6 @@ import com.example.msi.shared.Constant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,14 +32,13 @@ import static com.example.msi.service.impl.CompanyServiceImpl.getPageable;
 public class CompanyController {
   private final CompanyService service;
 
-  @GetMapping("")
-  public ResponseEntity<Page<Company>> getAllCompany(
-      @RequestParam(defaultValue = "0") Integer page,
-      @RequestParam(defaultValue = "10") Integer size
+  @GetMapping("/search")
+  public ResponseEntity<Page<CompanyDTO>> search(
+      SearchCompanyDTO searchDTO
   ) {
-    Pageable pageable = getPageable(page, size);
-    Page<Company> page1 = service.getAllCompany(pageable);
-    return ResponseEntity.ok(page1);
+    var responseData = service.search(searchDTO)
+        .map(CompanyDTO::getInstance);
+    return new ResponseEntity<>(responseData, HttpStatus.OK);
   }
 
   @PostMapping("")
@@ -66,19 +64,10 @@ public class CompanyController {
   @GetMapping(value = "/export", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> exportListCompany(
       @RequestParam(value = "name", required = false) String name,
-      @RequestParam(value = "phoneNumber", required = false) String phoneNumber,
-      @RequestParam(value = "email", required = false) String email,
-      @RequestParam(value = "status", required = false) String status,
-      @RequestParam(value = "address", required = false) String address,
       HttpServletRequest request) {
     byte[] bytes;
     try {
-      CompanyReqDTO reqDTO = new CompanyReqDTO();
-      reqDTO.setName(name);
-      reqDTO.setPhoneNumber(phoneNumber);
-      reqDTO.setEmail(email);
-      reqDTO.setAddress(address);
-      reqDTO.setStatus(status);
+      SearchCompanyDTO reqDTO = new SearchCompanyDTO(name);
       bytes = (byte[]) service.export(request, reqDTO);
       return new ResponseEntity<>(bytes, HttpStatus.OK);
     } catch (MSIException ex) {

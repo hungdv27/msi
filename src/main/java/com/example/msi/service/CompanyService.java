@@ -1,12 +1,12 @@
 package com.example.msi.service;
 
 import com.example.msi.domains.Company;
+import com.example.msi.models.company.SearchCompanyDTO;
 import com.example.msi.shared.exceptions.MSIException;
 import com.example.msi.models.company.CreateCompanyDTO;
 import com.example.msi.models.company.UpdateCompanyDTO;
 import lombok.NonNull;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,7 +16,8 @@ import java.util.Optional;
 
 
 public interface CompanyService {
-  Page<Company> getAllCompany(Pageable pageable);
+
+  Page<Company> search(@NonNull SearchCompanyDTO filter);
 
   Company getCompanyById(int id);
 

@@ -9,6 +9,7 @@ import java.util.List;
 public class Constant {
   public static final int DEFAULT_PAGE_NUMBER = 0;
   public static final int DEFAULT_PAGE_SIZE = 10;
+  public static final int MAX_PAGE_SIZE = 1000;
   public static final String ID = "id";
   public static final List<String> INCOME_COMPANY_IMPORT_HEADER =
       Arrays.asList(
