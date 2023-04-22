@@ -80,13 +80,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .authorizeRequests()
         .antMatchers("/api/user/register","/api/user/login","/api/user/register/verify").permitAll()
         .antMatchers(HttpMethod.POST, "*/swagger-ui.html/*").permitAll()
-        .antMatchers("/api/company/**", "/api/courses/**","/api/file/**"
-            ,"/api/grade/**","/api/internship-application/**","/api/internship-process/**",
-            "/api/post/**","/api/report/**","/api/result/**","/api/semester/**",
-            "/api/student/**").hasAnyAuthority(Role.STUDENT.name(),Role.TEACHER.name(),Role.ADMIN.name())
-        .antMatchers("api/user/register-teacher","/api/user/import-file","/api/internship-application/verify",
+        .antMatchers("/api/user/register-teacher","/api/user/import-file","/api/internship-application/verify",
             "/api/internship-application/accept-registration","/api/internship-process/assignTeacher",
-            "/api/internship-process/export","/api/post/delete/{id}").hasAnyAuthority(Role.ADMIN.name())
+            "/api/internship-process/export","/api/post/delete/{id}").hasAuthority(Role.ADMIN.name())
         .anyRequest().authenticated()
         .and()
         .httpBasic()
