@@ -71,17 +71,17 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
 
       var teacher = findUserByTeacherId(process.getTeacherId());
       sendNotificationAndConvertToQueue(teacher, "Thông báo",
-          "Bạn vừa được phân công hướng dẫn sinh viên", process.getId());
+          "Bạn vừa được phân công hướng dẫn sinh viên", process.getId(), true);
 
       var student = userService.findById(internshipProcess.getUserId()).orElse(null);
       sendNotificationAndConvertToQueue(student, "Thông báo",
-          "Bạn vừa được gán giảng viên hướng dẫn", process.getId());
+          "Bạn vừa được gán giảng viên hướng dẫn", process.getId(), false);
 
 
     });
   }
 
-  private void sendNotificationAndConvertToQueue(User user, String title, String message, Integer postId) {
+  private void sendNotificationAndConvertToQueue(User user, String title, String message, Integer postId, Boolean forTeacher) {
     Optional<User> optionalUser = Optional.ofNullable(user);
     optionalUser.ifPresent(u -> {
       Set<Integer> userIds = new HashSet<>();
@@ -91,7 +91,7 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
       notification.setTitle(title);
       notification.setMessage(message);
       notification.setUserIds(userIds);
-      notification.setType(NotificationType.REPORT);
+      notification.setType(forTeacher ? NotificationType.ASSIGN_FOR_TEACHER : NotificationType.ASSIGN_FOR_STUDENT);
       notification.setPostId(postId);
       notificationService.sendNotification(notification);
 
