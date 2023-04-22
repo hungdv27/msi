@@ -1,6 +1,7 @@
 package com.example.msi.models.internshipprocess;
 
 import com.example.msi.domains.InternshipProcess;
+import com.example.msi.shared.Constant;
 import com.example.msi.shared.base.BaseFilter;
 import lombok.Data;
 import lombok.Getter;
@@ -32,7 +33,7 @@ public class SearchInternshipProcessDTO implements BaseFilter<InternshipProcess>
     this.semesterId = semesterId;
     this.courseCode = courseCode;
     this.page = page();
-    this.size = size();
+    this.size = Constant.MAX_PAGE_SIZE;
   }
 
   public String studentCode() {

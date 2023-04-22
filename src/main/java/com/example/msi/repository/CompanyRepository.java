@@ -1,6 +1,9 @@
 package com.example.msi.repository;
 
 import com.example.msi.domains.Company;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,4 +15,6 @@ public interface CompanyRepository extends JpaRepository<Company, Integer> {
   List<Company> getCompanyByName(@Param("name") String name);
   boolean existsByEmail(String email);
   boolean existsByName(String name);
+
+  Page<Company> findAll(Specification<Company> specification, Pageable pageable);
 }

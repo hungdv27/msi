@@ -46,8 +46,10 @@ public class CompanyServiceImpl implements CompanyService {
   }
 
   @Override
-  public Page<Company> getAllCompany(Pageable pageable) {
-    return repository.findAll(pageable);
+  public Page<Company> search(@NonNull SearchCompanyDTO filter) {
+    var spec = filter.getSpecification();
+    var pageable = filter.getPageable();
+    return repository.findAll(spec, pageable);
   }
 
   @Override
@@ -82,11 +84,9 @@ public class CompanyServiceImpl implements CompanyService {
 
   @Override
   public Object export(HttpServletRequest request, Object req) throws MSIException {
-    CompanyReqDTO reqDTO = (CompanyReqDTO) req;
-    reqDTO.setPageable(
-        PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Constant.ID).ascending()));
+    SearchCompanyDTO reqDTO = (SearchCompanyDTO) req;
 
-    Page<Company> page = this.getAllCompany(reqDTO.getPageable());
+    Page<Company> page = this.search(reqDTO);
     List<Company> list = page.getContent();
     if (list.isEmpty()) {
       throw new MSIException(
