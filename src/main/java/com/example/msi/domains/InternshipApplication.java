@@ -50,7 +50,7 @@ public class InternshipApplication {
   @Column(name = "note", length = 10000)
   private String note;
 
-  @Column(name = "course_code", length = 10)
+  @Column(name = "course_code", length = 50)
   private String courseCode;
 
   @Column(name = "instructor")
@@ -98,6 +98,10 @@ public class InternshipApplication {
     totalHourPerShift = target.getTotalHourPerShift();
   }
 
+  public static InternshipApplication getInstance(@NonNull CreateInternshipApplicationDTO dto) throws MSIException {
+    return new InternshipApplication(dto);
+  }
+
   public void update(@NonNull UpdateInternshipApplicationDTO target) {
     companyId = target.getCompanyId();
     courseCode = target.getCourseCode();
@@ -119,10 +123,6 @@ public class InternshipApplication {
 
   public void setStatus(@NonNull InternshipApplicationStatus status) {
     this.status = status;
-  }
-
-  public static InternshipApplication getInstance(@NonNull CreateInternshipApplicationDTO dto) throws MSIException {
-    return new InternshipApplication(dto);
   }
 
   private static class SingletonHelper {

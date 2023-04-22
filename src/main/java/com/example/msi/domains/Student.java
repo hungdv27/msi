@@ -24,7 +24,7 @@ public class Student {
   @Column(name = "student_code", length = 50, unique = true)
   private String code;
 
-  @Column(name = "grade_code", length = 10)
+  @Column(name = "grade_code", length = 50)
   private String gradeCode;
 
   @Column(name = "user_id")
@@ -60,13 +60,13 @@ public class Student {
     this.semesterId  = target.getSemesterId();
   }
 
+  public static Student getInstance(@NonNull UpdateStudentDTO payload, int userId) {
+    return new Student(payload, userId);
+  }
+
   public void update(@NonNull UpdateStudentDTO target) {
     this.code = target.getCode();
     this.gradeCode = target.getGradeCode();
     this.semesterId = target.getSemesterId();
-  }
-
-  public static Student getInstance(@NonNull UpdateStudentDTO payload, int userId) {
-    return new Student(payload, userId);
   }
 }
