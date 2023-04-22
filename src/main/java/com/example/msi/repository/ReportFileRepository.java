@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface ReportFileRepository extends JpaRepository<ReportFile, Integer> {
   List<ReportFile> findAllByReportId(@NonNull int reportId);
+  void deleteAllByReportId(int reportId);
 }

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -24,5 +25,11 @@ public class ReportFileServiceImpl implements ReportFileService {
   @Override
   public List<ReportFile> findByReportId(@NonNull Integer reportId) {
     return repository.findAllByReportId(reportId);
+  }
+
+  @Override
+  @Transactional
+  public void deleteByReportId(int reportId) {
+    repository.deleteAllByReportId(reportId);
   }
 }
