@@ -21,6 +21,14 @@ public class ServiceUtils {
     return SingletonHelper.REPORT_FILE_SERVICE;
   }
 
+  public static CompanyResultFileService getCompanyResultFileService() {
+    return SingletonHelper.COMPANY_RESULT_FILE_SERVICE;
+  }
+
+  public static CompanyResultService getCompanyResultService() {
+    return SingletonHelper.COMPANY_RESULT_SERVICE;
+  }
+
   public static InternshipProcessService getInternshipProcessService() {
     return SingletonHelper.INTERNSHIP_PROCESS_SERVICE;
   }
@@ -62,6 +70,8 @@ public class ServiceUtils {
     private static final InternshipApplicationService INTERNSHIP_APPLICATION_SERVICE = getBean(InternshipApplicationService.class);
     private static final InternshipProcessService INTERNSHIP_PROCESS_SERVICE = getBean(InternshipProcessService.class);
     private static final ReportFileService REPORT_FILE_SERVICE = ApplicationContextHolder.getBean(ReportFileService.class);
+    private static final CompanyResultFileService COMPANY_RESULT_FILE_SERVICE = ApplicationContextHolder.getBean(CompanyResultFileService.class);
+    private static final CompanyResultService COMPANY_RESULT_SERVICE = ApplicationContextHolder.getBean(CompanyResultService.class);
     private static final FileService FILE_SERVICE = ApplicationContextHolder.getBean(FileService.class);
     private static final PostFileService POST_FILE_SERVICE = ApplicationContextHolder.getBean(PostFileService.class);
     private static final CompanyService COMPANY_SERVICE = ApplicationContextHolder.getBean(CompanyService.class);
