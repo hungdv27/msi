@@ -40,11 +40,13 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
   private final StudentService studentService;
   private final InternshipApplicationRepository internshipApplicationRepository;
   private final ResultRepository resultRepository;
+  private final CompanyResultService companyResultService;
 
   public InternshipProcessServiceImpl(InternshipProcessRepository repository, UserService userService,
                                       NotificationService notificationService, TeacherService teacherService,
                                       @Lazy StudentService studentService, InternshipApplicationRepository internshipApplicationRepository,
-                                      ResultRepository resultRepository) {
+                                      ResultRepository resultRepository,
+                                      CompanyResultService companyResultService) {
     this.repository = repository;
     this.userService = userService;
     this.notificationService = notificationService;
@@ -52,6 +54,7 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
     this.studentService = studentService;
     this.internshipApplicationRepository = internshipApplicationRepository;
     this.resultRepository = resultRepository;
+    this.companyResultService = companyResultService;
   }
 
   @Override
@@ -144,12 +147,14 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
     var resultIterable = resultRepository.findAll();
     var resultList = StreamSupport.stream(resultIterable.spliterator(), false).collect(Collectors.toList());
     var resultMap = resultList.stream().collect(Collectors.toMap(Result::getProcessId, r -> r));
+    var companyResultMap = companyResultService.findAll().stream()
+        .collect(Collectors.toMap(CompanyResult::getStudentCode, u -> u));
 
     // chuyển sang list obj
     List<Object> dataExport = new ArrayList<>();
     for (int i = 0; i < list.size(); i++) {
       dataExport.add(new InternshipProcessExportDTO(i + 1, list.get(i), internshipApplicationMap, studentMap,
-          userMap, teacherMap, resultMap));
+          userMap, teacherMap, resultMap, companyResultMap));
     }
     // tạo workbook
     ByteArrayOutputStream bos = new ByteArrayOutputStream();

@@ -59,6 +59,11 @@ public class CompanyResultServiceImpl implements CompanyResultService {
     return repository.findTopByStudentCode(code);
   }
 
+  @Override
+  public List<CompanyResult> findAll() {
+    return repository.findAll();
+  }
+
   private void attachFiles(int companyResultFileId, List<MultipartFile> multipartFiles) throws IOException {
     if (multipartFiles == null) return;
     var files = fileService.uploadFiles(multipartFiles);

@@ -6,6 +6,7 @@ import com.example.msi.shared.exceptions.MSIException;
 import org.springframework.lang.NonNull;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 public interface CompanyResultService {
@@ -14,4 +15,6 @@ public interface CompanyResultService {
   void delete(int id);
 
   Optional<CompanyResult> findByStudentCode(String code);
+
+  List<CompanyResult> findAll();
 }

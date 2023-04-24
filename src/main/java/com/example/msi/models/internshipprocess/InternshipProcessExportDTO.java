@@ -35,18 +35,25 @@ public class InternshipProcessExportDTO {
   @ExportExcel(title = "Email giảng viên")
   private String emailTeacher;
 
-  @ExportExcel(title = "Điểm đánh giá")
+  @ExportExcel(title = "Điểm đánh giá giảng viên")
   private String mark;
 
-  @ExportExcel(title = "Nhận xét")
+  @ExportExcel(title = "Nhận xét giảng viên")
   private String review;
+
+  @ExportExcel(title = "Điểm đánh giá công ty")
+  private String companyGrade;
+
+  @ExportExcel(title = "Nhận xét công ty")
+  private String companyReview;
 
   public InternshipProcessExportDTO(int cardinalNumber, InternshipProcess entity,
                                     Map<Integer, InternshipApplication> internshipApplicationMap,
                                     Map<String, Student> studentMap,
                                     Map<Integer, User> userMap,
                                     Map<Integer, Teacher> teacherMap,
-                                    Map<Integer, Result> resultMap) {
+                                    Map<Integer, Result> resultMap,
+                                    Map<String, CompanyResult> companyResultMap) {
     // cardinalNumber
     this.cardinalNumber = cardinalNumber;
 
@@ -76,5 +83,10 @@ public class InternshipProcessExportDTO {
     this.mark = result != null ? String.valueOf(result.getMark()) : StringUtils.EMPTY;
     // review
     this.review = result != null ? result.getReview() : StringUtils.EMPTY;
+    // companyGrade
+    var companyResult = companyResultMap.get(studentCodes);
+    this.companyGrade = companyResult != null ? String.valueOf(companyResult.getCompanyGrade()) : StringUtils.EMPTY;
+    // companyReview
+    this.companyReview = companyResult != null ? companyResult.getCompanyReview() : StringUtils.EMPTY;
   }
 }
