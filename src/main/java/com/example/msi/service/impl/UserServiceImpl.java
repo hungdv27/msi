@@ -101,7 +101,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     props.put("url", url.append(user.getVerificationCode()).toString());
     props.put("pass", randomPassword);
     if (role == Role.STUDENT) {
-      mailService.sendMail(props, user.getEmail(), "sendMail", "Xác thực tài khoản");
+      mailService.sendMail(props, user.getEmail(), "sendMail", "Kích hoạt tài khoản");
     } else {
       mailService.sendMail(props, user.getEmail(), "sendMailToTeacher", "Thông tin đăng nhập");
     }
@@ -111,18 +111,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
       teacherService.save(
           Teacher.getInstance(
               UpdateTeacherDTO.getInstance(
-                  new Teacher(
-                      0,
-                      user.getId(),
-                      null,
-                      null,
-                      null,
-                      false,
-                      null
-                  )
-              ),
-              user
-          )
+                  new Teacher(0, user.getId(), null, null, null, false, null)), user)
       );
     }
 
@@ -162,10 +151,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
   @Override
   public Data forgotPassword(String mail) throws MessagingException {
-    Optional<User> optionalUser = repository.findByEmail(mail);
-    if (optionalUser.isEmpty()) return new Data(null);
-    String pass = RandomString.make(10);
-    User user = optionalUser.get();
+    var user = repository.findByEmail(mail).orElseThrow(() -> new MessagingException("Email không tồn tại trong hệ thống"));
+    String pass = generateRandomString(6);
     user.setPassword(passwordEncoder.encode(pass));
     repository.save(user);
     Map<String, Object> props = new HashMap<>();
