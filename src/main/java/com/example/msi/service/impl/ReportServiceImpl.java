@@ -54,18 +54,9 @@ public class ReportServiceImpl implements ReportService {
 
     var teacher = teacherService.findById(process.getTeacherId()).orElseThrow(NoSuchElementException::new);
     var user = userService.findById(teacher.getUserId()).orElseThrow(NoSuchElementException::new);
-    Set<Integer> userIds = new HashSet<>();
-    userIds.add(user.getId());
-    Notification notification = new Notification();
-    notification.setTitle("Thông Báo");
-    notification.setMessage("Có sinh viên vừa nộp báo cáo");
-    notification.setUserIds(userIds);
-    notification.setType(NotificationType.REPORT);
-    notification.setPostId(process.getId());
-    notificationService.sendNotification(notification);
 
-    String queueName = "/queue/notification/" + user.getId();
-    messagingTemplate.convertAndSend(queueName, notification.getMessage());
+    notificationService.sendNotificationAndConvertToQueue(user, "Thông báo",
+        "Có sinh viên vừa nộp báo cáo", process.getId(), NotificationType.REPORT);
 
     return report;
   }
@@ -90,6 +81,14 @@ public class ReportServiceImpl implements ReportService {
     repository.findById(payload.getId()).ifPresent(entity -> {
       entity.addDescription(payload);
       repository.save(entity);
+
+      var process = internshipProcessService.findById(entity.getProcessId()).orElseThrow();
+      var application= internshipApplicationService.findById(process.getApplicationId());
+      var student = studentService.findByCode(application.getStudentCode()).orElseThrow();
+      var user = userService.findById(student.getUserId()).orElseThrow(NoSuchElementException::new);
+
+      notificationService.sendNotificationAndConvertToQueue(user, "Thông báo",
+          "Có Bình Luận Về Báo Cáo Của Bạn", process.getId(), NotificationType.COMMENT_REPORT);
     });
   }
 
