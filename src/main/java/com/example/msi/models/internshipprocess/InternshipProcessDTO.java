@@ -2,6 +2,7 @@ package com.example.msi.models.internshipprocess;
 
 import com.example.msi.domains.InternshipProcess;
 import com.example.msi.models.company.CompanyDTO;
+import com.example.msi.models.companyresult.CompanyResultDTO;
 import com.example.msi.models.report.ReportDTO;
 import com.example.msi.models.student.StudentDetailDTO;
 import com.example.msi.models.teacher.TeacherDTO;
@@ -27,6 +28,7 @@ public class InternshipProcessDTO {
   private LocalDate startDate;
   private LocalDate endDate;
   private Long currentWeek;
+  private CompanyResultDTO companyResult;
 
   private InternshipProcessDTO(@NonNull InternshipProcess entity) {
     var appId = entity.getApplicationId();
@@ -64,6 +66,9 @@ public class InternshipProcessDTO {
     applicationId = entity.getApplicationId();
     // currentWeek
     currentWeek = getInternshipProcessService().currentWeekProcess(internshipApplication);
+    // companyResult
+    companyResult = CompanyResultDTO.getInstance(getCompanyResultService()
+        .findByStudentCode(internshipApplication.getStudentCode()).orElseThrow(NoSuchElementException::new));
   }
 
   public static InternshipProcessDTO getInstance(@NonNull InternshipProcess entity) {

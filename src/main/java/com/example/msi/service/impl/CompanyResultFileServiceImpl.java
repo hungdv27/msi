@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CompanyResultFileServiceImpl implements CompanyResultFileService {
@@ -16,5 +19,16 @@ public class CompanyResultFileServiceImpl implements CompanyResultFileService {
   @Override
   public void add(@NonNull CreateCompanyResultFileDTO dto) {
     repository.save(CompanyResultFile.getInstance(dto));
+  }
+
+  @Override
+  public List<CompanyResultFile> findByCompanyResultId(int companyResultId) {
+    return repository.findAllByCompanyResultId(companyResultId);
+  }
+
+  @Override
+  @Transactional
+  public void deleteByCompanyResultId(int companyResultId) {
+    repository.deleteAllByCompanyResultId(companyResultId);
   }
 }
