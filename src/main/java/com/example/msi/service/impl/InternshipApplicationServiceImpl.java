@@ -135,19 +135,9 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
 
     var student = studentService.findByCode(entity.getStudentCode()).orElseThrow();
     var user = userService.findById(student.getUserId()).orElseThrow();
-    Set<Integer> userIds = new HashSet<>();
-    userIds.add(user.getId());
-    Notification notification = new Notification();
-    notification.setTitle("Thông Báo");
-    notification.setMessage(dto.isAccepted() ? "Đơn đăng ký được xét duyệt" : "Đơn đăng ký bị từ chối");
-    notification.setUserIds(userIds);
-    notification.setType(NotificationType.APPLICATION_APPROVE);
-    notification.setPostId(entity.getId());
-    notificationService.sendNotification(notification);
 
-    String queueName = "/queue/notification/" + user.getId();
-
-    messagingTemplate.convertAndSend(queueName, notification.getMessage());
+    notificationService.sendNotificationAndConvertToQueue(user, "Thông báo",
+        dto.isAccepted() ? "Đơn đăng ký được xét duyệt" : "Đơn đăng ký bị từ chối", entity.getId(), NotificationType.APPLICATION_APPROVE);
   }
 
   @Override

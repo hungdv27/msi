@@ -34,16 +34,14 @@ import java.util.*;
 public class InternshipProcessServiceImpl implements InternshipProcessService {
   private final InternshipProcessRepository repository;
   private final UserService userService;
-  private final SimpMessagingTemplate messagingTemplate;
   private final NotificationService notificationService;
   private final TeacherService teacherService;
   private final StudentService studentService;
   private final InternshipApplicationRepository internshipApplicationRepository;
 
-  public InternshipProcessServiceImpl(InternshipProcessRepository repository, UserService userService, SimpMessagingTemplate messagingTemplate, NotificationService notificationService, TeacherService teacherService, @Lazy StudentService studentService, InternshipApplicationRepository internshipApplicationRepository) {
+  public InternshipProcessServiceImpl(InternshipProcessRepository repository, UserService userService, NotificationService notificationService, TeacherService teacherService, @Lazy StudentService studentService, InternshipApplicationRepository internshipApplicationRepository) {
     this.repository = repository;
     this.userService = userService;
-    this.messagingTemplate = messagingTemplate;
     this.notificationService = notificationService;
     this.teacherService = teacherService;
     this.studentService = studentService;
@@ -70,33 +68,13 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
           .orElse(null);
 
       var teacher = findUserByTeacherId(process.getTeacherId());
-      sendNotificationAndConvertToQueue(teacher, "Thông báo",
-          "Bạn vừa được phân công hướng dẫn sinh viên", process.getId(), true);
+      notificationService.sendNotificationAndConvertToQueue(teacher, "Thông báo",
+          "Bạn vừa được phân công hướng dẫn sinh viên", process.getId(), NotificationType.ASSIGN_FOR_TEACHER);
 
       var student = userService.findById(internshipProcess.getUserId()).orElse(null);
-      sendNotificationAndConvertToQueue(student, "Thông báo",
-          "Bạn vừa được gán giảng viên hướng dẫn", process.getId(), false);
+      notificationService.sendNotificationAndConvertToQueue(student, "Thông báo",
+          "Bạn vừa được gán giảng viên hướng dẫn", process.getId(), NotificationType.ASSIGN_FOR_STUDENT);
 
-
-    });
-  }
-
-  private void sendNotificationAndConvertToQueue(User user, String title, String message, Integer postId, Boolean forTeacher) {
-    Optional<User> optionalUser = Optional.ofNullable(user);
-    optionalUser.ifPresent(u -> {
-      Set<Integer> userIds = new HashSet<>();
-      userIds.add(u.getId());
-
-      Notification notification = new Notification();
-      notification.setTitle(title);
-      notification.setMessage(message);
-      notification.setUserIds(userIds);
-      notification.setType(forTeacher ? NotificationType.ASSIGN_FOR_TEACHER : NotificationType.ASSIGN_FOR_STUDENT);
-      notification.setPostId(postId);
-      notificationService.sendNotification(notification);
-
-      String queueName = "/queue/notification/" + u.getId();
-      messagingTemplate.convertAndSend(queueName, notification.getMessage());
     });
   }
 
