@@ -1,11 +1,11 @@
 package com.example.msi.models.internshipprocess;
 
-import com.example.msi.domains.InternshipProcess;
+import com.example.msi.domains.*;
 import com.example.msi.shared.config.annotation.ExportExcel;
 import lombok.*;
+import org.apache.commons.lang3.StringUtils;
 
-import static com.example.msi.shared.utils.ServiceUtils.*;
-
+import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -41,35 +41,40 @@ public class InternshipProcessExportDTO {
   @ExportExcel(title = "Nhận xét")
   private String review;
 
-  public InternshipProcessExportDTO(int cardinalNumber, InternshipProcess entity) {
+  public InternshipProcessExportDTO(int cardinalNumber, InternshipProcess entity,
+                                    Map<Integer, InternshipApplication> internshipApplicationMap,
+                                    Map<String, Student> studentMap,
+                                    Map<Integer, User> userMap,
+                                    Map<Integer, Teacher> teacherMap,
+                                    Map<Integer, Result> resultMap) {
     // cardinalNumber
     this.cardinalNumber = cardinalNumber;
 
     var appId = entity.getApplicationId();
-    var internshipApplication = getInternshipApplicationService().findById(appId);
-    var studentCodes = internshipApplication.getStudentCode();
-    var student = getStudentService().findByCode(studentCodes).orElseThrow();
-    var userStudent = getUserService().findById(student.getUserId()).orElseThrow();
+    var internshipApplication = internshipApplicationMap.get(appId);
+    var studentCodes = internshipApplication != null ? internshipApplication.getStudentCode() : StringUtils.EMPTY;
+    var student = studentMap.get(studentCodes);
+    var userStudent = student != null ? userMap.get(student.getUserId()) : null;
     // fullName
-    this.fullName = userStudent.getFullName();
+    this.fullName = userStudent != null ? userStudent.getFullName() : StringUtils.EMPTY;
     // studentCode
     this.studentCode = studentCodes;
     // dob
-    this.dob = String.valueOf(userStudent.getDob());
+    this.dob = userStudent != null ? String.valueOf(userStudent.getDob()) : StringUtils.EMPTY;
     // gradeCode
-    this.gradeCode = student.getGradeCode();
+    this.gradeCode = student != null ? student.getGradeCode() : StringUtils.EMPTY;
     // courseCode
-    this.courseCode = internshipApplication.getCourseCode();
+    this.courseCode = internshipApplication != null ? internshipApplication.getCourseCode() : StringUtils.EMPTY;
     // fullNameTeacher
-    var teacherEntity = getTeacherService().findById(entity.getTeacherId()).orElseThrow();
-    var userTeacher = getUserService().findById(teacherEntity.getUserId()).orElseThrow();
-    this.fullNameTeacher = userTeacher.getFullName();
+    var teacherEntity = teacherMap.get(entity.getTeacherId());
+    var userTeacher = teacherEntity != null ? userMap.get(teacherEntity.getUserId()) : null;
+    this.fullNameTeacher = userTeacher != null ? userTeacher.getFullName() : StringUtils.EMPTY;
     // emailTeacher
-    this.emailTeacher = userTeacher.getEmail();
+    this.emailTeacher = userTeacher != null ? userTeacher.getEmail() : StringUtils.EMPTY;
     // mark
-    var result = getResultService().findByProcessId(entity.getId()).orElseThrow();
-    this.mark = String.valueOf(result.getMark());
+    var result = resultMap.get(entity.getId());
+    this.mark = result != null ? String.valueOf(result.getMark()) : StringUtils.EMPTY;
     // review
-    this.review = result.getReview();
+    this.review = result != null ? result.getReview() : StringUtils.EMPTY;
   }
 }

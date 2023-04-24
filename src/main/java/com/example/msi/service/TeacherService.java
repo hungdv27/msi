@@ -28,4 +28,6 @@ public interface TeacherService {
   int countNumberOfManagementStudents(int teacherId);
 
   List<InternshipProcess> findManagementStudents(int teacherId);
+
+  List<Teacher> findAll();
 }

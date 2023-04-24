@@ -25,4 +25,5 @@ public interface StudentService {
 
   List<InternshipApplication> getAllInternshipApplication(@NonNull String username);
   String getStudentCode(@NonNull String username);
+  List<Student> findAll();
 }

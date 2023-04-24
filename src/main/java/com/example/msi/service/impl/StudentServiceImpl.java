@@ -96,4 +96,9 @@ public class StudentServiceImpl implements StudentService {
     var user = userService.findByEmail(username).orElseThrow(NoSuchElementException::new);
     return repository.findTopByUserId(user.getId()).orElseThrow(NoSuchElementException::new).getCode();
   }
+
+  @Override
+  public List<Student> findAll() {
+    return repository.findAll();
+  }
 }

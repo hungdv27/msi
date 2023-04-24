@@ -6,10 +6,10 @@ import com.example.msi.models.internshipprocess.CreateInternshipProcessDTO;
 import com.example.msi.models.internshipprocess.SearchInternshipProcessDTO;
 import com.example.msi.domains.InternshipApplication;
 import com.example.msi.domains.InternshipProcess;
-import com.example.msi.domains.Notification;
 import com.example.msi.models.internshipprocess.*;
 import com.example.msi.repository.InternshipApplicationRepository;
 import com.example.msi.repository.InternshipProcessRepository;
+import com.example.msi.repository.ResultRepository;
 import com.example.msi.service.*;
 import com.example.msi.shared.enums.NotificationType;
 import com.example.msi.shared.enums.Role;
@@ -21,7 +21,6 @@ import org.springframework.context.annotation.Lazy;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.data.domain.Page;
 import org.springframework.lang.NonNull;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +28,8 @@ import javax.transaction.Transactional;
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class InternshipProcessServiceImpl implements InternshipProcessService {
@@ -38,14 +39,19 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
   private final TeacherService teacherService;
   private final StudentService studentService;
   private final InternshipApplicationRepository internshipApplicationRepository;
+  private final ResultRepository resultRepository;
 
-  public InternshipProcessServiceImpl(InternshipProcessRepository repository, UserService userService, NotificationService notificationService, TeacherService teacherService, @Lazy StudentService studentService, InternshipApplicationRepository internshipApplicationRepository) {
+  public InternshipProcessServiceImpl(InternshipProcessRepository repository, UserService userService,
+                                      NotificationService notificationService, TeacherService teacherService,
+                                      @Lazy StudentService studentService, InternshipApplicationRepository internshipApplicationRepository,
+                                      ResultRepository resultRepository) {
     this.repository = repository;
     this.userService = userService;
     this.notificationService = notificationService;
     this.teacherService = teacherService;
     this.studentService = studentService;
     this.internshipApplicationRepository = internshipApplicationRepository;
+    this.resultRepository = resultRepository;
   }
 
   @Override
@@ -126,10 +132,24 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
           ExceptionUtils.E_EXPORT_INTERNSHIP_PROCESS,
           ExceptionUtils.messages.get(ExceptionUtils.E_EXPORT_INTERNSHIP_PROCESS));
     }
+    // map các entity
+    var internshipApplicationMap = internshipApplicationRepository.findAll().stream()
+        .collect(Collectors.toMap(InternshipApplication::getId, ia -> ia));
+    var studentMap = studentService.findAll().stream()
+        .collect(Collectors.toMap(Student::getCode, s -> s));
+    var userMap = userService.findAll().stream()
+        .collect(Collectors.toMap(User::getId, u -> u));
+    var teacherMap = teacherService.findAll().stream()
+        .collect(Collectors.toMap(Teacher::getId, t -> t));
+    var resultIterable = resultRepository.findAll();
+    var resultList = StreamSupport.stream(resultIterable.spliterator(), false).collect(Collectors.toList());
+    var resultMap = resultList.stream().collect(Collectors.toMap(Result::getProcessId, r -> r));
+
     // chuyển sang list obj
     List<Object> dataExport = new ArrayList<>();
     for (int i = 0; i < list.size(); i++) {
-      dataExport.add(new InternshipProcessExportDTO(i + 1, list.get(i)));
+      dataExport.add(new InternshipProcessExportDTO(i + 1, list.get(i), internshipApplicationMap, studentMap,
+          userMap, teacherMap, resultMap));
     }
     // tạo workbook
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
