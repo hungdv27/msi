@@ -62,7 +62,7 @@ public class InternshipProcessController {
     return new ResponseEntity<>(responseData, HttpStatus.OK);
   }
 
-  @GetMapping(value = "/export", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/exportProcess", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> exportListProcess(
       @RequestParam(value = "studentCode", required = false) String studentCode,
       @RequestParam(value = "teacherId", required = false) Integer teacherId,

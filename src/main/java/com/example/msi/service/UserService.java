@@ -50,4 +50,6 @@ public interface UserService {
 
   Role getRole(@NonNull String username);
 
+  List<User> findAll();
+
 }

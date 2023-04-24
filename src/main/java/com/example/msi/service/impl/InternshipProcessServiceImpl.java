@@ -10,6 +10,7 @@ import com.example.msi.domains.Notification;
 import com.example.msi.models.internshipprocess.*;
 import com.example.msi.repository.InternshipApplicationRepository;
 import com.example.msi.repository.InternshipProcessRepository;
+import com.example.msi.repository.ResultRepository;
 import com.example.msi.service.*;
 import com.example.msi.shared.enums.NotificationType;
 import com.example.msi.shared.enums.Role;
@@ -29,6 +30,8 @@ import javax.transaction.Transactional;
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class InternshipProcessServiceImpl implements InternshipProcessService {
@@ -39,8 +42,13 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
   private final TeacherService teacherService;
   private final StudentService studentService;
   private final InternshipApplicationRepository internshipApplicationRepository;
+  private final ResultRepository resultRepository;
 
-  public InternshipProcessServiceImpl(InternshipProcessRepository repository, UserService userService, SimpMessagingTemplate messagingTemplate, NotificationService notificationService, TeacherService teacherService, @Lazy StudentService studentService, InternshipApplicationRepository internshipApplicationRepository) {
+  public InternshipProcessServiceImpl(InternshipProcessRepository repository, UserService userService,
+                                      SimpMessagingTemplate messagingTemplate, NotificationService notificationService,
+                                      TeacherService teacherService, @Lazy StudentService studentService,
+                                      InternshipApplicationRepository internshipApplicationRepository,
+                                      ResultRepository resultRepository) {
     this.repository = repository;
     this.userService = userService;
     this.messagingTemplate = messagingTemplate;
@@ -48,6 +56,7 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
     this.teacherService = teacherService;
     this.studentService = studentService;
     this.internshipApplicationRepository = internshipApplicationRepository;
+    this.resultRepository = resultRepository;
   }
 
   @Override
@@ -73,7 +82,7 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
       sendNotificationAndConvertToQueue(teacher, "Thông báo",
           "Bạn vừa được phân công hướng dẫn sinh viên", process.getId(), true);
 
-      var student = userService.findById(internshipProcess.getUserId()).orElse(null);
+      var student = userService.findById(internshipProcess.getUserId()).orElseThrow(NoSuchElementException::new);
       sendNotificationAndConvertToQueue(student, "Thông báo",
           "Bạn vừa được gán giảng viên hướng dẫn", process.getId(), false);
 
@@ -81,7 +90,7 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
     });
   }
 
-  private void sendNotificationAndConvertToQueue(User user, String title, String message, Integer postId, Boolean forTeacher) {
+  private void sendNotificationAndConvertToQueue(User user, String title, String message, Integer postId, boolean forTeacher) {
     Optional<User> optionalUser = Optional.ofNullable(user);
     optionalUser.ifPresent(u -> {
       Set<Integer> userIds = new HashSet<>();
@@ -148,10 +157,24 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
           ExceptionUtils.E_EXPORT_INTERNSHIP_PROCESS,
           ExceptionUtils.messages.get(ExceptionUtils.E_EXPORT_INTERNSHIP_PROCESS));
     }
+    // map các entity
+    var internshipApplicationMap = internshipApplicationRepository.findAll().stream()
+        .collect(Collectors.toMap(InternshipApplication::getId, ia -> ia));
+    var studentMap = studentService.findAll().stream()
+        .collect(Collectors.toMap(Student::getCode, s -> s));
+    var userMap = userService.findAll().stream()
+        .collect(Collectors.toMap(User::getId, u -> u));
+    var teacherMap = teacherService.findAll().stream()
+        .collect(Collectors.toMap(Teacher::getId, t -> t));
+    var resultIterable = resultRepository.findAll();
+    var resultList = StreamSupport.stream(resultIterable.spliterator(), false).collect(Collectors.toList());
+    var resultMap = resultList.stream().collect(Collectors.toMap(Result::getProcessId, r -> r));
+
     // chuyển sang list obj
     List<Object> dataExport = new ArrayList<>();
     for (int i = 0; i < list.size(); i++) {
-      dataExport.add(new InternshipProcessExportDTO(i + 1, list.get(i)));
+      dataExport.add(new InternshipProcessExportDTO(i + 1, list.get(i), internshipApplicationMap, studentMap,
+          userMap, teacherMap, resultMap));
     }
     // tạo workbook
     ByteArrayOutputStream bos = new ByteArrayOutputStream();

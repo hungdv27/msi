@@ -348,6 +348,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     return repository.findByEmail(username).orElseThrow().getRole();
   }
 
+  @Override
+  public List<User> findAll() {
+    return repository.findAll();
+  }
+
   private String getDataFromFileImport(Sheet sheet, List<IncomeUserCreateDTO> allData) {
     StringBuilder error = new StringBuilder();
     int rowTotal = sheet.getLastRowNum();

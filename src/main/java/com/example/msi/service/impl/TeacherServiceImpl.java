@@ -83,4 +83,9 @@ public class TeacherServiceImpl implements TeacherService {
       throw new RuntimeException("Không tồn tại Teacher_id");
     return repository.findManagementStudents(teacherId);
   }
+
+  @Override
+  public List<Teacher> findAll() {
+    return repository.findAll();
+  }
 }
