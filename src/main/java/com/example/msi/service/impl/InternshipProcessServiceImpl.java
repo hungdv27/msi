@@ -6,7 +6,6 @@ import com.example.msi.models.internshipprocess.CreateInternshipProcessDTO;
 import com.example.msi.models.internshipprocess.SearchInternshipProcessDTO;
 import com.example.msi.domains.InternshipApplication;
 import com.example.msi.domains.InternshipProcess;
-import com.example.msi.domains.Notification;
 import com.example.msi.models.internshipprocess.*;
 import com.example.msi.repository.InternshipApplicationRepository;
 import com.example.msi.repository.InternshipProcessRepository;
@@ -22,7 +21,6 @@ import org.springframework.context.annotation.Lazy;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.data.domain.Page;
 import org.springframework.lang.NonNull;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,7 +41,10 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
   private final InternshipApplicationRepository internshipApplicationRepository;
   private final ResultRepository resultRepository;
 
-  public InternshipProcessServiceImpl(InternshipProcessRepository repository, UserService userService, NotificationService notificationService, TeacherService teacherService, @Lazy StudentService studentService, InternshipApplicationRepository internshipApplicationRepository) {
+  public InternshipProcessServiceImpl(InternshipProcessRepository repository, UserService userService,
+                                      NotificationService notificationService, TeacherService teacherService,
+                                      @Lazy StudentService studentService, InternshipApplicationRepository internshipApplicationRepository,
+                                      ResultRepository resultRepository) {
     this.repository = repository;
     this.userService = userService;
     this.notificationService = notificationService;
