@@ -1,6 +1,6 @@
 package com.example.msi.models.post;
 
-import com.example.msi.shared.enums.Role;
+import com.example.msi.shared.enums.PostApplyTo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CreatePostDTO {
   private String title;
-  private Role applyTo;
+  private PostApplyTo applyTo;
   private String content;
 }

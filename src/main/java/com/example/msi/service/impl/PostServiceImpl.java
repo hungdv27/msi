@@ -7,6 +7,7 @@ import com.example.msi.models.postfile.CreatePostFileDTO;
 import com.example.msi.repository.PostRepository;
 import com.example.msi.service.*;
 import com.example.msi.shared.enums.NotificationType;
+import com.example.msi.shared.enums.PostApplyTo;
 import com.example.msi.shared.enums.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -55,7 +56,10 @@ public class PostServiceImpl implements PostService {
   @Transactional
   public Post add(@NonNull CreatePostDTO dto, List<MultipartFile> multipartFiles) throws Exception {
     var post = repository.save(Post.getInstance(dto));
-    var role = post.getApplyTo();
+    var role = Role.TEACHER;
+    if (post.getApplyTo() == PostApplyTo.STUDENT){
+      role = Role.STUDENT;
+    }
     attachFiles(post.getId(), multipartFiles);
     Set<User> users = userService.findAllByRole(role);
     var userIds = users.stream().map(User::getId).collect(Collectors.toSet());

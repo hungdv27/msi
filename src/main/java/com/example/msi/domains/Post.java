@@ -2,6 +2,7 @@ package com.example.msi.domains;
 
 import com.example.msi.models.post.CreatePostDTO;
 import com.example.msi.models.post.UpdatePostDTO;
+import com.example.msi.shared.enums.PostApplyTo;
 import com.example.msi.shared.enums.Role;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +29,7 @@ public class Post {
   private String title;
 
   @Column(name = "audience", nullable = false)
-  private Role applyTo;
+  private PostApplyTo applyTo;
 
   @Column(name = "content", nullable = false)
   private String content;
