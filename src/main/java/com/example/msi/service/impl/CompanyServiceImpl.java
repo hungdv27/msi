@@ -237,13 +237,13 @@ public class CompanyServiceImpl implements CompanyService {
           if (!repository.existsByEmail(item.getEmail())) {
             allData.add(item);
           } else {
-            error.append(String.format("Dòng <%d>: %s |", item.getNumberSort(), "Email đã tồn tại trong hệ thống"));
+            error.append(String.format("Dòng <%d>: %s |", item.getNumberSort() + 1, "Email đã tồn tại trong hệ thống"));
           }
         } else {
-          error.append(String.format("Dòng <%d>: %s |", item.getNumberSort(), "Email sai định dạng"));
+          error.append(String.format("Dòng <%d>: %s |", item.getNumberSort() + 1, "Email sai định dạng"));
         }
       } else {
-        error.append(String.format("Dòng <%d>: %s |", item.getNumberSort(), "Tên công ty đã tồn tại trong hệ thống"));
+        error.append(String.format("Dòng <%d>: %s |", item.getNumberSort() + 1, "Tên công ty đã tồn tại trong hệ thống"));
       }
     }
     return error.toString();
