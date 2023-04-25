@@ -3,6 +3,7 @@ package com.example.msi.controller;
 import com.example.msi.models.error.ErrorDTO;
 import com.example.msi.models.internshipprocess.AssignTeacherDTO;
 import com.example.msi.models.internshipprocess.InternshipProcessDTO;
+import com.example.msi.models.internshipprocess.InternshipProcessListDTO;
 import com.example.msi.models.internshipprocess.SearchInternshipProcessDTO;
 import com.example.msi.service.InternshipProcessService;
 import com.example.msi.service.StudentService;
@@ -54,11 +55,11 @@ public class InternshipProcessController {
   }
 
   @GetMapping("/search")
-  public ResponseEntity<Page<InternshipProcessDTO>> search(
+  public ResponseEntity<Page<InternshipProcessListDTO>> search(
       SearchInternshipProcessDTO searchDTO
   ) {
     var responseData = service.search(searchDTO)
-        .map(InternshipProcessDTO::getInstance);
+        .map(InternshipProcessListDTO::getInstance);
     return new ResponseEntity<>(responseData, HttpStatus.OK);
   }
 
