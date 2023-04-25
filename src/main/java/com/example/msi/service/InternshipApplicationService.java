@@ -36,4 +36,5 @@ public interface InternshipApplicationService {
   Optional<InternshipApplication> findByStudentCodeAndStatus(String studentCode, InternshipApplicationStatus status);
 
   boolean existsBySemesterId(int semesterId);
+  List<InternshipApplication> findAll();
 }

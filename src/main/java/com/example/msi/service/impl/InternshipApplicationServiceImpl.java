@@ -192,6 +192,11 @@ public class InternshipApplicationServiceImpl implements InternshipApplicationSe
     return repository.existsBySemesterId(semesterId);
   }
 
+  @Override
+  public List<InternshipApplication> findAll() {
+    return repository.findAll();
+  }
+
   private void attachFiles(int internshipApplicationFileId, List<MultipartFile> multipartFiles) throws IOException {
     if (multipartFiles == null) return;
     var files = fileService.uploadFiles(multipartFiles);
