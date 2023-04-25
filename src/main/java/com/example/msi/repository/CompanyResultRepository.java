@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface CompanyResultRepository extends JpaRepository<CompanyResult, Integer> {
   Optional<CompanyResult> findTopByStudentCode(String studentCode);
+  boolean existsByStudentCode(String studentCode);
 }

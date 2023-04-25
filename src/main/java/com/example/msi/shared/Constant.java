@@ -22,6 +22,15 @@ public class Constant {
   public static final String INCOME_COMPANY_TEMPLATE_EMAIL = "Email";
   public static final String INCOME_COMPANY_TEMPLATE_ADDRESS = "Địa chỉ";
 
+  public static final List<String> INCOME_COMPANY_RESULT_IMPORT_HEADER =
+      Arrays.asList(
+          Constant.INCOME_COMPANY_RESULT_TEMPLATE_STUDENT_CODE,
+          Constant.INCOME_COMPANY_RESULT_TEMPLATE_GRADE,
+          Constant.INCOME_COMPANY_RESULT_TEMPLATE_REVIEW);
+  public static final String INCOME_COMPANY_RESULT_TEMPLATE_STUDENT_CODE = "Mã sinh viên";
+  public static final String INCOME_COMPANY_RESULT_TEMPLATE_GRADE = "Điểm đánh giá công ty";
+  public static final String INCOME_COMPANY_RESULT_TEMPLATE_REVIEW = "Nhận xét công ty";
+
   public static final List<String> INCOME_TEACHER_ACCOUNT_IMPORT_HEADER =
       Arrays.asList(
           Constant.INCOME_TEACHER_ACCOUNT_TEMPLATE_NAME,

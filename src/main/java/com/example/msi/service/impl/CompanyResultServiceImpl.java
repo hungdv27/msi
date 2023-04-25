@@ -1,25 +1,39 @@
 package com.example.msi.service.impl;
 
-import com.example.msi.domains.CompanyResult;
-import com.example.msi.domains.CompanyResultFile;
-import com.example.msi.domains.FileE;
-import com.example.msi.domains.ReportFile;
+import com.example.msi.domains.*;
 import com.example.msi.models.companyresult.CreateCompanyResultDTO;
+import com.example.msi.models.companyresult.IncomeCompanyResultCreateDTO;
 import com.example.msi.models.companyresult_file.CreateCompanyResultFileDTO;
 import com.example.msi.repository.CompanyResultRepository;
 import com.example.msi.service.CompanyResultFileService;
 import com.example.msi.service.CompanyResultService;
 import com.example.msi.service.FileService;
+import com.example.msi.shared.Constant;
+import com.example.msi.shared.ValidateError;
+import com.example.msi.shared.exceptions.ExceptionUtils;
 import com.example.msi.shared.exceptions.MSIException;
+import com.example.msi.shared.utils.ExcelUtils;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,12 +78,162 @@ public class CompanyResultServiceImpl implements CompanyResultService {
     return repository.findAll();
   }
 
+  @Override
+  public byte[] templateDownload(HttpServletRequest request) throws IOException {
+    var columns = Constant.INCOME_COMPANY_RESULT_IMPORT_HEADER;
+    var workbook = new XSSFWorkbook();
+    XSSFSheet realSheet = workbook.createSheet("Danh sách Import");
+
+    // Style phần header
+    ExcelUtils.setHeader(columns, workbook, realSheet);
+    var bos = new ByteArrayOutputStream();
+    workbook.write(bos);
+    return bos.toByteArray();
+  }
+
+  @Override
+  public String importFile(MultipartFile file, HttpServletRequest request) throws IOException, MSIException {
+    //Check chưa đính kèm file
+    if (file.isEmpty()) {
+      throw new MSIException(
+          ExceptionUtils.E_FILE_IS_EMPTY,
+          ExceptionUtils.messages.get(ExceptionUtils.E_FILE_IS_EMPTY));
+    }
+    double fileSize = file.getBytes().length;
+    if (fileSize / (1024 * 1024) > 3) {
+      throw new MSIException(
+          ExceptionUtils.E_FILE_TOO_LARGE_THAN_DEFAULT_IMPORT_3MB,
+          ExceptionUtils.messages.get(ExceptionUtils.E_FILE_TOO_LARGE_THAN_DEFAULT_IMPORT_3MB));
+    }
+    // Số lượng bản ghi được cấu hình chp phép import
+    var totalImport = new AtomicInteger(10000);
+
+    //Kiểm tra file đẩy lên có đúng form
+    var workbook = ExcelUtils.checkFileExcel(file);
+
+    //Đọc dữ liệu sheet đầu tiên
+    var sheet = workbook.getSheetAt(0);
+    var rowHeader = sheet.getRow(0);
+
+    // Validate form file excel như file mẫu (hoặc theo file danh sách lỗi)
+    var headerSamples = Constant.INCOME_COMPANY_RESULT_IMPORT_HEADER;
+    List<String> headerData = new ArrayList<>();
+    for (Cell cell : rowHeader) {
+      headerData.add(cell.getStringCellValue());
+    }
+    boolean checkFile = headerSamples.equals(headerData);
+
+    // check file không đúng định dạng
+    if (BooleanUtils.isFalse(checkFile)) {
+      throw new MSIException(
+          ExceptionUtils.E_FILE_IS_NOT_FORMAT_CORRECT,
+          ExceptionUtils.messages.get(ExceptionUtils.E_FILE_IS_NOT_FORMAT_CORRECT));
+    }
+    // check file đẩy quá số lượng dữ liệu cho phép tron phần cấu hính
+    int totalImportFile = sheet.getLastRowNum();
+    if (totalImportFile > totalImport.get()) {
+      throw new MSIException(
+          ExceptionUtils.E_FILE_DATA_EXCEED_NUMBER_PERMITTED,
+          ExceptionUtils.buildMessage(
+              ExceptionUtils.E_FILE_DATA_EXCEED_NUMBER_PERMITTED, totalImport.get()));
+    }
+    // Xử lý dữ liệu trong file import
+    List<IncomeCompanyResultCreateDTO> allDataImport = new ArrayList<>();
+    var message = this.getDataFromFileImport(sheet, allDataImport);
+
+    workbook.close();
+    // validate duplicate
+    var duplicates =
+        allDataImport.parallelStream()
+            .filter(n -> StringUtils.isNotBlank(n.getCheckDuplicate()))
+            .collect(Collectors.groupingBy(IncomeCompanyResultCreateDTO::getCheckDuplicate));
+    duplicates.entrySet().parallelStream()
+        .forEach(
+            item -> {
+              if (item.getValue().size() > 1) {
+                item.getValue()
+                    .forEach(
+                        n ->
+                            n.getStrError()
+                                .add(
+                                    ValidateError.builder()
+                                        .code(Constant.F_DUPLICATE)
+                                        .errorMessage("Dữ liệu trùng với dữ liệu trong file")
+                                        .build()));
+              }
+            });
+//    Lưu dữ liệu
+    var dataInt = allDataImport.parallelStream()
+        .map(CompanyResult::new)
+        .collect(Collectors.toList());
+    repository.saveAll(dataInt);
+
+    if (message.trim().isEmpty()) {
+      return Constant.IMPORT_SUCCESS;
+    } else {
+      return message.substring(0, message.length() - 2);
+    }
+  }
+
+  // mapping data from file
+  private String getDataFromFileImport(Sheet sheet, List<IncomeCompanyResultCreateDTO> allData) {
+    StringBuilder error = new StringBuilder();
+    int rowTotal = sheet.getLastRowNum();
+    //  Đọc dữ liệu trong file bỏ dòng header(dòng 1).
+    IncomeCompanyResultCreateDTO item;
+    var dataFormatter = new DataFormatter();
+    for (var i = 1; i <= rowTotal; i++) {
+      // lấy giá trị từng row
+      var row = sheet.getRow(i);
+      // Bỏ qua dòng nào trống
+      if (ExcelUtils.isRowEmpty(row)) {
+        continue;
+      }
+      item = new IncomeCompanyResultCreateDTO();
+      // STT
+      item.setNumberSort(i);
+      // set data
+      this.setDataFromFile(item, dataFormatter, row);
+      // validate email của từng row
+      if (!repository.existsByStudentCode(item.getStudentCode())) {
+        if (isValidFloat(item.getCompanyGrade())) {
+          allData.add(item);
+        } else {
+          error.append(String.format("Dòng <%d>: %s |", item.getNumberSort() + 1, "Điểm không phải dạng số"));
+        }
+      } else {
+        error.append(String.format("Dòng <%d>: %s |", item.getNumberSort() + 1, "Mã sinh viên đã tồn tại trong hệ thống"));
+      }
+    }
+    return error.toString();
+  }
+
+  // set data import file
+  private void setDataFromFile(
+      IncomeCompanyResultCreateDTO item, DataFormatter dataFormatter, Row row) {
+    item.setStudentCode(
+        row.getCell(0) != null ? dataFormatter.formatCellValue(row.getCell(0)).trim() : null);
+    item.setCompanyGrade(
+        row.getCell(1) != null ? dataFormatter.formatCellValue(row.getCell(1)).trim() : null);
+    item.setCompanyReview(
+        row.getCell(2) != null ? dataFormatter.formatCellValue(row.getCell(2)).trim() : null);
+  }
+
   private void attachFiles(int companyResultFileId, List<MultipartFile> multipartFiles) throws IOException {
     if (multipartFiles == null) return;
     var files = fileService.uploadFiles(multipartFiles);
     for (FileE file : files) {
       var iaf = CreateCompanyResultFileDTO.getInstance(companyResultFileId, file.getId());
       companyResultFileService.add(iaf);
+    }
+  }
+
+  private boolean isValidFloat(String input) {
+    try {
+      Float.parseFloat(input);
+      return true;
+    } catch (NumberFormatException e) {
+      return false;
     }
   }
 }

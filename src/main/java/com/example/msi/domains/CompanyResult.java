@@ -1,6 +1,7 @@
 package com.example.msi.domains;
 
 import com.example.msi.models.companyresult.CreateCompanyResultDTO;
+import com.example.msi.models.companyresult.IncomeCompanyResultCreateDTO;
 import com.example.msi.shared.exceptions.MSIException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,6 +47,12 @@ public class CompanyResult {
     studentCode = target.getStudentCode();
     companyGrade = target.getCompanyGrade();
     companyReview = target.getCompanyReview();
+  }
+
+  public CompanyResult(@NonNull IncomeCompanyResultCreateDTO target) {
+    this.studentCode = target.getStudentCode();
+    this.companyGrade = Float.parseFloat(target.getCompanyGrade());
+    this.companyReview = target.getCompanyReview();
   }
 
   public static CompanyResult getInstance(@NonNull CreateCompanyResultDTO dto) throws MSIException {
