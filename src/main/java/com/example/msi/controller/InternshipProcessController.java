@@ -1,12 +1,15 @@
 package com.example.msi.controller;
 
+import com.example.msi.domains.InternshipApplication;
+import com.example.msi.domains.Student;
+import com.example.msi.domains.Teacher;
+import com.example.msi.domains.User;
 import com.example.msi.models.error.ErrorDTO;
 import com.example.msi.models.internshipprocess.AssignTeacherDTO;
 import com.example.msi.models.internshipprocess.InternshipProcessDTO;
 import com.example.msi.models.internshipprocess.InternshipProcessListDTO;
 import com.example.msi.models.internshipprocess.SearchInternshipProcessDTO;
-import com.example.msi.service.InternshipProcessService;
-import com.example.msi.service.StudentService;
+import com.example.msi.service.*;
 import com.example.msi.shared.exceptions.ExceptionUtils;
 import com.example.msi.shared.exceptions.MSIException;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/internship-process")
@@ -26,6 +30,9 @@ import java.security.Principal;
 public class InternshipProcessController {
   private final InternshipProcessService service;
   private final StudentService studentService;
+  private final InternshipApplicationService internshipApplicationService;
+  private final TeacherService teacherService;
+  private final UserService userService;
 
   @PutMapping("/assignTeacher")
   public ResponseEntity<Object> assignTeacher(@RequestBody AssignTeacherDTO dto, Principal principal) {
@@ -58,8 +65,18 @@ public class InternshipProcessController {
   public ResponseEntity<Page<InternshipProcessListDTO>> search(
       SearchInternshipProcessDTO searchDTO
   ) {
+    // map các entity
+    var internshipApplicationMap = internshipApplicationService.findAll().stream()
+        .collect(Collectors.toMap(InternshipApplication::getId, ia -> ia));
+    var studentMap = studentService.findAll().stream()
+        .collect(Collectors.toMap(Student::getCode, s -> s));
+    var userMap = userService.findAll().stream()
+        .collect(Collectors.toMap(User::getId, u -> u));
+    var teacherMap = teacherService.findAll().stream()
+        .collect(Collectors.toMap(Teacher::getId, t -> t));
+
     var responseData = service.search(searchDTO)
-        .map(InternshipProcessListDTO::getInstance);
+        .map(entity -> InternshipProcessListDTO.getInstance(entity, internshipApplicationMap, studentMap, userMap, teacherMap));
     return new ResponseEntity<>(responseData, HttpStatus.OK);
   }
 
