@@ -7,12 +7,10 @@ import com.example.msi.models.postfile.CreatePostFileDTO;
 import com.example.msi.repository.PostRepository;
 import com.example.msi.service.*;
 import com.example.msi.shared.enums.NotificationType;
+import com.example.msi.shared.enums.PostApplyTo;
 import com.example.msi.shared.enums.Role;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.lang.NonNull;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageType;
@@ -42,9 +40,20 @@ public class PostServiceImpl implements PostService {
     return userService.findByEmail(userName).map(User::getRole).map(val -> {
       if (val == Role.ADMIN) {
         return repository.findAll(pageable1);
-      } else return repository.findAllByApplyTo(val, pageable1);
+      } else {
+        List<Post> posts;
+        PostApplyTo applyTo = (val == Role.STUDENT) ? PostApplyTo.STUDENT : PostApplyTo.TEACHER;
+        posts = repository.findAllByApplyTo(applyTo);
+        posts.addAll(repository.findAllByApplyTo(PostApplyTo.ALL));
+        posts.sort(Comparator.comparing(Post::getCreatedDate).reversed());
+
+        int start = (int) pageable1.getOffset();
+        int end = Math.min((start + pageable1.getPageSize()), posts.size());
+        return new PageImpl<>(posts.subList(start, end), pageable1, posts.size());
+      }
     }).orElseThrow(NoSuchElementException::new);
   }
+
 
   @Override
   public Post findById(int id) {
@@ -55,9 +64,12 @@ public class PostServiceImpl implements PostService {
   @Transactional
   public Post add(@NonNull CreatePostDTO dto, List<MultipartFile> multipartFiles) throws Exception {
     var post = repository.save(Post.getInstance(dto));
-    var role = post.getApplyTo();
+    PostApplyTo applyTo = post.getApplyTo();
+    Role role = (applyTo != PostApplyTo.ALL) ? ((applyTo == PostApplyTo.TEACHER) ? Role.TEACHER : Role.STUDENT) : null;
+    HashSet<User> users = new HashSet<>((role != null) ? userService.findAllByRole(role) : userService.findAll());
+
     attachFiles(post.getId(), multipartFiles);
-    Set<User> users = userService.findAllByRole(role);
+
     var userIds = users.stream().map(User::getId).collect(Collectors.toSet());
     Notification notification = new Notification();
     notification.setTitle("Thông Báo");

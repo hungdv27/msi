@@ -3,6 +3,7 @@ package com.example.msi.models.post;
 import com.example.msi.domains.Post;
 import com.example.msi.domains.PostFile;
 import com.example.msi.models.file.FileDTO;
+import com.example.msi.shared.enums.PostApplyTo;
 import com.example.msi.shared.enums.Role;
 import lombok.Getter;
 import org.springframework.lang.NonNull;
@@ -18,7 +19,7 @@ import static com.example.msi.shared.utils.ServiceUtils.getPostFileService;
 public class PostDTO {
   private final int id;
   private final String title;
-  private final Role applyTo;
+  private final PostApplyTo applyTo;
   private final String content;
   private final List<FileDTO> files;
   private final LocalDateTime createdDate;

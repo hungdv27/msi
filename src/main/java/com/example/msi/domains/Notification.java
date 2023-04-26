@@ -42,8 +42,7 @@ public class Notification {
   private LocalDateTime createdDate;
 
   public Set<Integer> getUserIds() {
-    return new Gson().fromJson(userIds, new TypeToken<Set<Integer>>() {
-    }.getType());
+    return new Gson().fromJson(userIds, new TypeToken<Set<Integer>>() {}.getType());
   }
 
   public void setUserIds(Set<Integer> userIds) {
