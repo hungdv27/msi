@@ -67,8 +67,8 @@ public class InternshipProcessDTO {
     // currentWeek
     currentWeek = getInternshipProcessService().currentWeekProcess(internshipApplication);
     // companyResult
-    companyResult = CompanyResultDTO.getInstance(getCompanyResultService()
-        .findByStudentCode(internshipApplication.getStudentCode()).orElseThrow(NoSuchElementException::new));
+    var companyResultEntity = getCompanyResultService().findByStudentCode(internshipApplication.getStudentCode());
+    companyResultEntity.ifPresent(result -> companyResult = CompanyResultDTO.getInstance(result));
   }
 
   public static InternshipProcessDTO getInstance(@NonNull InternshipProcess entity) {
