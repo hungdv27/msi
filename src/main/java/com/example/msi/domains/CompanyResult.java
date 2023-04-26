@@ -35,6 +35,9 @@ public class CompanyResult {
   @Column(name = "company_review", length = 1000)
   private String companyReview;
 
+  @Column(name = "process_id")
+  private int processId;
+
   @Column(name = "created_date", nullable = false, updatable = false)
   @CreatedDate
   private LocalDateTime createdDate;
