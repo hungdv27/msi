@@ -15,6 +15,7 @@ import static com.example.msi.shared.utils.ServiceUtils.*;
 @Setter
 public class InternshipProcessListDTO {
   private int id;
+  private int applicationId;
   private String studentCode;
   private String studentFullName;
   private String teacherFullName;
@@ -28,6 +29,8 @@ public class InternshipProcessListDTO {
     var internshipApplication = internshipApplicationMap.get(appId);
     // id
     id = entity.getId();
+    // applicationId
+    applicationId = appId;
     // studentCode
     studentCode = internshipApplication.getStudentCode();
     // studentFullName
