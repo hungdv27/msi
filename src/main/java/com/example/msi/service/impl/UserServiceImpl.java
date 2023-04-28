@@ -111,7 +111,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
       teacherService.save(
           Teacher.getInstance(
               UpdateTeacherDTO.getInstance(
-                  new Teacher(0, user.getId(), null, null, null, false, null)), user)
+                  new Teacher(0, user.getId(), null, null, false, null)), user)
       );
     }
 

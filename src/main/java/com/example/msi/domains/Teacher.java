@@ -25,8 +25,6 @@ public class Teacher {
 
   @Column(name = "user_id", insertable = false, updatable = false)
   private Integer userId;
-  @Column(name = "name", length = 255)
-  private String name;
 
   @Column(name = "created_date", nullable = false, updatable = false)
   @CreatedDate
