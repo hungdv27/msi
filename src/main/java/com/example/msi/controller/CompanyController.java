@@ -23,8 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.msi.service.impl.CompanyServiceImpl.getPageable;
-
 @RequiredArgsConstructor
 @RequestMapping("api/company")
 @RestController

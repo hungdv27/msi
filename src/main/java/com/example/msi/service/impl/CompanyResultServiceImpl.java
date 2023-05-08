@@ -10,6 +10,7 @@ import com.example.msi.service.CompanyResultService;
 import com.example.msi.service.FileService;
 import com.example.msi.shared.Constant;
 import com.example.msi.shared.ValidateError;
+import com.example.msi.shared.enums.NotificationType;
 import com.example.msi.shared.exceptions.ExceptionUtils;
 import com.example.msi.shared.exceptions.MSIException;
 import com.example.msi.shared.utils.ExcelUtils;
@@ -43,14 +44,11 @@ public class CompanyResultServiceImpl implements CompanyResultService {
   private final FileService fileService;
   private final CompanyResultFileService companyResultFileService;
 
-
   @Override
   @Transactional
   public CompanyResult create(@NonNull CreateCompanyResultDTO dto) throws MSIException, IOException {
-    // check trùng studentCode
     var optional = repository.findTopByStudentCode(dto.getStudentCode());
     optional.ifPresent(cr -> delete(cr.getId()));
-
     var entity = repository.save(CompanyResult.getInstance(dto));
     attachFiles(entity.getId(), dto.getFiles());
     return entity;
@@ -83,8 +81,6 @@ public class CompanyResultServiceImpl implements CompanyResultService {
     var columns = Constant.INCOME_COMPANY_RESULT_IMPORT_HEADER;
     var workbook = new XSSFWorkbook();
     XSSFSheet realSheet = workbook.createSheet("Danh sách Import");
-
-    // Style phần header
     ExcelUtils.setHeader(columns, workbook, realSheet);
     var bos = new ByteArrayOutputStream();
     workbook.write(bos);
@@ -93,7 +89,6 @@ public class CompanyResultServiceImpl implements CompanyResultService {
 
   @Override
   public String importFile(MultipartFile file, HttpServletRequest request) throws IOException, MSIException {
-    //Check chưa đính kèm file
     if (file.isEmpty()) {
       throw new MSIException(
           ExceptionUtils.E_FILE_IS_EMPTY,
@@ -105,31 +100,21 @@ public class CompanyResultServiceImpl implements CompanyResultService {
           ExceptionUtils.E_FILE_TOO_LARGE_THAN_DEFAULT_IMPORT_3MB,
           ExceptionUtils.messages.get(ExceptionUtils.E_FILE_TOO_LARGE_THAN_DEFAULT_IMPORT_3MB));
     }
-    // Số lượng bản ghi được cấu hình chp phép import
     var totalImport = new AtomicInteger(10000);
-
-    //Kiểm tra file đẩy lên có đúng form
     var workbook = ExcelUtils.checkFileExcel(file);
-
-    //Đọc dữ liệu sheet đầu tiên
     var sheet = workbook.getSheetAt(0);
     var rowHeader = sheet.getRow(0);
-
-    // Validate form file excel như file mẫu (hoặc theo file danh sách lỗi)
     var headerSamples = Constant.INCOME_COMPANY_RESULT_IMPORT_HEADER;
     List<String> headerData = new ArrayList<>();
     for (Cell cell : rowHeader) {
       headerData.add(cell.getStringCellValue());
     }
     boolean checkFile = headerSamples.equals(headerData);
-
-    // check file không đúng định dạng
     if (BooleanUtils.isFalse(checkFile)) {
       throw new MSIException(
           ExceptionUtils.E_FILE_IS_NOT_FORMAT_CORRECT,
           ExceptionUtils.messages.get(ExceptionUtils.E_FILE_IS_NOT_FORMAT_CORRECT));
     }
-    // check file đẩy quá số lượng dữ liệu cho phép tron phần cấu hính
     int totalImportFile = sheet.getLastRowNum();
     if (totalImportFile > totalImport.get()) {
       throw new MSIException(
@@ -137,12 +122,10 @@ public class CompanyResultServiceImpl implements CompanyResultService {
           ExceptionUtils.buildMessage(
               ExceptionUtils.E_FILE_DATA_EXCEED_NUMBER_PERMITTED, totalImport.get()));
     }
-    // Xử lý dữ liệu trong file import
     List<IncomeCompanyResultCreateDTO> allDataImport = new ArrayList<>();
     var message = this.getDataFromFileImport(sheet, allDataImport);
 
     workbook.close();
-    // validate duplicate
     var duplicates =
         allDataImport.parallelStream()
             .filter(n -> StringUtils.isNotBlank(n.getCheckDuplicate()))
@@ -152,17 +135,13 @@ public class CompanyResultServiceImpl implements CompanyResultService {
             item -> {
               if (item.getValue().size() > 1) {
                 item.getValue()
-                    .forEach(
-                        n ->
-                            n.getStrError()
-                                .add(
-                                    ValidateError.builder()
-                                        .code(Constant.F_DUPLICATE)
-                                        .errorMessage("Dữ liệu trùng với dữ liệu trong file")
-                                        .build()));
+                    .forEach(n -> n.getStrError()
+                        .add(ValidateError.builder()
+                            .code(Constant.F_DUPLICATE)
+                            .errorMessage("Dữ liệu trùng với dữ liệu trong file")
+                            .build()));
               }
             });
-//    Lưu dữ liệu
     var dataInt = allDataImport.parallelStream()
         .map(CompanyResult::new)
         .collect(Collectors.toList());
@@ -175,26 +154,19 @@ public class CompanyResultServiceImpl implements CompanyResultService {
     }
   }
 
-  // mapping data from file
   private String getDataFromFileImport(Sheet sheet, List<IncomeCompanyResultCreateDTO> allData) {
     StringBuilder error = new StringBuilder();
     int rowTotal = sheet.getLastRowNum();
-    //  Đọc dữ liệu trong file bỏ dòng header(dòng 1).
     IncomeCompanyResultCreateDTO item;
     var dataFormatter = new DataFormatter();
     for (var i = 1; i <= rowTotal; i++) {
-      // lấy giá trị từng row
       var row = sheet.getRow(i);
-      // Bỏ qua dòng nào trống
       if (ExcelUtils.isRowEmpty(row)) {
         continue;
       }
       item = new IncomeCompanyResultCreateDTO();
-      // STT
       item.setNumberSort(i);
-      // set data
       this.setDataFromFile(item, dataFormatter, row);
-      // validate email của từng row
       if (!repository.existsByStudentCode(item.getStudentCode())) {
         if (isValidFloat(item.getCompanyGrade())) {
           allData.add(item);
@@ -208,7 +180,6 @@ public class CompanyResultServiceImpl implements CompanyResultService {
     return error.toString();
   }
 
-  // set data import file
   private void setDataFromFile(
       IncomeCompanyResultCreateDTO item, DataFormatter dataFormatter, Row row) {
     item.setStudentCode(

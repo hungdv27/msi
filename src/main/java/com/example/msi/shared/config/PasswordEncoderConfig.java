@@ -9,7 +9,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class PasswordEncoderConfig {
   @Bean
   public PasswordEncoder passwordEncoder() {
-    // Password encoder, để Spring Security sử dụng mã hóa mật khẩu người dùng
     return new BCryptPasswordEncoder();
   }
 }
