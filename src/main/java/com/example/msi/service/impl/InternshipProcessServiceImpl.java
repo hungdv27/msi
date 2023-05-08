@@ -87,7 +87,6 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
     });
   }
 
-  // Phương thức tìm kiếm user theo teacherId
   private User findUserByTeacherId(Integer teacherId) {
     return teacherService.findById(teacherId)
         .map(t -> userService.findById(t.getUserId()).orElse(null))
@@ -135,7 +134,7 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
           ExceptionUtils.E_EXPORT_INTERNSHIP_PROCESS,
           ExceptionUtils.messages.get(ExceptionUtils.E_EXPORT_INTERNSHIP_PROCESS));
     }
-    // map các entity
+
     var internshipApplicationMap = internshipApplicationRepository.findAll().stream()
         .collect(Collectors.toMap(InternshipApplication::getId, ia -> ia));
     var studentMap = studentService.findAll().stream()
@@ -150,13 +149,12 @@ public class InternshipProcessServiceImpl implements InternshipProcessService {
     var companyResultMap = companyResultService.findAll().stream()
         .collect(Collectors.toMap(CompanyResult::getStudentCode, u -> u));
 
-    // chuyển sang list obj
     List<Object> dataExport = new ArrayList<>();
     for (int i = 0; i < list.size(); i++) {
       dataExport.add(new InternshipProcessExportDTO(i + 1, list.get(i), internshipApplicationMap, studentMap,
           userMap, teacherMap, resultMap, companyResultMap));
     }
-    // tạo workbook
+
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
     try (Workbook workbook = ExcelUtils.executeExport(dataExport);
          bos) {

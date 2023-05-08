@@ -8,5 +8,6 @@ public enum NotificationType {
   ASSIGN_FOR_TEACHER,
   ASSIGN_FOR_STUDENT,
   COMMENT_REPORT,
-  RESULT
+  RESULT,
+  COMPANY_RESULT
 }
