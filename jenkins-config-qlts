@@ -1,0 +1,119 @@
+// git repository info
+	def gitRepository = 'https://gitlabs.baovietbank.vn/qlts/fixedassets.git'
+	def gitBranch = 'develop'
+
+	// gitlab credentials
+	def gitlabCredential = 'jenkins_gitlab_1'	
+	
+    environment{
+        APP_BUILD_NUMBER = 1521
+    }
+
+	pipeline {
+		agent any
+		
+		stages {
+			stage('Checkout project') 
+			{
+			  steps 
+			  {
+			    sh '''
+			        export no_proxy=baovietbank.vn
+			        git config --global http.sslverify false
+			        git config --global pull.ff only
+			        
+			        if [ ! -d "fixedassets" ]; then
+                        git clone -b staging https://jenkins_gitlab_1:Baoviet123@gitlabs.baovietbank.vn/qlts/fixedassets.git
+                    else
+                        cd fixedassets
+                        git reset --hard origin/staging
+                        git pull
+                    fi
+			    '''
+			 //   git credentialsId: gitlabCredential, 
+			 //       url: gitRepository,
+			 //       branch: gitBranch
+			 
+			    echo "Checkout repo"
+			    echo "APP_BUILD_NUMBER=${env.APP_BUILD_NUMBER}" 
+			  }
+			}
+			
+			stage('Build docker image, push image to harbor') 
+			{
+			  steps 
+			  {
+			    sh '''
+			       
+			        cd fixedassets
+			        git reset --hard
+			        
+			        docker build -t dockeregistry.baovietbank.vn/qlts/qlts_be_fixedassets:development -t dockeregistry.baovietbank.vn/qlts/qlts_be_fixedassets:development-$BUILD_ID -f Dockerfile .
+			        docker login dockeregistry.baovietbank.vn -u jenkins_harbor_1 -p Baoviet123
+			        docker push dockeregistry.baovietbank.vn/qlts/qlts_be_fixedassets:development
+			        docker push dockeregistry.baovietbank.vn/qlts/qlts_be_fixedassets:development-$BUILD_ID
+			        docker image rm dockeregistry.baovietbank.vn/qlts/qlts_be_fixedassets:development
+			    '''
+			  }
+			}
+			
+	
+			stage('Deploy via Argo-CD') {
+			    steps {
+			        script {
+			            sh """
+			                if [ ! -d "qlts-k8s-manifests" ]; then
+                                git clone -b develop https://jenkins_gitlab_1:Baoviet123@gitlabs.baovietbank.vn/qlts/qlts-k8s-manifests.git
+                                cd qlts-k8s-manifests
+                            else
+                                cd qlts-k8s-manifests
+                                git reset --hard origin/develop
+                                git pull -f
+                            fi
+                            cd be-manifests
+                            echo "Build.Number: $BUILD_ID"
+                            sed -i 's|image: .*|image: dockeregistry.baovietbank.vn/qlts/qlts_be_fixedassets:development-$BUILD_ID|' qlts-be-fixedassets.yaml
+                            cat qlts-be-fixedassets.yaml
+                            git add .
+                            git commit -m "Update image version"
+                            git push origin -f
+			                """
+			        }
+			    }
+			}
+			
+// 			stage('DeployDeploy') {
+//                 steps {
+//                     script {
+//                     // Define the server and credentials
+//                     def remote = [:]
+    
+//                     remote.host = '10.33.6.92'
+//                     remote.user = 'root'
+//                     remote.allowAnyHosts = true
+//                     remote.credentialsId = 'ssh_worker1'
+                    
+//                     // SSH Steps
+//                         sshagent (credentials : ['ssh_worker1']) {
+//                         // SSH into the target server and run the script
+                         
+//                             sh '''
+//                             ssh -o StrictHostKeyChecking=no root@10.33.6.92 -t "bash Projects_QLTS/qlts-fe/deploy.sh"
+//                             '''
+//                         }
+//                     }
+//                 }
+//             }
+		}
+		post {
+            always {
+                echo 'This will always run regardless of success or failure'
+            }
+            success {
+                echo 'This will run only if successful'
+            }
+            failure {
+                echo 'This will run only if failed'
+            }
+        }
+	}
